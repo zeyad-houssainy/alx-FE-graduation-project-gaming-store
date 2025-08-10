@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Streams - NexusGames</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body>
+
+    <!-- Header/Navigation Bar -->
+    <header class="header">
+        <nav class="nav container">
+            <a href="../index.html" class="logo">🎮 NexusGames</a>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="store.html">Store</a></li>
+                <li><a href="streaming.html" class="active">Streaming</a></li>
+                <li><a href="offers.html">Offers</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+                <li><a href="cart.html" class="cart-icon">🛒 <span class="cart-count">0</span></a></li>
+                <li><a href="login.html" class="btn btn-primary">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Streaming Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>🎥 Gaming Streams & Content</h1>
+            <p>Watch the best gaming content, live streams, and gameplay videos</p>
+        </div>
+    </section>
+
+    <!-- Live Streams Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">🔴 Live Now</h2>
+            <div class="grid grid-3" id="liveStreams">
+                <!-- Live streams will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Content -->
+    <section class="section bg-gray-800">
+        <div class="container">
+            <h2 class="section-title">⭐ Featured Content</h2>
+            <div class="grid grid-2 gap-5">
+                <div class="card">
+                    <img src="https://placehold.co/600x300/1f2937/60a5fa?text=Game+Review+Video" alt="Featured Video" class="w-full h-48 object-cover">
+                    <div class="card-content">
+                        <h3 class="card-title">Cyberpunk 2077 Complete Review</h3>
+                        <p class="card-text">In-depth review of the latest updates and DLC content</p>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-gray-400">🎮 NexusGames Official</span>
+                            <span class="text-gray-400">2.3M views</span>
+                        </div>
+                        <button class="btn btn-primary w-full mt-3">Watch Now</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <img src="https://placehold.co/600x300/1f2937/60a5fa?text=Gaming+Tournament" alt="Tournament Stream" class="w-full h-48 object-cover">
+                    <div class="card-content">
+                        <h3 class="card-title">NexusGames Championship Finals</h3>
+                        <p class="card-text">Watch the best players compete for the ultimate prize</p>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-gray-400">🏆 Tournament Channel</span>
+                            <span class="text-red-400">🔴 Live</span>
+                        </div>
+                        <button class="btn btn-danger w-full mt-3">Join Live Stream</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Categories -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">🎯 Popular Categories</h2>
+            <div class="grid grid-4">
+                <button class="card interactive-card" onclick="filterByCategory('gameplay')" onkeydown="handleKeyPress(event, 'gameplay')" tabindex="0">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3">🎮</div>
+                        <h3 class="card-title">Gameplay</h3>
+                        <p class="card-text">Latest gameplay videos and walkthroughs</p>
+                    </div>
+                </button>
+                
+                <button class="card interactive-card" onclick="filterByCategory('reviews')" onkeydown="handleKeyPress(event, 'reviews')" tabindex="0">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3">⭐</div>
+                        <h3 class="card-title">Reviews</h3>
+                        <p class="card-text">Honest game reviews and recommendations</p>
+                    </div>
+                </button>
+                
+                <button class="card interactive-card" onclick="filterByCategory('tutorials')" onkeydown="handleKeyPress(event, 'tutorials')" tabindex="0">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3">📚</div>
+                        <h3 class="card-title">Tutorials</h3>
+                        <p class="card-text">Tips, tricks, and gaming guides</p>
+                    </div>
+                </button>
+                
+                <button class="card interactive-card" onclick="filterByCategory('esports')" onkeydown="handleKeyPress(event, 'esports')" tabindex="0">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3">🏆</div>
+                        <h3 class="card-title">Esports</h3>
+                        <p class="card-text">Professional gaming and tournaments</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Grid -->
+    <section class="section bg-gray-900">
+        <div class="container">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">All Videos</h2>
+                <select id="sortVideos" class="form-input w-auto" title="Sort videos by">
+                    <option value="newest">Newest First</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="views">Most Viewed</option>
+                    <option value="duration">Duration</option>
+                </select>
+            </div>
+            
+            <div class="grid grid-3" id="videoGrid">
+                <!-- Videos will be populated by JavaScript -->
+            </div>
+            
+            <div class="text-center mt-5">
+                <button id="loadMoreVideos" class="btn btn-secondary">Load More Videos</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Streaming Platforms -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">🌐 Follow Us On</h2>
+            <div class="grid grid-4">
+                <a href="#" class="card hover:transform hover:scale-105 transition-transform">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3 twitch-color">📺</div>
+                        <h3 class="card-title">Twitch</h3>
+                        <p class="card-text">Live gaming streams daily</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="card hover:transform hover:scale-105 transition-transform">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3 youtube-color">📹</div>
+                        <h3 class="card-title">YouTube</h3>
+                        <p class="card-text">Gaming videos and reviews</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="card hover:transform hover:scale-105 transition-transform">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3 twitter-color">🐦</div>
+                        <h3 class="card-title">Twitter</h3>
+                        <p class="card-text">Gaming news and updates</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="card hover:transform hover:scale-105 transition-transform">
+                    <div class="card-content text-center">
+                        <div class="text-4xl mb-3 discord-color">💬</div>
+                        <h3 class="card-title">Discord</h3>
+                        <p class="card-text">Join our gaming community</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="offers.html">Offers</a></li>
+                        <li><a href="streaming.html">Streaming</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="return-policy.html">Return Policy</a></li>
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="../index.html#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <ul>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>NexusGames</h3>
+                    <p class="text-gray-400">Your ultimate gaming destination for the latest Xbox and PlayStation titles.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 NexusGames. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Sample streaming content data
+        const streamingContent = {
+            liveStreams: [
+                {
+                    id: 1,
+                    title: "Epic Cyberpunk 2077 Playthrough",
+                    streamer: "GamerPro123",
+                    viewers: 15420,
+                    category: "RPG",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Live+Stream+1"
+                },
+                {
+                    id: 2,
+                    title: "Call of Duty Tournament",
+                    streamer: "ESportsChannel",
+                    viewers: 8750,
+                    category: "FPS",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Live+Stream+2"
+                },
+                {
+                    id: 3,
+                    title: "Minecraft Building Marathon",
+                    streamer: "CreativeBuilder",
+                    viewers: 3200,
+                    category: "Sandbox",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Live+Stream+3"
+                }
+            ],
+            videos: [
+                {
+                    id: 1,
+                    title: "The Witcher 3 - Complete Beginner's Guide",
+                    creator: "NexusGames",
+                    views: 125000,
+                    duration: "15:42",
+                    category: "tutorials",
+                    uploadDate: "2025-01-15",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Video+1"
+                },
+                {
+                    id: 2,
+                    title: "FIFA 24 Ultimate Team Tips",
+                    creator: "SportsMaster",
+                    views: 89000,
+                    duration: "12:15",
+                    category: "tutorials",
+                    uploadDate: "2025-01-14",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Video+2"
+                },
+                {
+                    id: 3,
+                    title: "Elden Ring Boss Fight Compilation",
+                    creator: "EpicGamer",
+                    views: 234000,
+                    duration: "8:30",
+                    category: "gameplay",
+                    uploadDate: "2025-01-13",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Video+3"
+                },
+                {
+                    id: 4,
+                    title: "God of War Ragnarok Review",
+                    creator: "GameReviewer",
+                    views: 156000,
+                    duration: "18:25",
+                    category: "reviews",
+                    uploadDate: "2025-01-12",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Video+4"
+                },
+                {
+                    id: 5,
+                    title: "Esports Championship Highlights",
+                    creator: "ProGaming",
+                    views: 78000,
+                    duration: "22:10",
+                    category: "esports",
+                    uploadDate: "2025-01-11",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Video+5"
+                },
+                {
+                    id: 6,
+                    title: "Spider-Man Miles Morales Gameplay",
+                    creator: "ActionHero",
+                    views: 190000,
+                    duration: "25:45",
+                    category: "gameplay",
+                    uploadDate: "2025-01-10",
+                    thumbnail: "https://placehold.co/400x225/334155/f8fafc?text=Video+6"
+                }
+            ]
+        };
+
+        let currentVideos = [...streamingContent.videos];
+        let currentFilter = 'all';
+
+        function displayLiveStreams() {
+            const container = document.getElementById('liveStreams');
+            container.innerHTML = streamingContent.liveStreams.map(stream => `
+                <div class="card cursor-pointer" onclick="openStream(${stream.id})">
+                    <div class="relative">
+                        <img src="${stream.thumbnail}" alt="${stream.title}" class="w-full h-40 object-cover">
+                        <div class="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">
+                            🔴 LIVE
+                        </div>
+                        <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
+                            ${stream.viewers.toLocaleString()} viewers
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${stream.title}</h3>
+                        <p class="card-text">${stream.streamer} • ${stream.category}</p>
+                        <button class="btn btn-danger w-full mt-2">Watch Live</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayVideos() {
+            const container = document.getElementById('videoGrid');
+            container.innerHTML = currentVideos.map(video => `
+                <div class="card cursor-pointer" onclick="openVideo(${video.id})">
+                    <div class="relative">
+                        <img src="${video.thumbnail}" alt="${video.title}" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
+                            ${video.duration}
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${video.title}</h3>
+                        <p class="card-text">${video.creator}</p>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-gray-400 text-sm">${video.views.toLocaleString()} views</span>
+                            <span class="text-gray-400 text-sm">${formatDate(video.uploadDate)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterByCategory(category) {
+            currentFilter = category;
+            if (category === 'all') {
+                currentVideos = [...streamingContent.videos];
+            } else {
+                currentVideos = streamingContent.videos.filter(video => video.category === category);
+            }
+            displayVideos();
+            
+            // Smooth scroll to video grid
+            document.getElementById('videoGrid').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function sortVideos() {
+            const sortBy = document.getElementById('sortVideos').value;
+            
+            switch(sortBy) {
+                case 'popular':
+                    currentVideos.sort((a, b) => b.views - a.views);
+                    break;
+                case 'views':
+                    currentVideos.sort((a, b) => b.views - a.views);
+                    break;
+                case 'duration':
+                    currentVideos.sort((a, b) => {
+                        const aDuration = timeToSeconds(a.duration);
+                        const bDuration = timeToSeconds(b.duration);
+                        return bDuration - aDuration;
+                    });
+                    break;
+                case 'newest':
+                default:
+                    currentVideos.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+                    break;
+            }
+            
+            displayVideos();
+        }
+
+        function timeToSeconds(timeString) {
+            const parts = timeString.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) return '1 day ago';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+            return date.toLocaleDateString();
+        }
+
+        function openStream(streamId) {
+            const stream = streamingContent.liveStreams.find(s => s.id === streamId);
+            cart.showNotification(`Opening live stream: ${stream.title}`);
+            // In a real application, this would open the stream player
+        }
+
+        function openVideo(videoId) {
+            const video = currentVideos.find(v => v.id === videoId);
+            cart.showNotification(`Opening video: ${video.title}`);
+            // In a real application, this would open the video player
+        }
+
+        function handleKeyPress(event, category) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                filterByCategory(category);
+            }
+        }
+
+        // Initialize streaming page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayLiveStreams();
+            displayVideos();
+            
+            document.getElementById('sortVideos').addEventListener('change', sortVideos);
+            
+            document.getElementById('loadMoreVideos').addEventListener('click', function() {
+                // Simulate loading more videos
+                cart.showNotification('Loading more videos...');
+                // In a real application, this would load more content from an API
+            });
+        });
+    </script>
+
+</body>
+</html>

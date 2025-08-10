@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store - NexusGames</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body>
+
+    <!-- Header/Navigation Bar -->
+    <header class="header">
+        <nav class="nav container">
+            <a href="../index.html" class="logo">🎮 NexusGames</a>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="store.html" class="active">Store</a></li>
+                <li><a href="streaming.html">Streaming</a></li>
+                <li><a href="offers.html">Offers</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+                <li><a href="cart.html" class="cart-icon">🛒 <span class="cart-count">0</span></a></li>
+                <li><a href="profile.html" class="profile-link hidden">👤 Profile</a></li>
+                <li><button onclick="logout()" class="btn btn-danger logout-btn hidden">Logout</button></li>
+                <li><a href="login.html" class="btn btn-primary login-link">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Store Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Game Store</h1>
+            <p>Discover thousands of games for Xbox and PlayStation</p>
+        </div>
+    </section>
+
+    <!-- Search and Filters -->
+    <section class="section">
+        <div class="container">
+            <div class="card mb-5">
+                <div class="card-content">
+                    <div class="grid grid-3 gap-4">
+                        <div class="form-group">
+                            <label for="searchInput" class="form-label">Search Games</label>
+                            <input type="text" id="searchInput" class="form-input" placeholder="Search for games...">
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryFilter" class="form-label">Category</label>
+                            <select id="categoryFilter" class="form-input">
+                                <option value="">All Categories</option>
+                                <option value="RPG">RPG</option>
+                                <option value="FPS">FPS</option>
+                                <option value="Action">Action</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Adventure">Adventure</option>
+                                <option value="Racing">Racing</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="platformFilter" class="form-label">Platform</label>
+                            <select id="platformFilter" class="form-input">
+                                <option value="">All Platforms</option>
+                                <option value="xbox">Xbox</option>
+                                <option value="playstation">PlayStation</option>
+                                <option value="pc">PC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-2 gap-4 mt-4">
+                        <div class="form-group">
+                            <label for="priceRange" class="form-label">Price Range: $0 - $<span id="priceValue">100</span></label>
+                            <input type="range" id="priceRange" min="0" max="100" value="100" class="w-full">
+                        </div>
+                        <div class="form-group">
+                            <label for="sortBy" class="form-label">Sort By</label>
+                            <select id="sortBy" class="form-input">
+                                <option value="featured">Featured</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="rating">Rating</option>
+                                <option value="name">Name</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Games</h2>
+                <div class="text-gray-400">
+                    <span id="productCount">0</span> products found
+                </div>
+            </div>
+            
+            <div class="grid grid-4" id="productsGrid">
+                <!-- Products will be populated by JavaScript -->
+            </div>
+
+            <!-- Load More Button -->
+            <div class="text-center mt-5">
+                <button id="loadMoreBtn" class="btn btn-secondary hidden">Load More Games</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Details Modal -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content game-modal-content">
+            <button class="close-btn" onclick="closeModal('gameModal')">&times;</button>
+            <div id="gameModalContent">
+                <!-- Game details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="offers.html">Offers</a></li>
+                        <li><a href="streaming.html">Streaming</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="return-policy.html">Return Policy</a></li>
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="../index.html#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <ul>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>NexusGames</h3>
+                    <p class="text-gray-400">Your ultimate gaming destination for the latest Xbox and PlayStation titles.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 NexusGames. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        let currentProducts = [];
+        let filteredProducts = [];
+        let displayedCount = 0;
+        const itemsPerPage = 12;
+
+        // Extended products for store
+        const storeProducts = [
+            ...products,
+            {
+                id: 7,
+                title: "Grand Theft Auto V",
+                price: 29.99,
+                originalPrice: 39.99,
+                image: "https://placehold.co/400x250/334155/f8fafc?text=GTA+V",
+                category: "Action",
+                platform: "PC, Xbox, PlayStation",
+                rating: 4.5,
+                description: "An action-adventure game played from a third-person perspective."
+            },
+            {
+                id: 8,
+                title: "Minecraft",
+                price: 26.95,
+                image: "https://placehold.co/400x250/334155/f8fafc?text=Minecraft",
+                category: "Adventure",
+                platform: "PC, Xbox, PlayStation",
+                rating: 4.8,
+                description: "A sandbox video game about placing blocks and going on adventures."
+            },
+            {
+                id: 9,
+                title: "Forza Horizon 5",
+                price: 59.99,
+                image: "https://placehold.co/400x250/334155/f8fafc?text=Forza+5",
+                category: "Racing",
+                platform: "Xbox, PC",
+                rating: 4.6,
+                description: "Open-world racing set in a fictionalized representation of Mexico."
+            },
+            {
+                id: 10,
+                title: "God of War",
+                price: 49.99,
+                image: "https://placehold.co/400x250/334155/f8fafc?text=God+of+War",
+                category: "Action",
+                platform: "PlayStation, PC",
+                rating: 4.9,
+                description: "Follow Kratos and his son Atreus on their journey through Norse mythology."
+            }
+        ];
+
+        function initializeStore() {
+            currentProducts = [...storeProducts];
+            applyFilters();
+            
+            // Setup event listeners
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+            document.getElementById('platformFilter').addEventListener('change', applyFilters);
+            document.getElementById('priceRange').addEventListener('input', updatePriceRange);
+            document.getElementById('sortBy').addEventListener('change', applyFilters);
+            document.getElementById('loadMoreBtn').addEventListener('click', loadMore);
+
+            // Check URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const platform = urlParams.get('platform');
+            if (platform) {
+                document.getElementById('platformFilter').value = platform;
+                applyFilters();
+            }
+        }
+
+        function updatePriceRange() {
+            const priceRange = document.getElementById('priceRange');
+            const priceValue = document.getElementById('priceValue');
+            priceValue.textContent = priceRange.value;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const platform = document.getElementById('platformFilter').value;
+            const maxPrice = parseFloat(document.getElementById('priceRange').value);
+            const sortBy = document.getElementById('sortBy').value;
+
+            // Filter products
+            filteredProducts = currentProducts.filter(product => {
+                const matchesSearch = product.title.toLowerCase().includes(search) ||
+                                     product.category.toLowerCase().includes(search) ||
+                                     product.platform.toLowerCase().includes(search);
+                const matchesCategory = !category || product.category === category;
+                const matchesPlatform = !platform || product.platform.toLowerCase().includes(platform);
+                const matchesPrice = product.price <= maxPrice;
+
+                return matchesSearch && matchesCategory && matchesPlatform && matchesPrice;
+            });
+
+            // Sort products
+            sortProducts(sortBy);
+
+            // Reset display
+            displayedCount = 0;
+            displayProducts();
+        }
+
+        function sortProducts(sortBy) {
+            switch (sortBy) {
+                case 'price-low':
+                    filteredProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    filteredProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'rating':
+                    filteredProducts.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'name':
+                    filteredProducts.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+                default: // featured
+                    // Keep original order or shuffle for featured
+                    break;
+            }
+        }
+
+        function displayProducts() {
+            const productsGrid = document.getElementById('productsGrid');
+            const productCount = document.getElementById('productCount');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+            if (displayedCount === 0) {
+                productsGrid.innerHTML = '';
+            }
+
+            const toDisplay = filteredProducts.slice(displayedCount, displayedCount + itemsPerPage);
+            
+            toDisplay.forEach(product => {
+                const productCard = createProductCard(product);
+                const productElement = document.createElement('div');
+                productElement.innerHTML = productCard;
+                productElement.firstElementChild.addEventListener('click', (e) => {
+                    if (!e.target.closest('button')) {
+                        showGameDetails(product);
+                    }
+                });
+                productsGrid.appendChild(productElement.firstElementChild);
+            });
+
+            displayedCount += toDisplay.length;
+            productCount.textContent = filteredProducts.length;
+
+            // Show/hide load more button
+            if (displayedCount >= filteredProducts.length) {
+                loadMoreBtn.classList.add('hidden');
+            } else {
+                loadMoreBtn.classList.remove('hidden');
+            }
+        }
+
+        function loadMore() {
+            displayProducts();
+        }
+
+        function showGameDetails(product) {
+            const modalContent = document.getElementById('gameModalContent');
+            const discountPercentage = product.originalPrice ? 
+                Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
+            modalContent.innerHTML = `
+                <div class="grid grid-2 gap-4">
+                    <div>
+                        <img src="${product.image}" alt="${product.title}" class="w-full rounded-lg">
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2">${product.title}</h2>
+                        <div class="rating mb-2">${generateStars(Math.floor(product.rating))}</div>
+                        <p class="text-gray-400 mb-2">${product.category} • ${product.platform}</p>
+                        <p class="text-gray-300 mb-4">${product.description}</p>
+                        
+                        <div class="mb-4">
+                            <span class="price text-3xl">${formatPrice(product.price)}</span>
+                            ${product.originalPrice ? `<span class="text-gray-500 line-through ml-2">${formatPrice(product.originalPrice)}</span>` : ''}
+                            ${discountPercentage > 0 ? `<span class="discount-badge">-${discountPercentage}%</span>` : ''}
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <button class="btn btn-primary w-full" onclick="addToCart(${product.id}); closeModal('gameModal')">
+                                Add to Cart
+                            </button>
+                            <button class="btn btn-secondary w-full">
+                                Add to Wishlist
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-600">
+                            <h3 class="font-bold mb-2">Game Features:</h3>
+                            <ul class="list-disc list-inside text-gray-400 space-y-1">
+                                <li>Single-player campaign</li>
+                                <li>Online multiplayer</li>
+                                <li>Achievement support</li>
+                                <li>Cloud saves</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            openModal('gameModal');
+        }
+
+        // Initialize store when page loads
+        document.addEventListener('DOMContentLoaded', initializeStore);
+    </script>
+
+</body>
+</html>
