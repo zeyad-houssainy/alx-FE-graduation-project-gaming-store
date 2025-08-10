@@ -325,14 +325,14 @@ class ShoppingCart {
         
         this.saveToStorage();
         this.updateCartDisplay();
-        this.showNotification(`${product.title} added to cart!`);
+        this.showNotification('Lorem ipsum notification message');
     }
 
     removeItem(productId) {
         this.items = this.items.filter(item => item.id !== productId);
         this.saveToStorage();
         this.updateCartDisplay();
-        this.showNotification('Item removed from cart');
+        this.showNotification('Lorem ipsum action completed');
     }
 
     updateQuantity(productId, quantity) {
@@ -406,65 +406,65 @@ const cart = new ShoppingCart();
 const products = [
     {
         id: 1,
-        title: "Cyberpunk 2077",
+        title: "Product Item One",
         price: 59.99,
         originalPrice: 79.99,
-        image: "https://placehold.co/400x250/334155/f8fafc?text=Cyberpunk+2077",
-        category: "RPG",
-        platform: "PC, Xbox, PlayStation",
+        image: "https://placehold.co/400x250/666666/ffffff?text=■",
+        category: "Category A",
+        platform: "Platform X, Platform Y",
         rating: 4.2,
-        description: "An open-world, action-adventure story set in Night City."
+        description: "Lorem ipsum dolor sit amet consectetur adipiscing elit."
     },
     {
         id: 2,
-        title: "The Witcher 3",
+        title: "Product Item Two",
         price: 39.99,
         originalPrice: 59.99,
-        image: "https://placehold.co/400x250/334155/f8fafc?text=The+Witcher+3",
-        category: "RPG",
-        platform: "PC, Xbox, PlayStation",
+        image: "https://placehold.co/400x250/666666/ffffff?text=■",
+        category: "Category B",
+        platform: "Platform X, Platform Y",
         rating: 4.9,
-        description: "A story-driven open world RPG set in a visually stunning fantasy universe."
+        description: "Lorem ipsum dolor sit amet consectetur adipiscing elit."
     },
     {
         id: 3,
-        title: "Call of Duty: MW3",
+        title: "Product Item Three",
         price: 69.99,
-        image: "https://placehold.co/400x250/334155/f8fafc?text=COD+MW3",
-        category: "FPS",
-        platform: "PC, Xbox, PlayStation",
+        image: "https://placehold.co/400x250/666666/ffffff?text=■",
+        category: "Category C",
+        platform: "Platform X, Platform Y",
         rating: 4.1,
-        description: "The ultimate multiplayer and zombie experience."
+        description: "Lorem ipsum dolor sit amet consectetur adipiscing elit."
     },
     {
         id: 4,
-        title: "Spider-Man: Miles Morales",
+        title: "Product Item Four",
         price: 49.99,
-        image: "https://placehold.co/400x250/334155/f8fafc?text=Spider-Man",
-        category: "Action",
-        platform: "PlayStation, PC",
+        image: "https://placehold.co/400x250/666666/ffffff?text=■",
+        category: "Category D",
+        platform: "Platform Y, Platform Z",
         rating: 4.7,
-        description: "Experience the rise of Miles Morales as he masters new powers."
+        description: "Lorem ipsum dolor sit amet consectetur adipiscing elit."
     },
     {
         id: 5,
-        title: "FIFA 24",
+        title: "Product Item Five",
         price: 69.99,
-        image: "https://placehold.co/400x250/334155/f8fafc?text=FIFA+24",
-        category: "Sports",
-        platform: "PC, Xbox, PlayStation",
+        image: "https://placehold.co/400x250/666666/ffffff?text=■",
+        category: "Category E",
+        platform: "Platform X, Platform Y",
         rating: 4.0,
-        description: "The world's game like you've never experienced."
+        description: "Lorem ipsum dolor sit amet consectetur adipiscing elit."
     },
     {
         id: 6,
-        title: "Elden Ring",
+        title: "Product Item Six",
         price: 59.99,
-        image: "https://placehold.co/400x250/334155/f8fafc?text=Elden+Ring",
-        category: "RPG",
-        platform: "PC, Xbox, PlayStation",
+        image: "https://placehold.co/400x250/666666/ffffff?text=■",
+        category: "Category F",
+        platform: "Platform X, Platform Y",
         rating: 4.8,
-        description: "A fantasy action-RPG adventure set within a world full of mystery."
+        description: "Lorem ipsum dolor sit amet consectetur adipiscing elit."
     }
 ];
 
@@ -669,10 +669,10 @@ function subscribeNewsletter(email) {
     if (validateEmail(email)) {
         // Simulate API call
         console.log('Newsletter subscription:', email);
-        cart.showNotification('Successfully subscribed to newsletter!');
+        cart.showNotification('Lorem ipsum success message');
         return true;
     } else {
-        cart.showNotification('Please enter a valid email address.');
+        cart.showNotification('Lorem ipsum error message');
         return false;
     }
 }
@@ -726,7 +726,7 @@ function logout() {
     
     // Show notification
     if (window.cart && window.cart.showNotification) {
-        window.cart.showNotification('Logged out successfully!');
+        window.cart.showNotification('Lorem ipsum logout message');
     }
     
     // Update auth state

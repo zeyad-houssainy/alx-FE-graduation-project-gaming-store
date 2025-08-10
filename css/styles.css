@@ -5,43 +5,43 @@
     box-sizing: border-box;
 }
 
-/* Theme Variables */
+/* Theme Variables - Abstract Wireframe Colors */
 :root {
-    /* Dark Theme (Default) */
-    --primary-bg: #0d1117;
-    --secondary-bg: #1a1a1a;
-    --card-bg: #21262d;
-    --text-primary: #e6e6e6;
-    --text-secondary: #b3b3b3;
-    --text-muted: #888888;
-    --accent-primary: #4f46e5;
-    --accent-secondary: #7c3aed;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --shadow: rgba(0, 0, 0, 0.3);
+    /* Dark Theme (Default) - Wireframe Colors */
+    --primary-bg: #1a1a1a;
+    --secondary-bg: #2d2d2d;
+    --card-bg: #3a3a3a;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #808080;
+    --accent-primary: #6366f1;
+    --accent-secondary: #8b5cf6;
+    --border-color: rgba(255, 255, 255, 0.2);
+    --shadow: rgba(0, 0, 0, 0.5);
     --input-bg: rgba(255, 255, 255, 0.1);
     --hover-bg: rgba(255, 255, 255, 0.1);
-    --chat-bg: #2d3748;
-    --chat-user-bg: #4f46e5;
-    --chat-bot-bg: #374151;
+    --chat-bg: #404040;
+    --chat-user-bg: #6366f1;
+    --chat-bot-bg: #4a4a4a;
 }
 
 [data-theme="light"] {
-    /* Light Theme */
-    --primary-bg: #ffffff;
-    --secondary-bg: #f8fafc;
+    /* Light Theme - Wireframe Colors */
+    --primary-bg: #f5f5f5;
+    --secondary-bg: #e8e8e8;
     --card-bg: #ffffff;
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
-    --accent-primary: #4f46e5;
-    --accent-secondary: #7c3aed;
-    --border-color: rgba(0, 0, 0, 0.1);
-    --shadow: rgba(0, 0, 0, 0.1);
-    --input-bg: #f1f5f9;
-    --hover-bg: #f1f5f9;
-    --chat-bg: #f8fafc;
-    --chat-user-bg: #4f46e5;
-    --chat-bot-bg: #e2e8f0;
+    --text-primary: #2a2a2a;
+    --text-secondary: #4a4a4a;
+    --text-muted: #6a6a6a;
+    --accent-primary: #6366f1;
+    --accent-secondary: #8b5cf6;
+    --border-color: rgba(0, 0, 0, 0.2);
+    --shadow: rgba(0, 0, 0, 0.2);
+    --input-bg: #f0f0f0;
+    --hover-bg: #f0f0f0;
+    --chat-bg: #fafafa;
+    --chat-user-bg: #6366f1;
+    --chat-bot-bg: #e8e8e8;
 }
 
 body {
@@ -49,7 +49,70 @@ body {
     background-color: var(--primary-bg);
     color: var(--text-primary);
     line-height: 1.6;
+}
+
+/* Wireframe Abstract Styles */
+img {
+    background-color: #666666 !important;
+    border: 2px solid var(--border-color) !important;
+    filter: grayscale(100%) contrast(0%) brightness(50%) !important;
+}
+
+/* Abstract content placeholders */
+.wireframe-text::before {
+    content: "Lorem ipsum dolor sit amet";
+    color: var(--text-muted);
+}
+
+/* Make all text content more abstract looking */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Button wireframe styles */
+.btn {
+    border: 2px solid var(--accent-primary);
+    background: var(--accent-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
     transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn:hover {
+    background: transparent;
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+/* Card wireframe styles */
+.card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Form wireframe styles */
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .container {
