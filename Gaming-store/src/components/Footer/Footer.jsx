@@ -93,8 +93,8 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="bg-black text-center py-4 text-sm text-gray-400">
-        © 2022 Gamics. All Rights Reserved by{" "}
-        <span className="text-yellow-500">codewithsadee</span>
+        © 2025 Gamiz. All Rights Reserved by{" "}
+        <span className="text-yellow-500">Zeyad Alhoussainy</span>
       </div>
     </footer>
   );
