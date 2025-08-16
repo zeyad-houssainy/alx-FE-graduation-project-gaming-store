@@ -2,89 +2,98 @@ import { FaFacebookF, FaTwitter, FaPinterestP, FaLinkedinIn } from "react-icons/
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1c191d] text-gray-300 pt-12">
+    <footer className="bg-gray-50 text-gray-700 pt-12 border-t border-gray-200">
       {/* Newsletter Top Bar */}
-      <div className="bg-[#1c191d] flex justify-center items-center relative rounded-t-[3rem] py-6">
-        <h3 className="text-white font-bold text-lg mr-4">
-          OUR <span className="text-yellow-500">NEWSLETTER</span>
+      <div className="bg-white shadow-sm flex justify-center items-center relative rounded-t-[3rem] py-8 border-b border-gray-100">
+        <h3 className="text-gray-800 font-bold text-lg mr-4">
+          OUR <span className="text-blue-600">NEWSLETTER</span>
         </h3>
-        <div className="flex">
+        <div className="flex shadow-sm">
           <input
             type="email"
             placeholder="Enter your email..."
-            className="px-4 py-2 w-72 bg-[#2b282c] text-gray-300 rounded-l-lg focus:outline-none"
+            className="px-4 py-3 w-72 bg-white text-gray-700 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          <button className="bg-yellow-500 px-6 rounded-r-lg font-semibold text-black hover:bg-yellow-600">
+          <button className="bg-blue-600 px-6 rounded-r-lg font-semibold text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm">
             SUBSCRIBE
           </button>
         </div>
       </div>
 
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6 py-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6 py-12 bg-gray-50">
         {/* Column 1 */}
         <div>
-          <h4 className="text-white text-xl font-bold mb-4">Gamics</h4>
-          <p className="text-sm mb-4">
+          <h4 className="text-gray-900 text-xl font-bold mb-4">Gamics</h4>
+          <p className="text-sm mb-4 text-gray-600 leading-relaxed">
             Gamics marketplace the relase etras thats sheets continig passag.
           </p>
-          <ul className="space-y-2 text-sm">
-            <li>📍 Address : PO Box W75 Street Ian West new queens</li>
-            <li>📞 Phone : +24 1245 654 235</li>
-            <li>📧 Email : info@exemple.com</li>
+          <ul className="space-y-3 text-sm text-gray-600">
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600">📍</span>
+              <span>Address : PO Box W75 Street Ian West new queens</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-600">📞</span>
+              <span>Phone : +24 1245 654 235</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-500">📧</span>
+              <span>Email : info@exemple.com</span>
+            </li>
           </ul>
         </div>
 
         {/* Column 2 */}
         <div>
-          <h4 className="text-white text-lg font-semibold mb-4">PRODUCTS</h4>
-          <ul className="space-y-2 text-sm">
-            <li>Graphics (26)</li>
-            <li>Backgrounds (11)</li>
-            <li>Fonts (9)</li>
-            <li>Music (3)</li>
-            <li>Photography (3)</li>
+          <h4 className="text-gray-900 text-lg font-semibold mb-4">PRODUCTS</h4>
+          <ul className="space-y-3 text-sm text-gray-600">
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Graphics (26)</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Backgrounds (11)</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Fonts (9)</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Music (3)</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Photography (3)</li>
           </ul>
         </div>
 
         {/* Column 3 */}
         <div>
-          <h4 className="text-white text-lg font-semibold mb-4">NEED HELP?</h4>
-          <ul className="space-y-2 text-sm">
-            <li>Terms & Conditions</li>
-            <li>Privacy Policy</li>
-            <li>Refund Policy</li>
-            <li>Affiliate</li>
-            <li>Use Cases</li>
+          <h4 className="text-gray-900 text-lg font-semibold mb-4">NEED HELP?</h4>
+          <ul className="space-y-3 text-sm text-gray-600">
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Terms & Conditions</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Privacy Policy</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Refund Policy</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Affiliate</li>
+            <li className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Use Cases</li>
           </ul>
         </div>
 
         {/* Column 4 */}
         <div>
-          <h4 className="text-white text-lg font-semibold mb-4">FOLLOW US</h4>
+          <h4 className="text-gray-900 text-lg font-semibold mb-4">FOLLOW US</h4>
           <div className="flex space-x-3 mb-6">
-            <a href="#" className="bg-blue-600 p-2 rounded text-white">
+            <a href="#" className="bg-blue-600 hover:bg-blue-700 p-3 rounded-lg text-white transition-colors duration-200 shadow-sm hover:shadow-md">
               <FaFacebookF />
             </a>
-            <a href="#" className="bg-sky-500 p-2 rounded text-white">
+            <a href="#" className="bg-sky-500 hover:bg-sky-600 p-3 rounded-lg text-white transition-colors duration-200 shadow-sm hover:shadow-md">
               <FaTwitter />
             </a>
-            <a href="#" className="bg-red-600 p-2 rounded text-white">
+            <a href="#" className="bg-red-500 hover:bg-red-600 p-3 rounded-lg text-white transition-colors duration-200 shadow-sm hover:shadow-md">
               <FaPinterestP />
             </a>
-            <a href="#" className="bg-blue-700 p-2 rounded text-white">
+            <a href="#" className="bg-blue-700 hover:bg-blue-800 p-3 rounded-lg text-white transition-colors duration-200 shadow-sm hover:shadow-md">
               <FaLinkedinIn />
             </a>
           </div>
 
-          <h4 className="text-white text-lg font-semibold mb-4">NEWSLETTER SIGN UP</h4>
-          <div className="flex">
+          <h4 className="text-gray-900 text-lg font-semibold mb-4">NEWSLETTER SIGN UP</h4>
+          <div className="flex shadow-sm">
             <input
               type="email"
               placeholder="Enter your email"
-              className="px-4 py-2 w-full bg-[#2b282c] text-gray-300 rounded-l-lg focus:outline-none"
+              className="px-4 py-3 w-full bg-white text-gray-700 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-            <button className="bg-yellow-500 px-4 rounded-r-lg font-semibold text-black hover:bg-yellow-600">
+            <button className="bg-blue-600 px-4 rounded-r-lg font-semibold text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm">
               🚀
             </button>
           </div>
@@ -92,9 +101,9 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="bg-black text-center py-4 text-sm text-gray-400">
+      <div className="bg-gray-100 text-center py-6 text-sm text-gray-600 border-t border-gray-200">
         © 2025 Gamiz. All Rights Reserved by{" "}
-        <span className="text-yellow-500">Zeyad Alhoussainy</span>
+        <span className="text-blue-600 font-medium">Zeyad Alhoussainy</span>
       </div>
     </footer>
   );
