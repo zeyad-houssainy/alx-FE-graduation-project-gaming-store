@@ -5,7 +5,7 @@ export default function Logo() {
       <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
         Gam
       </span>
-      <span className="text-blue-600">ics</span>
+      <span className="text-blue-600">iz</span>
       {/* Gaming controller icon accent */}
       <div className="ml-2 text-blue-600 text-sm">🎮</div>
     </div>

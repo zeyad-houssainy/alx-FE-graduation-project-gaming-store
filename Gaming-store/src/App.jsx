@@ -1,7 +1,9 @@
 import './App.css'
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
-import OurServices from './components/OurServices'
+import OurServices from './pages/HomePage/OurServices'
+import FeaturedGames from './pages/HomePage/FeaturedGames'
+import Features from './pages/HomePage/Features'
 
 function App() {
 
@@ -36,7 +38,8 @@ function App() {
                 <button className="group relative bg-blue-600 text-white font-bold px-8 py-4 rounded-lg uppercase tracking-wider hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                   <span className="relative z-10">Explore Games</span>
                 </button>
-                <button className="group relative border-2 border-blue-600 text-blue-600 font-bold px-8 py-4 rounded-lg uppercase tracking-wider hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg">
+                <button className="group relative overflow-hidden bg-transparent border-2 border-blue-600 text-blue-600 font-bold px-8 py-4 rounded-lg uppercase tracking-wider transition-all duration-300 hover:text-white hover:shadow-lg">
+                  <span className="absolute inset-0 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                   <span className="relative z-10">Join Community</span>
                 </button>
               </div>
@@ -54,47 +57,11 @@ function App() {
         {/* Our Services Section */}
         <OurServices />
 
-        {/* Featured Content Section */}
-        <section className="py-20 bg-white relative">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-16">
-              <p className="text-gray-500 font-bold text-sm uppercase tracking-wider mb-4">
-                What We Offer
-              </p>
-              <h2 className="text-4xl md:text-5xl font-black font-['Oxanium'] mb-6 text-gray-900">
-                Gaming <span className="text-blue-600">Excellence</span>
-              </h2>
-              <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
-            </div>
+        {/* Featured Games Section */}
+        <FeaturedGames />
 
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="group bg-white p-8 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
-                <div className="text-blue-600 text-4xl mb-4">🎮</div>
-                <h3 className="text-xl font-bold mb-4 font-['Oxanium'] text-gray-900">Latest Games</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Discover the newest and most exciting games in our ever-expanding collection.
-                </p>
-              </div>
-              
-              <div className="group bg-white p-8 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
-                <div className="text-blue-600 text-4xl mb-4">🏆</div>
-                <h3 className="text-xl font-bold mb-4 font-['Oxanium'] text-gray-900">Tournaments</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Compete with players worldwide in epic tournaments and live matches.
-                </p>
-              </div>
-              
-              <div className="group bg-white p-8 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
-                <div className="text-blue-600 text-4xl mb-4">🛒</div>
-                <h3 className="text-xl font-bold mb-4 font-['Oxanium'] text-gray-900">Gaming Store</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Shop for gaming accessories, merchandise, and exclusive collectibles.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Features Section */}
+        <Features />
       </main>
       <Footer />
     </div>

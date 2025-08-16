@@ -24,9 +24,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6 py-12 bg-gray-50">
         {/* Column 1 */}
         <div>
-          <h4 className="text-gray-900 text-xl font-bold mb-4">Gamics</h4>
+          <h4 className="text-gray-900 text-xl font-bold mb-4">Gamiz</h4>
           <p className="text-sm mb-4 text-gray-600 leading-relaxed">
-            Gamics marketplace the relase etras thats sheets continig passag.
+            Gamiz marketplace the relase etras thats sheets continig passag.
           </p>
           <ul className="space-y-3 text-sm text-gray-600">
             <li className="flex items-start gap-2">
