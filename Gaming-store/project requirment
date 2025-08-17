@@ -1,0 +1,131 @@
+use project requirments file to complete my project
+it's a gaming ecommerce website
+uuse the same theme for the whole project
+you can change the file structure. it's ok
+and from your won knowledge, use an online API for gaming store to fetch data and implement it to my website
+you can use any images templates or anything you need
+you'll find in the publick/assets/MaterialUI folder that has some materialUI to use
+
+also, do not change the website theme. keep all to be with the same color scheme
+and after finishing everything, add a dark color scheme toggle
+use tailwind for everything related to styling
+
+File Structure
+gaming-store/
+├── public/
+│   ├── favicon.ico
+│   ├── logo.png
+│   └── placeholder.jpg         # fallback for game images
+│
+├── src/
+│   ├── assets/                  # images, fonts, icons
+│   │   ├── banners/
+│   │   └── icons/
+│   │
+│   ├── components/              # reusable UI parts
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   ├── GameCard.jsx
+│   │   ├── SearchBar.jsx
+│   │   ├── Pagination.jsx
+│   │   └── Loader.jsx
+│   │
+│   ├── pages/                   # full page components
+│   │   ├── Home.jsx
+│   │   ├── Games.jsx
+│   │   ├── GameDetail.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Checkout.jsx
+│   │   └── NotFound.jsx
+│   │   └── Login.jsx
+│   │   └── Signup.jsx
+│   │   └── Checkout.jsx
+│   │   └── MyProfiile.jsx
+│   │
+│   ├── hooks/                   # custom React hooks
+│   │   └── useFetchGames.js
+│   │
+│   ├── services/                # API logic
+│   │   └── gamesApi.js
+│   │
+│   ├── context/                 # React context (e.g., Cart)
+│   │   └── CartContext.jsx
+│   │
+│   ├── styles/
+│   │   └── globals.css          # Tailwind base styles
+│   │
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── vite-env.d.ts
+│
+├── package.json
+├── tailwind.config.js
+├── postcss.config.js
+└── vite.config.js.
+
+
+
+1️⃣ Pages you should have
+
+These are the core pages for a simple gaming e-commerce site:
+    Home Page
+        Hero section with store banner.
+        Featured / New games.
+        "Shop Now" button linking to the store page.
+    Store / Shop Page
+        Grid of all games (image, title, price).
+        Category filter (PC, PS5, Xbox, Nintendo).
+        Search bar for games.
+        Sort by price / rating. 
+    Game Detail Page
+        Game image carousel or main cover.
+        Title, description, price, platform, release date.
+        "Add to Cart" button.
+        Reviews (optional simple list).
+    Cart Page
+        List of games added to cart.
+        Quantity selector.
+        Total price calculation.
+        Remove item from cart.
+    Checkout Page
+        Simple form for user details (name, email, address).
+        Order summary.
+        “Place Order” button.
+    About Us Page (optional but nice for presentation)
+        Contact info.
+        Short story about the store.
+    404 Not Found Page
+        Fun game-related error message.
+
+2️⃣ Components you should create
+
+    Break your site into reusable React components:
+    Navbar (logo, navigation links, cart icon with item count)
+    Footer (social links, copyright)
+    GameCard (image, title, price, "Add to Cart" button)
+    GameList (grid of GameCard components)
+    SearchBar (for store page)
+    FilterMenu (checkboxes or buttons for categories/platforms)
+    CartItem (for each game in cart)
+    Button (reusable styled button component)
+    RatingStars (optional, for reviews)
+
+3️⃣ Features to include
+
+    Even for a beginner project, these features will impress:
+    Add to Cart functionality (using React useState or Context API).
+    Cart item count in the navbar.
+    Search games by title.
+    Filter games by category/platform.
+    Sort games by price.
+    Responsive design (mobile & desktop friendly).
+    Simple routing with react-router-dom for page navigation.
+    Mock data in a data.json file (or fetch from a mock API like JSONPlaceholder or FakeStoreAPI).
+    Form validation on checkout.
+
+4️⃣ Optional “Wow” extras (if time allows)
+
+    Dark mode toggle.
+    Save cart in localStorage so it persists after refresh.
+    Game trailers embedded from YouTube.
+    Simple login/logout simulation.
