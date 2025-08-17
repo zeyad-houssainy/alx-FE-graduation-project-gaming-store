@@ -1,3 +1,6 @@
+28849ae8cd824c84ae3af5da501b0d67 API key
+
+
 # 🎮 Gaming Store E-Commerce Project
 
 Welcome to the **Gaming Store**! This is a modern, beginner-friendly React project for a gaming e-commerce site. Shop, browse, and discover your favorite games! 🚀
