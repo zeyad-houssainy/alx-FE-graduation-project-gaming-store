@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import Button from '../components/Button';
@@ -133,10 +133,13 @@ export default function Checkout() {
     return v;
   };
 
-  if (items.length === 0) {
-    navigate('/cart');
-    return null;
-  }
+  useEffect(() => {
+    if (items.length === 0) {
+      navigate('/cart');
+    }
+  }, [items.length, navigate]);
+
+  if (items.length === 0) return null;
 
      return (
      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
@@ -183,7 +186,7 @@ export default function Checkout() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Last Name *
                     </label>
                     <input
@@ -191,8 +194,8 @@ export default function Checkout() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.lastName ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                        errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
                       placeholder="Doe"
                     />
@@ -202,7 +205,7 @@ export default function Checkout() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email *
                     </label>
                     <input
@@ -210,8 +213,8 @@ export default function Checkout() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.email ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                        errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
                       placeholder="john@example.com"
                     />
@@ -221,7 +224,7 @@ export default function Checkout() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Phone
                     </label>
                     <input
@@ -229,8 +232,8 @@ export default function Checkout() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.phone ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                        errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
                       placeholder="+1 (555) 123-4567"
                     />
@@ -249,7 +252,7 @@ export default function Checkout() {
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Address *
                     </label>
                     <input
@@ -257,8 +260,8 @@ export default function Checkout() {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.address ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                        errors.address ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
                       placeholder="123 Main Street"
                     />
@@ -269,7 +272,7 @@ export default function Checkout() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         City *
                       </label>
                       <input
@@ -277,8 +280,8 @@ export default function Checkout() {
                         name="city"
                         value={formData.city}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.city ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                          errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                         }`}
                         placeholder="New York"
                       />
@@ -288,7 +291,7 @@ export default function Checkout() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         State *
                       </label>
                       <input
@@ -296,8 +299,8 @@ export default function Checkout() {
                         name="state"
                         value={formData.state}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.state ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                          errors.state ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                         }`}
                         placeholder="NY"
                       />
@@ -307,7 +310,7 @@ export default function Checkout() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         ZIP Code *
                       </label>
                       <input
@@ -315,8 +318,8 @@ export default function Checkout() {
                         name="zipCode"
                         value={formData.zipCode}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.zipCode ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                          errors.zipCode ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                         }`}
                         placeholder="10001"
                       />
@@ -336,7 +339,7 @@ export default function Checkout() {
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Card Number *
                     </label>
                     <input
@@ -347,8 +350,8 @@ export default function Checkout() {
                         const formatted = formatCardNumber(e.target.value);
                         setFormData(prev => ({ ...prev, cardNumber: formatted }));
                       }}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.cardNumber ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                        errors.cardNumber ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
                       placeholder="XXXX XXXX XXXX XXXX"
                       maxLength="19"
@@ -360,7 +363,7 @@ export default function Checkout() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Cardholder Name *
                       </label>
                       <input
@@ -368,8 +371,8 @@ export default function Checkout() {
                         name="cardName"
                         value={formData.cardName}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.cardName ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                          errors.cardName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                         }`}
                         placeholder="John Doe"
                       />
@@ -379,7 +382,7 @@ export default function Checkout() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Expiry Date *
                       </label>
                       <input
@@ -390,8 +393,8 @@ export default function Checkout() {
                           const formatted = formatExpiryDate(e.target.value);
                           setFormData(prev => ({ ...prev, expiryDate: formatted }));
                         }}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.expiryDate ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                          errors.expiryDate ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                         }`}
                         placeholder="MM/YY"
                         maxLength="5"
@@ -402,7 +405,7 @@ export default function Checkout() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         CVV *
                       </label>
                       <input
@@ -410,8 +413,8 @@ export default function Checkout() {
                         name="cvv"
                         value={formData.cvv}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.cvv ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                          errors.cvv ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                         }`}
                         placeholder="123"
                         maxLength="4"
@@ -425,12 +428,13 @@ export default function Checkout() {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col sm:flex-row justify-end space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/cart')}
                   disabled={isProcessing}
+                  className="w-full sm:w-auto"
                 >
                   Back to Cart
                 </Button>
@@ -438,7 +442,7 @@ export default function Checkout() {
                 <Button
                   type="submit"
                   disabled={isProcessing}
-                  className="min-w-[200px]"
+                  className="w-full sm:w-auto min-w-[200px]"
                 >
                   {isProcessing ? (
                     <div className="flex items-center space-x-2">
@@ -477,11 +481,11 @@ export default function Checkout() {
                         className="w-12 h-12 rounded-lg object-cover"
                       />
                       <div>
-                        <p className="font-medium text-gray-900 truncate">{item.name}</p>
-                        <p className="text-gray-500">Qty: {item.quantity}</p>
+                        <p className="font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
+                        <p className="text-gray-500 dark:text-gray-400">Qty: {item.quantity}</p>
                       </div>
                     </div>
-                    <span className="font-bold text-gray-900">
+                    <span className="font-bold text-gray-900 dark:text-white">
                       ${(item.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -489,12 +493,12 @@ export default function Checkout() {
               </div>
 
               {/* Divider */}
-              <div className="border-t border-gray-200 my-4"></div>
+              <div className="border-t border-gray-200 dark:border-gray-600 my-4"></div>
 
               {/* Total */}
               <div className="flex justify-between items-center mb-6">
-                <span className="text-lg font-bold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-green-600">
+                <span className="text-lg font-bold text-gray-900 dark:text-white">Total</span>
+                <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                   ${getCartTotal().toFixed(2)}
                 </span>
               </div>

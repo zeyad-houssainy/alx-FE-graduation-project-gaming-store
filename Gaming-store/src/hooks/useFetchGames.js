@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchGames, fetchGameById, fetchGenres, fetchPlatforms } from '../services/gamesApi';
 
-export const useFetchGames = (page = 1, pageSize = 20, search = '', genre = '', platform = '') => {
+export const useFetchGames = (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,13 +11,17 @@ export const useFetchGames = (page = 1, pageSize = 20, search = '', genre = '', 
     previous: null,
   });
 
+  // Create stable dependency keys for array params
+  const genreKey = Array.isArray(genre) ? [...genre].sort().join('|') : String(genre || '');
+  const platformKey = Array.isArray(platform) ? [...platform].sort().join('|') : String(platform || '');
+
   useEffect(() => {
     const getGames = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        const result = await fetchGames(page, pageSize, search, genre, platform);
+        const result = await fetchGames(page, pageSize, search, genre, platform, sortBy);
         
         setGames(result.games);
         setPagination({
@@ -34,7 +38,7 @@ export const useFetchGames = (page = 1, pageSize = 20, search = '', genre = '', 
     };
 
     getGames();
-  }, [page, pageSize, search, genre, platform]);
+  }, [page, pageSize, search, genreKey, platformKey, sortBy]);
 
   return { games, loading, error, pagination };
 };

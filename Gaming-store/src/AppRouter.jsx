@@ -9,6 +9,8 @@ import NotFound from './pages/NotFound';
 import UnderConstruction from './pages/UnderConstruction';
 import LogIn from './pages/LogIn/LogIn';
 import SignUp from './pages/SignUp/SignUp';
+import CheckoutSuccess from './pages/CheckoutSuccess';
+import SlidingCartSummary from './components/SlidingCartSummary';
 
 export default function AppRouter() {
   return (
@@ -19,6 +21,7 @@ export default function AppRouter() {
         <Route path="/games/:id" element={<GameDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
@@ -28,6 +31,7 @@ export default function AppRouter() {
         <Route path="/contact" element={<UnderConstruction />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <SlidingCartSummary />
     </Router>
   );
 }

@@ -19,7 +19,7 @@ export default function GameCard({ game }) {
   return (
     <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
       {/* Game Image */}
-      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+      <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden">
         <img 
           src={game.background_image} 
           alt={game.name}
@@ -30,25 +30,35 @@ export default function GameCard({ game }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
         
         {/* Rating Badge */}
-        <div className="absolute top-4 right-4 bg-amber-500 text-black px-2 py-1 rounded-full text-xs font-bold">
+        <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-amber-500 text-black px-2 py-1 rounded-full text-xs font-bold">
           ⭐ {formatRating(game.rating)}
         </div>
         
         {/* Genre Badge */}
-        <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+        <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-blue-600 text-white px-2 sm:px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
           {game.genre}
         </div>
         
         {/* Price */}
-        <div className="absolute bottom-4 right-4 bg-green-600 text-white px-3 py-1 rounded-lg font-bold text-lg">
+        <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 bg-green-600 text-white px-2 sm:px-3 py-1 rounded-lg font-bold text-base sm:text-lg">
           {formatPrice(game.price)}
         </div>
         
-        {/* Hover Action Button */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50">
+        {/* Hover Action Button - Desktop */}
+        <div className="absolute inset-0 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50">
           <button 
             onClick={handleAddToCart}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg uppercase tracking-wider transform -translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 sm:px-6 py-2 sm:py-3 rounded-lg uppercase tracking-wider transform -translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-lg text-sm sm:text-base"
+          >
+            Add to Cart
+          </button>
+        </div>
+
+        {/* Mobile Add to Cart Button - Always Visible */}
+        <div className="absolute bottom-4 left-4 md:hidden">
+          <button 
+            onClick={handleAddToCart}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-2 rounded-lg uppercase tracking-wider text-xs shadow-lg touch-manipulation"
           >
             Add to Cart
           </button>
@@ -57,12 +67,12 @@ export default function GameCard({ game }) {
       
       {/* Game Info */}
       <div className="p-3 sm:p-4">
-        <h3 className="text-base sm:text-lg font-bold mb-2 text-gray-900 dark:text-gray-100 font-['Oxanium'] leading-tight">
+        <h3 className="text-sm sm:text-base md:text-lg font-bold mb-2 text-gray-900 dark:text-gray-100 font-['Oxanium'] leading-tight">
           {game.name}
         </h3>
         
         {/* Platforms */}
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 mb-3">
+        <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-3">
           <span className="text-blue-600 dark:text-orange-400">🎮</span>
           <span className="uppercase tracking-wide">
             {game.platforms?.slice(0, 2).join(', ')}
@@ -72,13 +82,13 @@ export default function GameCard({ game }) {
         
         {/* Release Date */}
         {game.released && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-          Released: {new Date(game.released).toLocaleDateString()}
-        </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+            Released: {new Date(game.released).toLocaleDateString()}
+          </p>
         )}
         
         {/* Description */}
-        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2">
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2">
           {game.description}
         </p>
       </div>

@@ -7,8 +7,8 @@ export default function Loader() {
         
         {/* Loading Text */}
         <div className="mt-4 text-center">
-          <p className="text-gray-600 font-medium">Loading games...</p>
-          <p className="text-sm text-gray-500 mt-1">Please wait while we fetch the latest titles</p>
+          <p className="text-gray-600 dark:text-gray-300 font-medium">Loading games...</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Please wait while we fetch the latest titles</p>
         </div>
         
         {/* Gaming Icons */}

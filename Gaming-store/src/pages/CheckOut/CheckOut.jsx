@@ -17,6 +17,8 @@ import AddressForm from './AddressForm';
 import PaymentForm from './PaymentForm';
 import Review from './Review';
 import Info from './Info';
+import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
 
 // Gaming-themed colors
 const theme = createTheme({
@@ -67,12 +69,14 @@ export default function CheckOut() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
+      <Header />
       
       <Grid
         container
         sx={{
           minHeight: '100vh',
           backgroundColor: 'background.default',
+          pt: 8, // Add padding top to account for fixed header
         }}
       >
         <Grid
@@ -84,9 +88,9 @@ export default function CheckOut() {
             borderRight: { sm: 'none', md: '1px solid' },
             borderColor: { sm: 'none', md: 'divider' },
             alignItems: 'start',
-            pt: 16,
-            px: 10,
-            gap: 4,
+            pt: { xs: 2, sm: 4, md: 8 },
+            px: { xs: 2, sm: 4, md: 10 },
+            gap: { xs: 2, sm: 3, md: 4 },
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -128,7 +132,7 @@ export default function CheckOut() {
             width: '100%',
             backgroundColor: { xs: 'transparent', sm: 'background.default' },
             alignItems: 'start',
-            pt: { xs: 2, sm: 16 },
+            pt: { xs: 2, sm: 8 },
             px: { xs: 2, sm: 10 },
             gap: { xs: 4, md: 8 },
           }}
@@ -363,6 +367,7 @@ export default function CheckOut() {
           </Box>
         </Grid>
       </Grid>
+      <Footer />
     </ThemeProvider>
   );
 }

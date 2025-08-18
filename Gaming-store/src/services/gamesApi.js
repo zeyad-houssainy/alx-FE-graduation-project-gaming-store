@@ -191,18 +191,39 @@ const api = axios.create({
 });
 
 // API functions
-export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = '', platform = '') => {
+export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
   try {
     const params = {
       key: API_KEY,
       page,
       page_size: pageSize,
-      ordering: '-rating',
     };
 
+    // Apply sorting based on sortBy parameter
+    switch (sortBy) {
+      case 'name-asc':
+        params.ordering = 'name';
+        break;
+      case 'name-desc':
+        params.ordering = '-name';
+        break;
+      case 'price-low':
+        params.ordering = 'rating'; // Using rating as proxy for price
+        break;
+      case 'price-high':
+        params.ordering = '-rating'; // Using rating as proxy for price
+        break;
+      case 'rating':
+        params.ordering = '-rating';
+        break;
+      default: // relevance
+        params.ordering = '-rating';
+        break;
+    }
+
     if (search) params.search = search;
-    if (genre) params.genres = genre;
-    if (platform) params.platforms = platform;
+    if (genre && genre.length > 0) params.genres = genre.join(',');
+    if (platform && platform.length > 0) params.platforms = platform.join(',');
 
     const response = await api.get('/games', { params });
     
@@ -210,7 +231,7 @@ export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = '
     const transformedGames = response.data.results.map(game => ({
       id: game.id,
       name: game.name,
-      background_image: game.background_image || game.background_image_additional || '/assets/images/placeholder.jpg',
+      background_image: game.background_image || game.background_image_additional || '/assets/images/featured-game-1.jpg',
       rating: game.rating,
       price: Math.floor(Math.random() * 70) + 19.99, // Random price for demo
       platforms: game.platforms?.map(p => p.platform.name) || ['PC'],
@@ -241,18 +262,41 @@ export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = '
       );
     }
     
-    // Apply genre filter
-    if (genre) {
+    // Apply genre filter (multiple genres)
+    if (genre && genre.length > 0) {
       filteredGames = filteredGames.filter(game => 
-        game.genre.toLowerCase() === genre.toLowerCase()
+        genre.some(g => game.genre.toLowerCase() === g.toLowerCase())
       );
     }
     
-    // Apply platform filter
-    if (platform) {
+    // Apply platform filter (multiple platforms)
+    if (platform && platform.length > 0) {
       filteredGames = filteredGames.filter(game => 
-        game.platforms.some(p => p.toLowerCase().includes(platform.toLowerCase()))
+        platform.some(p => game.platforms.some(gamePlatform => 
+          gamePlatform.toLowerCase().includes(p.toLowerCase())
+        ))
       );
+    }
+    
+    // Apply sorting to fallback data
+    switch (sortBy) {
+      case 'name-asc':
+        filteredGames.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        filteredGames.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'price-low':
+        filteredGames.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filteredGames.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        filteredGames.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      default: // relevance - keep original order
+        break;
     }
     
     // Apply pagination
@@ -279,7 +323,7 @@ export const fetchGameById = async (id) => {
     return {
       id: game.id,
       name: game.name,
-      background_image: game.background_image || game.background_image_additional || '/assets/images/placeholder.jpg',
+      background_image: game.background_image || game.background_image_additional || '/assets/images/featured-game-1.jpg',
       rating: game.rating,
       price: Math.floor(Math.random() * 70) + 19.99,
       platforms: game.platforms?.map(p => p.platform.name) || ['PC'],

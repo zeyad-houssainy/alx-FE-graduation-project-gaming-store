@@ -26,7 +26,7 @@ export default function NotFound() {
         
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <Button onClick={() => navigate('/')} size="large">
+          <Button onClick={() => navigate('/')} size="large" className="w-full sm:w-auto">
             Return to Home
           </Button>
           
@@ -34,6 +34,7 @@ export default function NotFound() {
             onClick={() => navigate('/games')} 
             variant="secondary" 
             size="large"
+            className="w-full sm:w-auto"
           >
             Explore Games
           </Button>
@@ -44,12 +45,12 @@ export default function NotFound() {
           <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 font-['Oxanium']">
             🎯 Gaming Trivia While You're Here
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">
+            <div className="space-y-2">
               <p><strong>🎮 First Video Game:</strong> Pong (1972)</p>
               <p><strong>🏆 Best Selling:</strong> Minecraft (200+ million)</p>
             </div>
-            <div>
+            <div className="space-y-2">
               <p><strong>💰 Highest Grossing:</strong> GTA V ($6+ billion)</p>
               <p><strong>⏱️ Longest Game:</strong> The Longing (400+ days)</p>
             </div>

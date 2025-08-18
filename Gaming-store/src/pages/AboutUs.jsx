@@ -73,25 +73,25 @@ export default function AboutUs() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">1000+</div>
-            <div className="text-gray-600 dark:text-gray-300">Games Available</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-16">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
+            <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">1000+</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Games Available</div>
           </div>
           
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">50K+</div>
-            <div className="text-gray-600 dark:text-gray-300">Happy Gamers</div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
+            <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mb-2">50K+</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Happy Gamers</div>
           </div>
           
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
-            <div className="text-3xl font-bold text-amber-600 dark:text-amber-400 mb-2">24/7</div>
-            <div className="text-gray-600 dark:text-gray-300">Support Available</div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
+            <div className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-400 mb-2">24/7</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Support Available</div>
           </div>
           
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">99.9%</div>
-            <div className="text-gray-600 dark:text-gray-300">Uptime</div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
+            <div className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">99.9%</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Uptime</div>
           </div>
         </div>
 

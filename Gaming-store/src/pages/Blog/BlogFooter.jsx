@@ -34,7 +34,7 @@ export default function BlogFooter() {
         py: { xs: 8, sm: 10 },
         textAlign: { sm: 'center', md: 'left' },
       }}
-    >
+    >hbgp[saaaaaw;]
       <Box
         sx={{
           display: 'flex',

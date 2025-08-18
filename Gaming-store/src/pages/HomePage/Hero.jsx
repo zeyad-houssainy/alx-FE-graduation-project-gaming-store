@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { DarkDynamicBackground, LightDynamicBackground, GamingDynamicBackground } from '../../components/DynamicBackgrounds';
 
 export default function Hero() {
     const [backgroundGradient, setBackgroundGradient] = useState('from-indigo-100 via-blue-50 to-purple-100');
+    const [backgroundStyle, setBackgroundStyle] = useState('default'); // 'default', 'gaming', 'minimal'
 
     // Array of different gradient combinations
-    const gradients = [
+    const gradients = useMemo(() => ([
         'from-indigo-100 via-blue-50 to-purple-100',
         'from-blue-100 via-cyan-50 to-teal-100',
         'from-purple-100 via-pink-50 to-rose-100',
         'from-emerald-100 via-green-50 to-lime-100',
         'from-amber-100 via-yellow-50 to-orange-100',
         'from-slate-100 via-gray-50 to-zinc-100'
-    ];
+    ]), []);
 
     // Auto-change background every 5 seconds
     useEffect(() => {
@@ -30,11 +32,27 @@ export default function Hero() {
 
     return(
         <section className={`relative min-h-screen flex items-center justify-center bg-gradient-to-br ${backgroundGradient} dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-all duration-1000 ease-in-out`}>
-                         {/* Animated background elements */}
+                         {/* Dynamic Backgrounds */}
              <div className="absolute inset-0 overflow-hidden">
-                 <div className="absolute top-1/4 left-1/4 w-32 h-32 border border-blue-200 dark:border-orange-400 rotate-45 animate-spin"></div>
-                 <div className="absolute top-3/4 right-1/4 w-24 h-24 border border-blue-200 dark:border-orange-400 rotate-12 animate-pulse"></div>
-                 <div className="absolute bottom-1/4 left-1/2 w-16 h-16 border border-blue-200 dark:border-orange-400 -rotate-45 animate-bounce"></div>
+                 {backgroundStyle === 'default' ? (
+                     <>
+                         {/* Light mode background */}
+                         <div className="block dark:hidden">
+                             <LightDynamicBackground />
+                         </div>
+                         
+                         {/* Dark mode background */}
+                         <div className="hidden dark:block">
+                             <DarkDynamicBackground />
+                         </div>
+                     </>
+                 ) : (
+                     <>
+                         {/* Gaming-themed background overlay */}
+                         <GamingDynamicBackground isDark={false} className="block dark:hidden" />
+                         <GamingDynamicBackground isDark={true} className="hidden dark:block" />
+                     </>
+                 )}
              </div>
 
                          <div className="container mx-auto px-4 sm:px-6 relative z-10">
@@ -62,6 +80,12 @@ export default function Hero() {
                                  className="bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase text-sm tracking-wider hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 rounded-lg shadow-lg hover:shadow-xl"
                              >
                                  🎨 Change Theme
+                             </button>
+                             <button 
+                                 onClick={() => setBackgroundStyle(backgroundStyle === 'default' ? 'gaming' : 'default')}
+                                 className="bg-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase text-sm tracking-wider hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 rounded-lg shadow-lg hover:shadow-xl"
+                             >
+                                 {backgroundStyle === 'default' ? '🎮 Gaming Mode' : '✨ Default Mode'}
                              </button>
                          </div>
                     </div>
