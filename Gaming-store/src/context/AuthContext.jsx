@@ -11,9 +11,9 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // Initialize state from sessionStorage if available
+  // Initialize state from localStorage if available
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    const savedAuth = sessionStorage.getItem('gaming-auth');
+    const savedAuth = localStorage.getItem('gaming-auth');
     if (savedAuth) {
       const parsedAuth = JSON.parse(savedAuth);
       return parsedAuth.isLoggedIn || false;
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [user, setUser] = useState(() => {
-    const savedAuth = sessionStorage.getItem('gaming-auth');
+    const savedAuth = localStorage.getItem('gaming-auth');
     if (savedAuth) {
       const parsedAuth = JSON.parse(savedAuth);
       return parsedAuth.user || null;
@@ -31,23 +31,41 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [orders, setOrders] = useState(() => {
-    const savedOrders = sessionStorage.getItem('gaming-orders');
-    return savedOrders ? JSON.parse(savedOrders) : [];
+    const savedOrders = localStorage.getItem('gaming-orders');
+    // Only load real orders, filter out any mock data
+    if (savedOrders) {
+      const parsedOrders = JSON.parse(savedOrders);
+      // Filter out any orders that don't have proper structure
+      return parsedOrders.filter(order => 
+        order && 
+        order.id && 
+        order.items && 
+        Array.isArray(order.items) && 
+        order.items.length > 0 &&
+        order.total !== undefined
+      );
+    }
+    return [];
   });
 
-  // Save auth state to sessionStorage whenever it changes
+  // Save auth state to localStorage whenever it changes
   useEffect(() => {
     const authData = {
       isLoggedIn,
       user
     };
-    sessionStorage.setItem('gaming-auth', JSON.stringify(authData));
+    localStorage.setItem('gaming-auth', JSON.stringify(authData));
   }, [isLoggedIn, user]);
 
-  // Save orders to sessionStorage whenever they change
+  // Save orders to localStorage whenever they change
   useEffect(() => {
-    sessionStorage.setItem('gaming-orders', JSON.stringify(orders));
+    localStorage.setItem('gaming-orders', JSON.stringify(orders));
   }, [orders]);
+
+  // Clean up any existing mock data on mount
+  useEffect(() => {
+    cleanupMockData();
+  }, []); // Only run once on mount
 
   const login = () => {
     const userData = {
@@ -63,9 +81,58 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setIsLoggedIn(false);
     setUser(null);
-    // Clear session storage on logout
-    sessionStorage.removeItem('gaming-auth');
-    sessionStorage.removeItem('gaming-orders');
+    // Clear localStorage on logout
+    localStorage.removeItem('gaming-auth');
+    localStorage.removeItem('gaming-orders');
+  };
+
+  // Clear any mock data and reset orders
+  const clearMockData = () => {
+    setOrders([]);
+    localStorage.removeItem('gaming-orders');
+  };
+
+  // Clean up any existing mock data from localStorage
+  const cleanupMockData = () => {
+    const savedOrders = localStorage.getItem('gaming-orders');
+    if (savedOrders) {
+      try {
+        const parsedOrders = JSON.parse(savedOrders);
+        // Filter out any orders that don't have proper structure
+        const validOrders = parsedOrders.filter(order => 
+          order && 
+          order.id && 
+          order.items && 
+          Array.isArray(order.items) && 
+          order.items.length > 0 &&
+          order.total !== undefined &&
+          order.shippingAddress &&
+          order.paymentDetails
+        );
+        
+        if (validOrders.length !== parsedOrders.length) {
+          console.log('Cleaned up mock data from localStorage');
+          setOrders(validOrders);
+          localStorage.setItem('gaming-orders', JSON.stringify(validOrders));
+        }
+      } catch (error) {
+        console.error('Error cleaning up mock data:', error);
+        // If there's an error parsing, clear everything
+        setOrders([]);
+        localStorage.removeItem('gaming-orders');
+      }
+    }
+  };
+
+  // Development helper: Reset all localStorage data
+  const resetAllData = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setOrders([]);
+    localStorage.removeItem('gaming-auth');
+    localStorage.removeItem('gaming-orders');
+    localStorage.removeItem('gaming-cart');
+    console.log('All localStorage data has been reset');
   };
 
   // Add new order
@@ -92,7 +159,10 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     addOrder,
-    getOrders
+    getOrders,
+    clearMockData,
+    cleanupMockData,
+    resetAllData
   };
 
   return (

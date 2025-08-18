@@ -9,53 +9,53 @@ import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
 export default function Games() {
-  // Initialize states from sessionStorage if available
+  // Initialize states from localStorage if available
   const [currentPage, setCurrentPage] = useState(() => {
-    const savedPage = sessionStorage.getItem('gaming-current-page');
+    const savedPage = localStorage.getItem('gaming-current-page');
     return savedPage ? parseInt(savedPage) : 1;
   });
   
   const [searchTerm, setSearchTerm] = useState(() => {
-    const savedSearch = sessionStorage.getItem('gaming-search-term');
+    const savedSearch = localStorage.getItem('gaming-search-term');
     return savedSearch || '';
   });
   
   const [selectedGenre, setSelectedGenre] = useState(() => {
-    const savedGenres = sessionStorage.getItem('gaming-selected-genres');
+    const savedGenres = localStorage.getItem('gaming-selected-genres');
     return savedGenres ? JSON.parse(savedGenres) : [];
   });
   
   const [selectedPlatform, setSelectedPlatform] = useState(() => {
-    const savedPlatforms = sessionStorage.getItem('gaming-selected-platforms');
+    const savedPlatforms = localStorage.getItem('gaming-selected-platforms');
     return savedPlatforms ? JSON.parse(savedPlatforms) : [];
   });
   
   const [sortBy, setSortBy] = useState(() => {
-    const savedSort = sessionStorage.getItem('gaming-sort-by');
+    const savedSort = localStorage.getItem('gaming-sort-by');
     return savedSort || 'relevance';
   });
   
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
-  // Save states to sessionStorage whenever they change
+  // Save states to localStorage whenever they change
   useEffect(() => {
-    sessionStorage.setItem('gaming-current-page', currentPage.toString());
+    localStorage.setItem('gaming-current-page', currentPage.toString());
   }, [currentPage]);
 
   useEffect(() => {
-    sessionStorage.setItem('gaming-search-term', searchTerm);
+    localStorage.setItem('gaming-search-term', searchTerm);
   }, [searchTerm]);
 
   useEffect(() => {
-    sessionStorage.setItem('gaming-selected-genres', JSON.stringify(selectedGenre));
+    localStorage.setItem('gaming-selected-genres', JSON.stringify(selectedGenre));
   }, [selectedGenre]);
 
   useEffect(() => {
-    sessionStorage.setItem('gaming-selected-platforms', JSON.stringify(selectedPlatform));
+    localStorage.setItem('gaming-selected-platforms', JSON.stringify(selectedPlatform));
   }, [selectedPlatform]);
 
   useEffect(() => {
-    sessionStorage.setItem('gaming-sort-by', sortBy);
+    localStorage.setItem('gaming-sort-by', sortBy);
   }, [sortBy]);
 
   // Fetch data
@@ -110,12 +110,12 @@ export default function Games() {
     setDebouncedSearchTerm('');
     setCurrentPage(1);
     
-    // Clear session storage
-    sessionStorage.removeItem('gaming-selected-genres');
-    sessionStorage.removeItem('gaming-selected-platforms');
-    sessionStorage.removeItem('gaming-sort-by');
-    sessionStorage.removeItem('gaming-search-term');
-    sessionStorage.removeItem('gaming-current-page');
+    // Clear localStorage
+    localStorage.removeItem('gaming-selected-genres');
+    localStorage.removeItem('gaming-selected-platforms');
+    localStorage.removeItem('gaming-sort-by');
+    localStorage.removeItem('gaming-search-term');
+    localStorage.removeItem('gaming-current-page');
   };
 
   const handlePageChange = (page) => {

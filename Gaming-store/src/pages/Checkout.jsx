@@ -8,7 +8,7 @@ import Footer from '../components/Footer/Footer';
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, getCartTotal, clearCart } = useCart();
-  const { addOrder } = useAuth();
+  const { addOrder, isLoggedIn, user } = useAuth();
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -78,6 +78,18 @@ export default function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      setErrors({ submit: 'Please log in to complete your purchase. Your order will be saved to your profile.' });
+      return;
+    }
+    
+    // Check if cart has items before proceeding
+    if (items.length === 0) {
+      setErrors({ submit: 'Your cart is empty! Please add some games before checkout.' });
+      return;
+    }
     
     if (!validateForm()) {
       return;
@@ -162,12 +174,9 @@ export default function Checkout() {
   };
 
   useEffect(() => {
-    if (items.length === 0) {
-      navigate('/cart');
-    }
-  }, [items.length, navigate]);
-
-  if (items.length === 0) return null;
+    // Only redirect if we're already on the page and cart becomes empty
+    // Don't redirect immediately on page load
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
@@ -186,6 +195,41 @@ export default function Checkout() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Checkout Form */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8">
+            {/* Login Status Indicator */}
+            {!isLoggedIn ? (
+              <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <div className="flex items-center space-x-2 text-yellow-800 dark:text-yellow-200">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-semibold">Login Required</span>
+                </div>
+                <p className="text-yellow-700 dark:text-yellow-300 mt-1 text-sm">
+                  Please log in to complete your purchase. Your order will be saved to your profile for future reference.
+                </p>
+                <div className="mt-3">
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  >
+                    Go to Login
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <div className="flex items-center space-x-2 text-green-800 dark:text-green-200">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-semibold">Logged In</span>
+                </div>
+                <p className="text-green-700 dark:text-green-300 mt-1 text-sm">
+                  Welcome back, {user?.name}! Your order will be saved to your profile.
+                </p>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}
               <div>
@@ -546,10 +590,10 @@ export default function Checkout() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isProcessing}
+                disabled={isProcessing || !isLoggedIn}
                 className="w-full bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {isProcessing ? 'Processing...' : 'Complete Purchase'}
+                {isProcessing ? 'Processing...' : !isLoggedIn ? 'Login Required' : 'Complete Purchase'}
               </button>
 
               {errors.submit && (
@@ -562,57 +606,82 @@ export default function Checkout() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 h-fit">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Order Summary</h2>
             
-            <div className="space-y-4 mb-6">
-              {items.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center space-x-3">
-                    <img 
-                      src={item.imageUrl || '/assets/images/featured-game-1.jpg'} 
-                      alt={item.name}
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">{item.name}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Quantity: {item.quantity}</p>
+            {items.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-6xl mb-4">🛒</div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  Your Cart is Empty
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Add some games to your cart to continue with checkout
+                </p>
+                <button
+                  onClick={() => navigate('/games')}
+                  className="px-6 py-3 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
+                >
+                  Browse Games
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-4 mb-6">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center space-x-3">
+                        <img 
+                          src={item.imageUrl || '/assets/images/featured-game-1.jpg'} 
+                          alt={item.name}
+                          className="w-16 h-16 rounded-lg object-cover"
+                        />
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">{item.name}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Quantity: {item.quantity}</p>
+                        </div>
+                      </div>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </span>
                     </div>
-                  </div>
-                  <span className="font-semibold text-gray-900 dark:text-white">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            <div className="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>Subtotal:</span>
-                <span>${getCartTotal().toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>Shipping:</span>
-                <span className="text-green-600 dark:text-green-400">FREE</span>
-              </div>
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>Tax:</span>
-                <span>${(getCartTotal() * 0.05).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-xl font-bold text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700 pt-3">
-                <span>Total:</span>
-                <span>${(getCartTotal() * 1.05).toFixed(2)}</span>
-              </div>
-            </div>
+                <div className="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Subtotal:</span>
+                    <span>${getCartTotal().toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Shipping:</span>
+                    <span className="text-green-600 dark:text-green-400">FREE</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Tax:</span>
+                    <span>${(getCartTotal() * 0.05).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-xl font-bold text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700 pt-3">
+                    <span>Total:</span>
+                    <span>${(getCartTotal() * 1.05).toFixed(2)}</span>
+                  </div>
+                </div>
 
-            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-                <span className="font-semibold text-blue-900 dark:text-blue-100">Secure Checkout</span>
-              </div>
-              <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                Your payment information is encrypted and secure
-              </p>
-            </div>
+                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-semibold text-blue-900 dark:text-blue-100">Secure Checkout</span>
+                  </div>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                    Your payment information is encrypted and secure
+                  </p>
+                  {isLoggedIn && (
+                    <p className="text-sm text-blue-600 dark:text-blue-400 mt-2 font-medium">
+                      ✓ Order will be saved to your profile
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>

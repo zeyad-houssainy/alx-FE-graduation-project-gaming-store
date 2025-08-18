@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/Header/Header';
@@ -6,7 +6,7 @@ import Footer from '../../components/Footer/Footer';
 
 export default function MyProfile() {
   const navigate = useNavigate();
-  const { user, logout, orders } = useAuth();
+  const { user, logout, orders, clearMockData, cleanupMockData, resetAllData } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -25,6 +25,12 @@ export default function MyProfile() {
     newPassword: '',
     confirmPassword: ''
   });
+
+  // Clear any existing mock data on component mount
+  useEffect(() => {
+    // Clean up any mock data that might exist
+    cleanupMockData();
+  }, [cleanupMockData]);
 
   // Handle profile form changes
   const handleProfileChange = (e) => {
@@ -76,6 +82,14 @@ export default function MyProfile() {
     navigate('/');
   };
 
+  // Development helper: Reset all data
+  const handleResetAllData = () => {
+    if (window.confirm('⚠️ DEVELOPMENT ONLY: This will reset ALL data including cart, orders, and login state. Are you sure?')) {
+      resetAllData();
+      navigate('/');
+    }
+  };
+
   // Redirect if not logged in
   if (!user) {
     navigate('/login');
@@ -92,9 +106,18 @@ export default function MyProfile() {
             <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               My Profile
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               Manage your account settings and view your orders
             </p>
+            
+            {/* Development Reset Button */}
+            <button
+              onClick={handleResetAllData}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+              title="Development only - Reset all data"
+            >
+              🔄 Reset All Data (Dev)
+            </button>
           </div>
 
           {/* Profile Content */}
@@ -217,9 +240,36 @@ export default function MyProfile() {
               {/* Orders Tab */}
               {activeTab === 'orders' && (
                 <div className="space-y-6">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-                    Order History
-                  </h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      Order History
+                    </h2>
+                    {orders.length > 0 && (
+                      <button
+                        onClick={() => {
+                          if (window.confirm('Are you sure you want to clear all orders? This action cannot be undone.')) {
+                            clearMockData();
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+                      >
+                        Clear All Orders
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Info Note */}
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-semibold">Orders Information</span>
+                    </div>
+                    <p className="text-blue-700 dark:text-blue-300 mt-1 text-sm">
+                      Only real orders from completed checkouts are displayed here. No mock or test data is shown.
+                    </p>
+                  </div>
 
                   {orders.length === 0 ? (
                     <div className="text-center py-12">
@@ -228,7 +278,7 @@ export default function MyProfile() {
                         No Orders Yet
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 mb-6">
-                        Start shopping to see your order history here
+                        Complete a purchase to see your order history here. Only real orders from checkout are displayed.
                       </p>
                       <button
                         onClick={() => navigate('/games')}
