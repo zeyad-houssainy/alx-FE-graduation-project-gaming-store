@@ -1,0 +1,33 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/HomePage/HomePage';
+import Games from './pages/Games';
+import GameDetail from './pages/GameDetail';
+import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import AboutUs from './pages/AboutUs';
+import NotFound from './pages/NotFound';
+import UnderConstruction from './pages/UnderConstruction';
+import LogIn from './pages/LogIn/LogIn';
+import SignUp from './pages/SignUp/SignUp';
+
+export default function AppRouter() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/games" element={<Games />} />
+        <Route path="/games/:id" element={<GameDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/live" element={<UnderConstruction />} />
+        <Route path="/features" element={<UnderConstruction />} />
+        <Route path="/blog" element={<UnderConstruction />} />
+        <Route path="/contact" element={<UnderConstruction />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  );
+}

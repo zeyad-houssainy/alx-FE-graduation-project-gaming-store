@@ -2,7 +2,7 @@ import { FaFacebookF, FaTwitter, FaPinterestP, FaLinkedinIn } from "react-icons/
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-50 text-gray-700 pt-12 border-t border-gray-200">
+    <footer className="bg-gray-50 text-gray-700 pt-12 border-t border-gray-200 transition-colors duration-300">
       {/* Newsletter Top Bar */}
       <div className="bg-white shadow-sm flex justify-center items-center relative rounded-t-[3rem] py-8 border-b border-gray-100">
         <h3 className="text-gray-800 font-bold text-lg mr-4">
@@ -101,9 +101,15 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="bg-gray-100 text-center py-6 text-sm text-gray-600 border-t border-gray-200">
-        © 2025 Gamiz. All Rights Reserved by{" "}
-        <span className="text-blue-600 font-medium">Zeyad Alhoussainy</span>
+      <div className="bg-gray-100 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
+          <p>© 2024 Gamiz. All rights reserved.</p>
+          <div className="flex space-x-6 mt-4 md:mt-0">
+            <span className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Privacy Policy</span>
+            <span className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Terms of Service</span>
+            <span className="hover:text-blue-600 cursor-pointer transition-colors duration-200">Cookie Policy</span>
+          </div>
+        </div>
       </div>
     </footer>
   );

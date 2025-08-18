@@ -1,4 +1,5 @@
 // src/components/Header.jsx
+import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import NavBar from "./NavBar";
 import News from "./News";
@@ -12,7 +13,9 @@ export default function Header() {
         {/* Decorative Background Element */}
         <div className="absolute top-0 left-0 w-48 h-full bg-gradient-to-r from-blue-50 to-transparent transform -skew-x-12 -translate-x-8"></div>
         
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
         <NavBar />
         <Utility />
       </div>

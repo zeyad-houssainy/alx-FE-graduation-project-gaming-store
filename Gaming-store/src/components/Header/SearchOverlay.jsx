@@ -1,107 +1,100 @@
 // src/components/SearchOverlay.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export default function SearchOverlay({ onClose }) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([
+    'Action Games',
+    'RPG Games',
+    'Strategy Games',
+    'Sports Games',
+    'Racing Games',
+    'Puzzle Games'
+  ]);
 
-  // Close on Escape key
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         onClose();
       }
     };
+
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
-  // Handle search submit
-  const handleSearch = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      console.log('Searching for:', searchQuery);
-      onClose();
-    }
-  };
-
-  // Close when clicking outside
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    // Handle search submission
+    console.log('Searching for:', searchTerm);
+    onClose();
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center z-[60] animate-fadeIn"
-      onClick={handleBackdropClick}
-    >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 border border-blue-200 rotate-45 animate-spin-slow"></div>
-        <div className="absolute top-3/4 right-1/4 w-24 h-24 border border-blue-200 rotate-12 animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/2 w-16 h-16 border border-blue-200 -rotate-45 animate-bounce"></div>
-      </div>
-
-      <div className="relative w-full max-w-3xl mx-4 animate-slideUp">
-        {/* Search Form */}
-        <form onSubmit={handleSearch} className="relative group">
-          <div className="relative">
-            {/* Shadow effect */}
-            <div className="absolute -inset-1 bg-gray-200 rounded-lg blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
-            {/* Input field */}
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search games, tournaments, players..."
-              className="relative w-full px-8 py-6 text-xl bg-white border-2 border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all font-['Oxanium'] font-medium shadow-lg"
-              autoFocus
-            />
-            
-            {/* Search icon */}
-            <button 
-              type="submit"
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 text-black hover:text-gray-800 transition-colors text-2xl group/btn"
-            >
-              <i className="fas fa-magnifying-glass group-hover/btn:scale-110 transition-transform"></i>
-            </button>
-          </div>
-        </form>
-        
-        {/* Close button */}
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 relative">
+        {/* Close Button */}
         <button
-          className="absolute -top-16 right-0 text-gray-600 hover:text-blue-600 text-4xl transition-all duration-300 transform hover:scale-110"
           onClick={onClose}
-          aria-label="Close search"
+          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <i className="fas fa-times"></i>
+          <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
 
-        {/* Search suggestions */}
-        {searchQuery && (
-          <div className="mt-6 bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-6 animate-fadeIn shadow-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <i className="fas fa-search text-blue-600"></i>
-              <p className="text-gray-700 font-medium">
-                Press <kbd className="bg-blue-100 px-2 py-1 rounded text-blue-600 font-bold">Enter</kbd> to search for "{searchQuery}"
-              </p>
-            </div>
-            
-            {/* Quick suggestions */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {['Popular Games', 'Live Tournaments', 'Pro Players', 'Gaming Gear'].map((suggestion, index) => (
-                <button
-                  key={index}
-                  className="text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg text-gray-700 hover:text-blue-600 transition-all duration-300 text-sm"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
+        {/* Search Form */}
+        <form onSubmit={handleSubmit} className="p-8">
+          <div className="text-center mb-8">
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2">Search Games</h2>
+          <p className="text-gray-600">Find your next gaming adventure</p>
           </div>
-        )}
+
+          {/* Search Input */}
+          <div className="relative mb-8">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search for games, genres, or developers..."
+              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 transition-colors"
+              autoFocus
+            />
+            <button 
+              type="submit"
+              className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Search Suggestions */}
+          {searchTerm.length === 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Searches</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSearchTerm(suggestion)}
+                    className="p-3 text-left bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <span className="text-gray-700 group-hover:text-blue-600 transition-colors">
+                        {suggestion}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </form>
       </div>
     </div>
   );

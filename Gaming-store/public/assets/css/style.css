@@ -20,30 +20,30 @@
    * colors
    */
 
-  --rich-black-fogra-29_95: hsla(222, 18%, 11%, 0.95);
-  --raisin-black-1: hsl(0, 0%, 16%);
-  --raisin-black-2: hsl(236, 17%, 17%);
-  --raisin-black-3: hsl(280, 11%, 11%);
-  --raisin-black-4: hsl(280, 8%, 15%);
-  --english-violet: hsl(274, 21%, 23%);
-  --eerie-black-1: hsl(277, 25%, 10%);
-  --eerie-black-2: hsl(280, 7%, 8%);
-  --roman-silver: hsl(220, 6%, 59%);
-  --quick-silver: hsl(0, 1%, 65%);
-  --light-gray-1: hsl(0, 0%, 80%);
-  --light-gray-2: hsl(0, 2%, 82%);
-  --marigold_75: hsla(42, 99%, 46%, 0.75);
-  --xiketic_90: hsla(280, 37%, 8%, 0.9);
-  --cultured-2: hsl(0, 0%, 97%);
-  --marigold: hsl(42, 99%, 46%);
-  --platinum: hsl(0, 0%, 89%);
-  --dim-gray: hsl(0, 0%, 42%);
+  --rich-black-fogra-29_95: hsla(0, 0%, 100%, 0.95); /* light white */
+  --raisin-black-1: hsl(0, 0%, 95%); /* very light gray */
+  --raisin-black-2: hsl(0, 0%, 98%); /* lighter gray */
+  --raisin-black-3: hsl(0, 0%, 99%); /* near white */
+  --raisin-black-4: hsl(0, 0%, 97%); /* soft white */
+  --english-violet: hsl(220, 60%, 90%); /* soft blue */
+  --eerie-black-1: hsl(0, 0%, 100%); /* pure white */
+  --eerie-black-2: hsl(0, 0%, 99%); /* near white */
+  --roman-silver: hsl(220, 6%, 80%); /* light silver */
+  --quick-silver: hsl(0, 0%, 90%); /* lighter silver */
+  --light-gray-1: hsl(0, 0%, 95%); /* very light gray */
+  --light-gray-2: hsl(0, 0%, 98%); /* lighter gray */
+  --marigold_75: hsla(42, 99%, 80%, 0.75); /* soft yellow */
+  --xiketic_90: hsla(0, 0%, 100%, 0.9); /* white */
+  --cultured-2: hsl(0, 0%, 99%); /* near white */
+  --marigold: hsl(42, 99%, 80%); /* soft yellow */
+  --platinum: hsl(0, 0%, 97%); /* platinum */
+  --dim-gray: hsl(0, 0%, 80%); /* light gray */
   --white_15: hsla(0, 0%, 100%, 0.15);
   --white_10: hsla(0, 0%, 100%, 0.1);
-  --xiketic: hsl(277, 25%, 10%);
-  --silver: hsl(0, 0%, 78%);
-  --white: hsl(0, 0%, 100%);
-  --jet: hsl(236, 13%, 23%);
+  --xiketic: hsl(0, 0%, 100%); /* white */
+  --silver: hsl(0, 0%, 90%); /* light silver */
+  --white: hsl(0, 0%, 100%); /* pure white */
+  --jet: hsl(0, 0%, 97%); /* platinum */
 
   /**
    * typography
