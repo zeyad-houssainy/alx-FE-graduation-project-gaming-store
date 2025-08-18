@@ -5,22 +5,22 @@ export default function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
-      <div className="container mx-auto px-6 py-12 text-center">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24 flex items-center justify-center">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 text-center">
         {/* 404 Icon */}
-        <div className="text-9xl font-black text-blue-600 mb-8 font-['Oxanium']">
+        <div className="text-6xl sm:text-8xl lg:text-9xl font-black text-blue-600 dark:text-orange-400 mb-6 sm:mb-8 font-['Oxanium']">
           404
         </div>
         
         {/* Gaming Icon */}
-        <div className="text-8xl mb-8 animate-bounce">🎮</div>
+        <div className="text-6xl sm:text-8xl mb-6 sm:mb-8 animate-bounce">🎮</div>
         
         {/* Error Message */}
-        <h1 className="text-4xl md:text-5xl font-black font-['Oxanium'] mb-6 text-gray-900">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
           GAME OVER!
         </h1>
         
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4">
           Looks like you've wandered into uncharted territory! This level doesn't exist in our gaming universe.
         </p>
         
@@ -40,11 +40,11 @@ export default function NotFound() {
         </div>
         
         {/* Fun Gaming Facts */}
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 max-w-2xl mx-auto">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 font-['Oxanium']">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 max-w-2xl mx-auto">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 font-['Oxanium']">
             🎯 Gaming Trivia While You're Here
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">
             <div>
               <p><strong>🎮 First Video Game:</strong> Pong (1972)</p>
               <p><strong>🏆 Best Selling:</strong> Minecraft (200+ million)</p>
@@ -60,7 +60,7 @@ export default function NotFound() {
         <div className="mt-8">
           <button
             onClick={() => navigate(-1)}
-            className="text-blue-600 hover:text-blue-700 font-medium underline"
+            className="text-blue-600 dark:text-orange-400 hover:text-blue-700 dark:hover:text-orange-300 font-medium underline"
           >
             ← Go back to previous page
           </button>

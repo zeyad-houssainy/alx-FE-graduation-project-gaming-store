@@ -7,7 +7,7 @@ function App() {
   return (
     <ThemeProvider>
       <CartProvider>
-        <div className="min-h-screen bg-gray-50 text-gray-900 font-['Poppins'] relative transition-colors duration-300">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-['Poppins'] relative transition-colors duration-300">
           <AppRouter />
         </div>
       </CartProvider>

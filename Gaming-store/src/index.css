@@ -1,54 +1,14 @@
 @import "tailwindcss";
 
+/* Custom dark mode variant */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
-/* Custom Gaming Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { 
-    transform: translateY(30px); 
-    opacity: 0; 
-  }
-  to { 
-    transform: translateY(0); 
-    opacity: 1; 
-  }
-}
-
-@keyframes glow {
-  0%, 100% { 
-    box-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 15px #3b82f6; 
-  }
-  50% { 
-    box-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6, 0 0 30px #3b82f6; 
-  }
-}
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Custom utility classes */
-.animate-fadeIn {
-  animation: fadeIn 0.5s ease-out;
-}
-
-.animate-slideUp {
-  animation: slideUp 0.6s ease-out;
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Custom scrollbar for gaming theme */
@@ -60,6 +20,10 @@
   background: #f1f5f9;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #3b82f6;
   border-radius: 4px;
@@ -69,144 +33,11 @@
   background: #2563eb;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+.dark ::-webkit-scrollbar-thumb {
+  background: #f59e0b;
 }
 
-/* Body styles for gaming theme */
-body {
-  background-color: #f8fafc;
-  color: #1e293b;
-  font-family: 'Poppins', sans-serif;
-}
-
-/* Font family utilities */
-.font-oxanium {
-  font-family: 'Oxanium', cursive;
-}
-
-/* Custom gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Gaming button effects */
-.gaming-btn {
-  position: relative;
-  overflow: hidden;
-  transform: skewX(-10deg);
-  transition: all 0.3s ease;
-}
-
-.gaming-btn:hover {
-  transform: skewX(-10deg) scale(1.05);
-}
-
-.gaming-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
-  transition: left 0.5s;
-}
-
-.gaming-btn:hover::before {
-  left: 100%;
-}
-
-/* Header with fixed positioning adjustments */
-main {
-  padding-top: 120px; /* Adjust based on header height */
-}
-
-/* Ensure proper z-index stacking */
-.z-gaming-header { z-index: 1000; }
-.z-gaming-overlay { z-index: 1100; }
-.z-gaming-modal { z-index: 1200; }
-
-/* New Hero Background Animations */
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-10px) rotate(3deg); }
-  66% { transform: translateY(-5px) rotate(-2deg); }
-}
-
-@keyframes float-delayed {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-8px) rotate(-3deg); }
-  66% { transform: translateY(-12px) rotate(2deg); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-15px) rotate(5deg); }
-}
-
-@keyframes float-fast {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-8px) rotate(2deg); }
-  75% { transform: translateY(-4px) rotate(-1deg); }
-}
-
-@keyframes blob {
-  0%, 100% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-}
-
-@keyframes blob-reverse {
-  0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
-  33% { transform: translate(-40px, 40px) scale(0.8) rotate(120deg); }
-  66% { transform: translate(20px, -30px) scale(1.2) rotate(240deg); }
-}
-
-@keyframes blob-slow {
-  0%, 100% { transform: translate(0px, 0px) scale(1); }
-  50% { transform: translate(25px, -25px) scale(1.1); }
-}
-
-@keyframes spin-reverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
-}
-
-/* Animation utility classes */
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float-delayed 8s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 10s ease-in-out infinite;
-}
-
-.animate-float-fast {
-  animation: float-fast 4s ease-in-out infinite;
-}
-
-.animate-blob {
-  animation: blob 15s ease-in-out infinite;
-}
-
-.animate-blob-reverse {
-  animation: blob-reverse 20s ease-in-out infinite;
-}
-
-.animate-blob-slow {
-  animation: blob-slow 25s ease-in-out infinite;
-}
-
-.animate-spin-reverse {
-  animation: spin-reverse 15s linear infinite;
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
 }
 

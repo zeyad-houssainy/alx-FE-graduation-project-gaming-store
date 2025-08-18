@@ -138,45 +138,45 @@ export default function Checkout() {
     return null;
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 pt-20">
-      <Header />
-      <main className="container mx-auto px-6 py-12">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-black font-['Oxanium'] mb-6 text-gray-900">
-            CHECKOUT
-          </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
-            Complete your purchase and get ready to game!
-          </p>
-        </div>
+     return (
+     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
+       <Header />
+       <main className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+         {/* Page Header */}
+         <div className="text-center mb-8 sm:mb-12">
+           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
+             CHECKOUT
+           </h1>
+           <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed px-4">
+             Complete your purchase and get ready to game!
+           </p>
+         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Personal Information */}
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 font-['Oxanium'] mb-6">
-                  Personal Information
-                </h3>
+                             {/* Personal Information */}
+               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 font-['Oxanium'] mb-6">
+                   Personal Information
+                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.firstName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="John"
-                    />
+                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                       First Name *
+                     </label>
+                     <input
+                       type="text"
+                       name="firstName"
+                       value={formData.firstName}
+                       onChange={handleInputChange}
+                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+                         errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                       }`}
+                       placeholder="John"
+                     />
                     {errors.firstName && (
                       <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
                     )}
@@ -241,11 +241,11 @@ export default function Checkout() {
                 </div>
               </div>
 
-              {/* Billing Address */}
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 font-['Oxanium'] mb-6">
-                  Billing Address
-                </h3>
+                             {/* Billing Address */}
+               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 font-['Oxanium'] mb-6">
+                   Billing Address
+                 </h3>
                 
                 <div className="space-y-4">
                   <div>
@@ -328,11 +328,11 @@ export default function Checkout() {
                 </div>
               </div>
 
-              {/* Payment Information */}
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 font-['Oxanium'] mb-6">
-                  Payment Information
-                </h3>
+                             {/* Payment Information */}
+               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 font-['Oxanium'] mb-6">
+                   Payment Information
+                 </h3>
                 
                 <div className="space-y-4">
                   <div>
@@ -459,12 +459,12 @@ export default function Checkout() {
             </form>
           </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 sticky top-24">
-              <h3 className="text-xl font-bold text-gray-900 font-['Oxanium'] mb-6">
-                Order Summary
-              </h3>
+                     {/* Order Summary */}
+           <div className="lg:col-span-1">
+             <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 sticky top-24">
+               <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 font-['Oxanium'] mb-6">
+                 Order Summary
+               </h3>
 
               {/* Cart Items Summary */}
               <div className="space-y-3 mb-6">
@@ -477,11 +477,7 @@ export default function Checkout() {
                         className="w-12 h-12 rounded-lg object-cover"
                       />
                       <div>
-                        <p className="font-medium text-gray-900 overflow-hidden" style={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 1,
-                          WebkitBoxOrient: 'vertical'
-                        }}>{item.name}</p>
+                        <p className="font-medium text-gray-900 truncate">{item.name}</p>
                         <p className="text-gray-500">Qty: {item.quantity}</p>
                       </div>
                     </div>
@@ -503,18 +499,18 @@ export default function Checkout() {
                 </span>
               </div>
 
-              {/* Security Info */}
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="flex items-center space-x-2 mb-2">
-                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className="font-semibold text-blue-900">Secure Checkout</span>
-                </div>
-                <p className="text-sm text-blue-800">
-                  Your payment information is encrypted and secure. We never store your card details.
-                </p>
-              </div>
+                             {/* Security Info */}
+               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                 <div className="flex items-center space-x-2 mb-2">
+                   <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                   </svg>
+                   <span className="font-semibold text-blue-900 dark:text-blue-100">Secure Checkout</span>
+                 </div>
+                 <p className="text-sm text-blue-800 dark:text-blue-200">
+                   Your payment information is encrypted and secure. We never store your card details.
+                 </p>
+               </div>
             </div>
           </div>
         </div>

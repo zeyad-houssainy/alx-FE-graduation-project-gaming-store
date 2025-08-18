@@ -17,9 +17,9 @@ export default function GameCard({ game }) {
   };
 
   return (
-    <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+    <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
       {/* Game Image */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
         <img 
           src={game.background_image} 
           alt={game.name}
@@ -56,14 +56,14 @@ export default function GameCard({ game }) {
       </div>
       
       {/* Game Info */}
-      <div className="p-4">
-        <h3 className="text-lg font-bold mb-2 text-gray-900 font-['Oxanium'] leading-tight">
+      <div className="p-3 sm:p-4">
+        <h3 className="text-base sm:text-lg font-bold mb-2 text-gray-900 dark:text-gray-100 font-['Oxanium'] leading-tight">
           {game.name}
         </h3>
         
         {/* Platforms */}
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-          <span className="text-blue-600">🎮</span>
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 mb-3">
+          <span className="text-blue-600 dark:text-orange-400">🎮</span>
           <span className="uppercase tracking-wide">
             {game.platforms?.slice(0, 2).join(', ')}
             {game.platforms?.length > 2 && ' +'}
@@ -72,17 +72,13 @@ export default function GameCard({ game }) {
         
         {/* Release Date */}
         {game.released && (
-          <p className="text-xs text-gray-500 mb-3">
-            Released: {new Date(game.released).toLocaleDateString()}
-          </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+          Released: {new Date(game.released).toLocaleDateString()}
+        </p>
         )}
         
         {/* Description */}
-        <p className="text-sm text-gray-600 leading-relaxed overflow-hidden" style={{
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical'
-        }}>
+        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2">
           {game.description}
         </p>
       </div>
