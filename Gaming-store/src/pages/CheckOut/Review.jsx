@@ -6,45 +6,37 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useCart } from '../../context/CartContext';
 
-const products = [
-  {
-    name: 'Cyberpunk 2077 Deluxe Edition',
-    desc: 'Action RPG Game',
-    price: '$59.99',
-  },
-  {
-    name: 'Gaming Headset Pro',
-    desc: 'Wireless RGB Headset',
-    price: '$79.99',
-  },
-  {
-    name: 'Game Pass Ultimate - 3 Months',
-    desc: 'Subscription Service',
-    price: '$44.99',
-  },
-];
+export default function Review({ shippingAddress, paymentDetails }) {
+  const { items, getCartTotal } = useCart();
+  
+  // Calculate totals
+  const subtotal = getCartTotal();
+  const shipping = 0; // Free shipping
+  const tax = subtotal * 0.05; // 5% tax
+  const total = subtotal + shipping + tax;
 
-const addresses = ['1 MUI Drive', 'Reactville', 'Anytown', '99999', 'USA'];
-const payments = [
-  { name: 'Card type', detail: 'Visa' },
-  { name: 'Card holder', detail: 'Mr John Smith' },
-  { name: 'Card number', detail: 'xxxx-xxxx-xxxx-1234' },
-  { name: 'Expiry date', detail: '04/2024' },
-];
-
-export default function Review() {
   return (
     <Stack spacing={2}>
       <List disablePadding>
+        {items.map((item) => (
+          <ListItem key={item.id} sx={{ py: 1, px: 0 }}>
+            <ListItemText
+              sx={{ mr: 2 }}
+              primary={item.name}
+              secondary={`Quantity: ${item.quantity}`}
+            />
+            <Typography variant="body1" fontWeight="medium">
+              ${(item.price * item.quantity).toFixed(2)}
+            </Typography>
+          </ListItem>
+        ))}
+        <Divider />
         <ListItem sx={{ py: 1, px: 0 }}>
-          <ListItemText
-            sx={{ mr: 2 }}
-            primary="Products"
-            secondary={`${products.length} selected`}
-          />
+          <ListItemText primary="Subtotal" />
           <Typography variant="body1" fontWeight="medium">
-            $184.97
+            ${subtotal.toFixed(2)}
           </Typography>
         </ListItem>
         <Divider />
@@ -58,14 +50,14 @@ export default function Review() {
         <ListItem sx={{ py: 1, px: 0 }}>
           <ListItemText primary="Tax" />
           <Typography variant="body1" fontWeight="medium">
-            $9.99
+            ${tax.toFixed(2)}
           </Typography>
         </ListItem>
         <Divider />
         <ListItem sx={{ py: 1, px: 0 }}>
           <ListItemText primary="Total" />
           <Typography variant="subtitle1" fontWeight="bold">
-            $194.96
+            ${total.toFixed(2)}
           </Typography>
         </ListItem>
       </List>
@@ -80,29 +72,30 @@ export default function Review() {
           <Typography variant="subtitle2" gutterBottom>
             Shipment details
           </Typography>
-          <Typography gutterBottom>{addresses.join(', ')}</Typography>
+          {shippingAddress ? (
+            <Typography gutterBottom>
+              {shippingAddress.firstName} {shippingAddress.lastName}<br />
+              {shippingAddress.address1}<br />
+              {shippingAddress.address2 && `${shippingAddress.address2}<br />`}
+              {shippingAddress.city}, {shippingAddress.state} {shippingAddress.zip}<br />
+              {shippingAddress.country}
+            </Typography>
+          ) : (
+            <Typography color="text.secondary">No shipping address provided</Typography>
+          )}
         </div>
         <div>
           <Typography variant="subtitle2" gutterBottom>
             Payment details
           </Typography>
-          <Grid container>
-            {payments.map((payment) => (
-              <React.Fragment key={payment.name}>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  useFlexGap
-                  sx={{ width: '100%', mb: 1 }}
-                >
-                  <Typography variant="body1" color="text.secondary">
-                    {payment.name}:
-                  </Typography>
-                  <Typography variant="body2">{payment.detail}</Typography>
-                </Stack>
-              </React.Fragment>
-            ))}
-          </Grid>
+          {paymentDetails ? (
+            <Typography gutterBottom>
+              {paymentDetails.cardType} ending in {paymentDetails.cardNumber.slice(-4)}<br />
+              Expires: {paymentDetails.expiryDate}
+            </Typography>
+          ) : (
+            <Typography color="text.secondary">No payment details provided</Typography>
+          )}
         </div>
       </Stack>
     </Stack>

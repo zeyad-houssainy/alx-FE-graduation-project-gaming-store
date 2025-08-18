@@ -13,11 +13,16 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-export default function PaymentForm() {
+export default function PaymentForm({ onComplete }) {
   const [paymentType, setPaymentType] = React.useState('creditCard');
   const [cardNumber, setCardNumber] = React.useState('');
   const [cvv, setCvv] = React.useState('');
   const [expirationDate, setExpirationDate] = React.useState('');
+  const [cardName, setCardName] = React.useState('');
+  const [bankName, setBankName] = React.useState('');
+  const [bankAccount, setBankAccount] = React.useState('');
+  const [routingNumber, setRoutingNumber] = React.useState('');
+  const [accountHolder, setAccountHolder] = React.useState('');
 
   const handlePaymentTypeChange = (event) => {
     setPaymentType(event.target.value);
@@ -46,6 +51,35 @@ export default function PaymentForm() {
     }
     setExpirationDate(formattedValue);
   };
+
+  // Check if form is complete and call onComplete
+  React.useEffect(() => {
+    let isComplete = false;
+    
+    if (paymentType === 'creditCard') {
+      isComplete = cardNumber && cvv && expirationDate && cardName;
+    } else if (paymentType === 'bankTransfer') {
+      isComplete = bankName && bankAccount && routingNumber && accountHolder;
+    }
+    
+    if (isComplete && onComplete) {
+      const paymentData = {
+        type: paymentType,
+        ...(paymentType === 'creditCard' ? {
+          cardType: 'Credit Card',
+          cardNumber: cardNumber,
+          expiryDate: expirationDate,
+          cardHolder: cardName
+        } : {
+          cardType: 'Bank Transfer',
+          cardNumber: `****${bankAccount.slice(-4)}`,
+          expiryDate: 'N/A',
+          cardHolder: accountHolder
+        })
+      };
+      onComplete(paymentData);
+    }
+  }, [paymentType, cardNumber, cvv, expirationDate, cardName, bankName, bankAccount, routingNumber, accountHolder, onComplete]);
 
   return (
     <Stack spacing={{ xs: 3, sm: 6 }} useFlexGap>
@@ -152,6 +186,8 @@ export default function PaymentForm() {
               <OutlinedInput
                 id="card-name"
                 placeholder="John Smith"
+                value={cardName}
+                onChange={(e) => setCardName(e.target.value)}
                 required
                 size="small"
               />
@@ -196,6 +232,8 @@ export default function PaymentForm() {
               <OutlinedInput
                 id="bank-name"
                 placeholder="Industrial Bank"
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
                 required
                 size="small"
               />
@@ -207,6 +245,8 @@ export default function PaymentForm() {
               <OutlinedInput
                 id="bank-account"
                 placeholder="987654321"
+                value={bankAccount}
+                onChange={(e) => setBankAccount(e.target.value)}
                 required
                 size="small"
               />
@@ -226,6 +266,8 @@ export default function PaymentForm() {
               <OutlinedInput
                 id="routing-number"
                 placeholder="123456789"
+                value={routingNumber}
+                onChange={(e) => setRoutingNumber(e.target.value)}
                 required
                 size="small"
               />
@@ -237,6 +279,8 @@ export default function PaymentForm() {
               <OutlinedInput
                 id="account-holder"
                 placeholder="John Smith"
+                value={accountHolder}
+                onChange={(e) => setAccountHolder(e.target.value)}
                 required
                 size="small"
               />

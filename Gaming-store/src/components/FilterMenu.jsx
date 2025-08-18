@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function FilterMenu({ 
   genres, 
@@ -12,6 +12,32 @@ export default function FilterMenu({
   const [isOpen, setIsOpen] = useState(false);
   const [tempGenre, setTempGenre] = useState(selectedGenre);
   const [tempPlatform, setTempPlatform] = useState(selectedPlatform);
+  const modalRef = useRef(null);
+
+  // Handle clicking outside the modal
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Also close on Escape key
+      const handleEscapeKey = (event) => {
+        if (event.key === 'Escape') {
+          handleClose();
+        }
+      };
+      document.addEventListener('keydown', handleEscapeKey);
+      
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscapeKey);
+      };
+    }
+  }, [isOpen]);
 
   const handleOpen = () => {
     setTempGenre(selectedGenre);
@@ -81,14 +107,14 @@ export default function FilterMenu({
       {isOpen && (
         <>
           {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={handleClose}
-          />
+          <div className="fixed inset-0 bg-black/50 z-40" />
           
           {/* Modal */}
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all duration-300 ease-out animate-slide-up sm:animate-fade-in">
+            <div 
+              ref={modalRef}
+              className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all duration-300 ease-out animate-slide-up sm:animate-fade-in"
+            >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center">

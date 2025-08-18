@@ -1,5 +1,5 @@
 // src/components/SearchOverlay.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function SearchOverlay({ onClose }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,6 +11,7 @@ export default function SearchOverlay({ onClose }) {
     'Racing Games',
     'Puzzle Games'
   ]);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -19,8 +20,24 @@ export default function SearchOverlay({ onClose }) {
       }
     };
 
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    // Add opacity class to body when search is open
+    document.body.classList.add('search-overlay-active');
+
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleClickOutside);
+      // Remove opacity class when search closes
+      document.body.classList.remove('search-overlay-active');
+    };
   }, [onClose]);
 
   const handleSubmit = (e) => {
@@ -30,8 +47,11 @@ export default function SearchOverlay({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 relative">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-start justify-center pt-24 p-4">
+      <div 
+        ref={searchRef}
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 relative"
+      >
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -45,8 +65,8 @@ export default function SearchOverlay({ onClose }) {
         {/* Search Form */}
         <form onSubmit={handleSubmit} className="p-8">
           <div className="text-center mb-8">
-                      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Search Games</h2>
-          <p className="text-gray-600 dark:text-gray-400">Find your next gaming adventure</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Search Games</h2>
+            <p className="text-gray-600 dark:text-gray-400">Find your next gaming adventure</p>
           </div>
 
           {/* Search Input */}
@@ -65,7 +85,7 @@ export default function SearchOverlay({ onClose }) {
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+          </svg>
             </button>
           </div>
 

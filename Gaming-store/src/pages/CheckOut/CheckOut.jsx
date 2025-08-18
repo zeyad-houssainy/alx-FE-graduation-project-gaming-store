@@ -13,12 +13,15 @@ import Typography from '@mui/material/Typography';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import AddressForm from './AddressForm';
 import PaymentForm from './PaymentForm';
 import Review from './Review';
 import Info from './Info';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 // Gaming-themed colors
 const theme = createTheme({
@@ -42,14 +45,14 @@ const theme = createTheme({
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
-function getStepContent(step) {
+function getStepContent(step, orderData) {
   switch (step) {
     case 0:
-      return <AddressForm />;
+      return <AddressForm onComplete={(data) => orderData.updateOrderData(0, data)} />;
     case 1:
-      return <PaymentForm />;
+      return <PaymentForm onComplete={(data) => orderData.updateOrderData(1, data)} />;
     case 2:
-      return <Review />;
+      return <Review shippingAddress={orderData.shippingAddress} paymentDetails={orderData.paymentDetails} />;
     default:
       throw new Error('Unknown step');
   }
@@ -57,6 +60,13 @@ function getStepContent(step) {
 
 export default function CheckOut() {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [orderData, setOrderData] = React.useState({
+    shippingAddress: null,
+    paymentDetails: null
+  });
+  const navigate = useNavigate();
+  const { items, getCartTotal, clearCart } = useCart();
+  const { addOrder } = useAuth();
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -64,6 +74,74 @@ export default function CheckOut() {
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
+  };
+
+  const handlePlaceOrder = () => {
+    if (items.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+
+    // Calculate totals
+    const subtotal = getCartTotal();
+    const shipping = 0; // Free shipping
+    const tax = subtotal * 0.05; // 5% tax
+    const total = subtotal + shipping + tax;
+
+    // Create order object
+    const newOrder = {
+      items: items.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      subtotal: subtotal,
+      shipping: shipping,
+      tax: tax,
+      total: total,
+      shippingAddress: orderData.shippingAddress,
+      paymentDetails: orderData.paymentDetails
+    };
+
+    // Save order
+    addOrder(newOrder);
+    
+    // Clear cart
+    clearCart();
+    
+    // Navigate to success page (which will auto-redirect to home after 4 seconds)
+    navigate('/checkout/success');
+  };
+
+  // Update order data when forms are completed
+  const updateOrderData = (step, data) => {
+    setOrderData(prev => ({
+      ...prev,
+      [step === 0 ? 'shippingAddress' : 'paymentDetails']: data
+    }));
+  };
+
+  // Check if we can proceed to next step
+  const canProceed = (step) => {
+    if (step === 0) return orderData.shippingAddress;
+    if (step === 1) return orderData.paymentDetails;
+    return true;
+  };
+
+  const handleNextStep = () => {
+    if (canProceed(activeStep)) {
+      handleNext();
+    } else {
+      alert('Please complete the current step before proceeding.');
+    }
+  };
+
+  // Create orderData object to pass to getStepContent
+  const orderDataForSteps = {
+    shippingAddress: orderData.shippingAddress,
+    paymentDetails: orderData.paymentDetails,
+    updateOrderData: updateOrderData
   };
 
   return (
@@ -214,9 +292,9 @@ export default function CheckOut() {
                 <Typography variant="subtitle2" gutterBottom>
                   Selected products
                 </Typography>
-                <Typography variant="body1">$144.97</Typography>
+                <Typography variant="body1">${getCartTotal().toFixed(2)}</Typography>
               </div>
-              <Info totalPrice="$144.97" />
+              <Info />
             </CardContent>
           </Card>
           <Box
@@ -277,7 +355,7 @@ export default function CheckOut() {
               </Stack>
             ) : (
               <React.Fragment>
-                {getStepContent(activeStep)}
+                {getStepContent(activeStep, orderDataForSteps)}
                 <Box
                   sx={{
                     display: 'flex',
@@ -354,7 +432,7 @@ export default function CheckOut() {
                   <Button
                     variant="contained"
                     endIcon={<ChevronRightRoundedIcon />}
-                    onClick={handleNext}
+                    onClick={activeStep === steps.length - 1 ? handlePlaceOrder : handleNextStep}
                     sx={{
                       width: { xs: '100%', sm: 'fit-content' },
                     }}

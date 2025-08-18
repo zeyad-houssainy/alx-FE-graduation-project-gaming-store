@@ -10,29 +10,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useCart } from '../../context/CartContext';
 
-const products = [
-  {
-    name: 'Cyberpunk 2077 Deluxe Edition',
-    desc: 'Action RPG Game',
-    price: '$59.99',
-    imageUrl: '/assets/images/featured-game-1.jpg',
-  },
-  {
-    name: 'Gaming Headset Pro',
-    desc: 'Wireless RGB Headset',
-    price: '$79.99',
-    imageUrl: '/assets/images/featured-game-2.jpg',
-  },
-  {
-    name: 'Game Pass Ultimate - 3 Months',
-    desc: 'Subscription Service',
-    price: '$44.99',
-    imageUrl: '/assets/images/featured-game-3.jpg',
-  },
-];
+export default function Info({ totalPrice }) {
+  const { items, getCartTotal } = useCart();
+  
+  // Calculate totals
+  const subtotal = getCartTotal();
+  const shipping = 0; // Free shipping
+  const tax = subtotal * 0.05; // 5% tax
+  const total = subtotal + shipping + tax;
 
-export default function Info({ totalPrice = '$194.96' }) {
   return (
     <Stack spacing={2} sx={{ width: '100%' }}>
       <Typography variant="h6" fontWeight="bold">
@@ -41,13 +29,13 @@ export default function Info({ totalPrice = '$194.96' }) {
       <Card variant="outlined">
         <CardContent>
           <List disablePadding>
-            {products.map((product, index) => (
-              <React.Fragment key={product.name}>
+            {items.map((item, index) => (
+              <React.Fragment key={item.id}>
                 <ListItem sx={{ py: 2, px: 0 }}>
                   <Box
                     component="img"
-                    src={product.imageUrl}
-                    alt={product.name}
+                    src={item.imageUrl || '/assets/images/featured-game-1.jpg'}
+                    alt={item.name}
                     sx={{
                       width: 60,
                       height: 60,
@@ -59,27 +47,27 @@ export default function Info({ totalPrice = '$194.96' }) {
                   <ListItemText
                     primary={
                       <Typography variant="body1" fontWeight="medium">
-                        {product.name}
+                        {item.name}
                       </Typography>
                     }
                     secondary={
                       <Typography variant="body2" color="text.secondary">
-                        {product.desc}
+                        Quantity: {item.quantity}
                       </Typography>
                     }
                   />
                   <Typography variant="body1" fontWeight="medium">
-                    {product.price}
+                    ${(item.price * item.quantity).toFixed(2)}
                   </Typography>
                 </ListItem>
-                {index < products.length - 1 && <Divider />}
+                {index < items.length - 1 && <Divider />}
               </React.Fragment>
             ))}
           </List>
           <Divider sx={{ my: 2 }} />
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="body1">Subtotal:</Typography>
-            <Typography variant="body1">$184.97</Typography>
+            <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="body1">Shipping:</Typography>
@@ -87,7 +75,7 @@ export default function Info({ totalPrice = '$194.96' }) {
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="body1">Tax:</Typography>
-            <Typography variant="body1">$9.99</Typography>
+            <Typography variant="body1">${tax.toFixed(2)}</Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
           <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -95,14 +83,11 @@ export default function Info({ totalPrice = '$194.96' }) {
               Total:
             </Typography>
             <Typography variant="h6" fontWeight="bold" color="primary">
-              {totalPrice}
+              ${total.toFixed(2)}
             </Typography>
           </Stack>
         </CardContent>
       </Card>
-      <Button variant="text" sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
-        Add coupon code
-      </Button>
     </Stack>
   );
 }

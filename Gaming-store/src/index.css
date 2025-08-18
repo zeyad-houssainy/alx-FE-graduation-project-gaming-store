@@ -41,3 +41,15 @@ html {
   background: #d97706;
 }
 
+/* Search Overlay Active State */
+body.search-overlay-active {
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Ensure the search overlay itself maintains full opacity */
+body.search-overlay-active .search-overlay,
+body.search-overlay-active [data-search-overlay] {
+  opacity: 1 !important;
+}
+
