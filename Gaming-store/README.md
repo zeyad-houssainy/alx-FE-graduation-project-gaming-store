@@ -9,7 +9,6 @@ Welcome to **Gaming Store**, a modern, responsive web application that brings th
 - **📱 Mobile First**: Fully responsive design that looks great on phones, tablets, and desktops
 - **🛒 Smart Shopping**: Intelligent cart system with real-time updates and smooth checkout
 - **🔍 Powerful Search**: Find games quickly with advanced filtering and search capabilities
-- **⚡ Fast Performance**: Built with modern technologies for lightning-fast loading times
 
 ## 🚀 Features That Gamers Love
 

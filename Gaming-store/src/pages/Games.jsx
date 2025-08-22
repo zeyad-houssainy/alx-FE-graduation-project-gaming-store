@@ -96,7 +96,7 @@ export default function Games() {
   useEffect(() => {
     setSearchParams({});
     localStorage.removeItem('gaming-search-term');
-  }, []);
+  }, [setSearchParams]);
 
   // Log when component loads
   useEffect(() => {
@@ -318,7 +318,7 @@ export default function Games() {
 
             {/* Games Grid */}
             {!loading && games.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
                 {games.map((game) => (
                   <GameCard key={game.id} game={game} />
                 ))}
