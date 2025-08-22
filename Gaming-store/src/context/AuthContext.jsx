@@ -46,6 +46,12 @@ export const AuthProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Avatar state
+  const [avatar, setAvatar] = useState(() => {
+    const savedAvatar = localStorage.getItem('gaming-avatar');
+    return savedAvatar || null;
+  });
+
   // Save auth state to localStorage whenever it changes
   useEffect(() => {
     const authData = {
@@ -68,6 +74,15 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('gaming-saved-payment', JSON.stringify(savedPaymentMethods));
   }, [savedPaymentMethods]);
+
+  // Save avatar to localStorage whenever it changes
+  useEffect(() => {
+    if (avatar) {
+      localStorage.setItem('gaming-avatar', avatar);
+    } else {
+      localStorage.removeItem('gaming-avatar');
+    }
+  }, [avatar]);
 
   // Clean up any existing mock data on mount
   useEffect(() => {
@@ -232,6 +247,10 @@ export const AuthProvider = ({ children }) => {
     return savedPaymentMethods;
   };
 
+  const updateAvatar = (newAvatar) => {
+    setAvatar(newAvatar);
+  };
+
   const value = {
     isLoggedIn,
     user,
@@ -254,7 +273,10 @@ export const AuthProvider = ({ children }) => {
     addPaymentMethod,
     updatePaymentMethod,
     deletePaymentMethod,
-    getPaymentMethods
+    getPaymentMethods,
+    // Avatar management
+    avatar,
+    updateAvatar
   };
 
   return (

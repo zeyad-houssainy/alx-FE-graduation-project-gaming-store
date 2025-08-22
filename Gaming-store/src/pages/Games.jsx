@@ -19,13 +19,9 @@ export default function Games() {
   });
   
   const [searchTerm, setSearchTerm] = useState(() => {
-    // Check URL params first, then localStorage
-    const urlSearch = searchParams.get('search');
-    if (urlSearch) {
-      return urlSearch;
-    }
-    const savedSearch = localStorage.getItem('gaming-search-term');
-    return savedSearch || '';
+    // Always start with empty search on Games page
+    // This ensures users see all games when they visit the shop
+    return '';
   });
   
   const [selectedGenre, setSelectedGenre] = useState(() => {
@@ -87,20 +83,25 @@ export default function Games() {
     }
   }, [searchTerm, setSearchParams]);
 
-  // Update search term when URL params change
+  // Don't update search term from URL params - always start fresh
+  // This prevents search terms from being carried over from homepage
   useEffect(() => {
-    const urlSearch = searchParams.get('search');
-    if (urlSearch && urlSearch !== searchTerm) {
-      setSearchTerm(urlSearch);
+    // If there are any search params, clear them
+    if (searchParams.get('search')) {
+      setSearchParams({});
     }
-  }, [searchParams, searchTerm]);
+  }, [searchParams, setSearchParams]);
 
-  // Handle initial URL search parameter on component mount
+  // Clear any existing search parameters when component mounts
   useEffect(() => {
-    const urlSearch = searchParams.get('search');
-    if (urlSearch && !searchTerm) {
-      setSearchTerm(urlSearch);
+    // Clear URL search params to ensure clean start
+    if (searchParams.get('search')) {
+      console.log('🧹 Clearing URL search params on Games page load');
+      setSearchParams({});
     }
+    // Clear localStorage search term to ensure clean start
+    localStorage.removeItem('gaming-search-term');
+    console.log('🎮 Games page loaded with clean search state');
   }, []); // Only run once on mount
 
   // Debounce search term
@@ -152,6 +153,9 @@ export default function Games() {
     localStorage.removeItem('gaming-sort-by');
     localStorage.removeItem('gaming-search-term');
     localStorage.removeItem('gaming-current-page');
+    
+    // Force immediate search update
+    setDebouncedSearchTerm('');
   };
 
   const handlePageChange = (page) => {
@@ -315,7 +319,7 @@ export default function Games() {
 
             {/* Games Grid */}
             {!loading && games.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                 {games.map((game) => (
                   <GameCard key={game.id} game={game} />
                 ))}

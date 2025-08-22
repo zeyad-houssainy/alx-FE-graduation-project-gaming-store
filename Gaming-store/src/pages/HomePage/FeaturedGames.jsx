@@ -8,14 +8,14 @@ export default function FeaturedGames() {
 
     if (loading) {
         return (
-            <section className="py-20 bg-gray-50 relative">
+            <section className="py-20 bg-gray-50 dark:bg-gray-800 relative">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-black font-bold mb-6 text-gray-900">
+                        <h2 className="text-4xl md:text-5xl font-black font-bold mb-6 text-gray-900 dark:text-white">
                             FEATURED <span className="text-blue-600 dark:text-orange-400">GAMES</span>
                         </h2>
                         <div className="w-24 h-1 bg-amber-500 mx-auto mb-6"></div>
-                        <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+                        <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
                             Discover our collection of the latest and most exciting games available across all platforms
                         </p>
                     </div>
@@ -26,15 +26,15 @@ export default function FeaturedGames() {
     }
 
     return (
-        <section className="py-20 bg-gray-50 relative">
+        <section className="py-20 bg-gray-50 dark:bg-gray-800 relative">
             <div className="container mx-auto px-6">
                 {/* Section Header */}
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-black font-bold mb-6 text-gray-900">
+                    <h2 className="text-4xl md:text-5xl font-black font-bold mb-6 text-gray-900 dark:text-white">
                         FEATURED <span className="text-blue-600 dark:text-orange-400">GAMES</span>
                     </h2>
                     <div className="w-24 h-1 bg-amber-500 mx-auto mb-6"></div>
-                    <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
                         Discover our collection of the latest and most exciting games available across all platforms
                     </p>
                 </div>

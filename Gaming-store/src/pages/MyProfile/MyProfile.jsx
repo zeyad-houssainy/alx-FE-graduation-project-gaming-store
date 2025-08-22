@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/Header/Header';
@@ -20,7 +20,9 @@ export default function MyProfile() {
     addPaymentMethod,
     updatePaymentMethod,
     deletePaymentMethod,
-    getPaymentMethods
+    getPaymentMethods,
+    avatar,
+    updateAvatar
   } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
@@ -29,6 +31,8 @@ export default function MyProfile() {
   const [isAddingPayment, setIsAddingPayment] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [editingPayment, setEditingPayment] = useState(null);
+  const fileInputRef = useRef(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   
   // Profile edit form state
   const [profileForm, setProfileForm] = useState({
@@ -106,6 +110,44 @@ export default function MyProfile() {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Handle photo upload
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size must be less than 5MB');
+        return;
+      }
+
+      setIsUploadingPhoto(true);
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        updateAvatar(event.target.result);
+        setIsUploadingPhoto(false);
+        // Show success message
+        alert('Photo uploaded successfully!');
+      };
+      
+      reader.onerror = () => {
+        setIsUploadingPhoto(false);
+        alert('Error uploading photo. Please try again.');
+      };
+      
+      reader.readAsDataURL(file);
+    }
+    
+    // Reset the file input
+    e.target.value = '';
   };
 
   // Save profile changes
@@ -264,13 +306,22 @@ export default function MyProfile() {
                 <div className="space-y-6">
                   {/* Profile Image Section */}
                   <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-24 h-24 bg-blue-600 dark:bg-orange-500 rounded-full text-white text-3xl font-bold mb-4">
-                      {user?.avatar ? (
-                        <img 
-                          src={user.avatar} 
-                          alt={user.name} 
-                          className="w-24 h-24 rounded-full object-cover"
-                        />
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-blue-600 dark:bg-orange-500 rounded-full text-white text-3xl font-bold mb-4 relative">
+                      {avatar ? (
+                        <>
+                          <img 
+                            src={avatar} 
+                            alt={user.name} 
+                            className="w-24 h-24 rounded-full object-cover"
+                          />
+                          <button
+                            onClick={() => updateAvatar(null)}
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
+                            title="Remove photo"
+                          >
+                            ×
+                          </button>
+                        </>
                       ) : (
                         user?.name?.charAt(0)?.toUpperCase() || 'U'
                       )}
@@ -283,9 +334,20 @@ export default function MyProfile() {
                     </p>
                     
                     {/* Upload Photo Button */}
-                    <button className="mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors text-sm font-medium">
-                      📷 Upload Photo
+                    <button 
+                      onClick={() => fileInputRef.current.click()}
+                      disabled={isUploadingPhoto}
+                      className="mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isUploadingPhoto ? '⏳ Uploading...' : '📷 Upload Photo'}
                     </button>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handlePhotoUpload} 
+                      accept="image/*"
+                      className="hidden" 
+                    />
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -364,7 +426,22 @@ export default function MyProfile() {
 
                   {/* Save Button */}
                   {isEditing && (
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => {
+                          setIsEditing(false);
+                          // Reset form to original values
+                          setProfileForm({
+                            name: user?.name || '',
+                            email: user?.email || '',
+                            phone: user?.phone || '',
+                            address: user?.address || ''
+                          });
+                        }}
+                        className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+                      >
+                        Cancel
+                      </button>
                       <button
                         onClick={handleSaveProfile}
                         className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors"

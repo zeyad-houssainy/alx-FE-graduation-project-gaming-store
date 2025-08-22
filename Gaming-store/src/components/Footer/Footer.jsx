@@ -105,9 +105,9 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 dark:text-gray-400 gap-4 md:gap-0">
           <p>© 2024 GAMING STORE. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <span className="hover:text-blue-600 dark:hover:text-orange-400 cursor-pointer transition-colors duration-200">Privacy Policy</span>
-            <span className="hover:text-blue-600 dark:hover:text-orange-400 cursor-pointer transition-colors duration-200">Terms of Service</span>
             <span className="hover:text-blue-600 dark:hover:text-orange-400 cursor-pointer transition-colors duration-200">Cookie Policy</span>
+            <span className="hover:text-blue-600 dark:hover:text-orange-400 cursor-pointer transition-colors duration-200">Contact Us</span>
+            <span className="hover:text-blue-600 dark:hover:text-orange-400 cursor-pointer transition-colors duration-200">Support</span>
           </div>
         </div>
       </div>

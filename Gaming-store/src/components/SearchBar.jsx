@@ -1,23 +1,39 @@
 import React from 'react';
 
-export default function SearchBar({ searchTerm, onSearchChange, onSearch, placeholder = "Search games...", className = "" }) {
+export default function SearchBar({ 
+  searchTerm = '', 
+  onSearchChange, 
+  onSearch, 
+  placeholder = "Search games...",
+  className = ""
+}) {
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-      onSearch(searchTerm.trim());
+    const trimmedTerm = (searchTerm || '').trim();
+    if (trimmedTerm) {
+      onSearch(trimmedTerm);
     }
   };
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    onSearchChange(value);
+  };
+
+  // Ensure searchTerm is always a string
+  const safeSearchTerm = searchTerm || '';
+
   return (
     <div className={`relative ${className}`}>
-      <form onSubmit={handleSubmit} className="relative">
-        {/* Search Input */}
+      <form onSubmit={handleSubmit} className="relative" role="search">
         <input
           type="text"
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={safeSearchTerm}
+          onChange={handleInputChange}
           placeholder={placeholder}
           className="w-full px-4 py-3 pl-12 pr-32 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 focus:border-blue-500 dark:focus:border-orange-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 font-medium transition-colors"
+          role="searchbox"
+          aria-label="Search for games"
         />
         
         {/* Search Icon */}
@@ -27,11 +43,11 @@ export default function SearchBar({ searchTerm, onSearchChange, onSearch, placeh
           </svg>
         </div>
         
-        {/* Search Button */}
         <button
           type="submit"
-          disabled={!searchTerm.trim()}
+          disabled={!safeSearchTerm.trim()}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1.5 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Search games"
         >
           Search
         </button>

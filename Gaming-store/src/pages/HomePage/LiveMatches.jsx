@@ -59,7 +59,7 @@ const LiveMatches = () => {
 
             {/* Team 2: New York Hunter 7 */}
             <div className="flex flex-col items-center text-gray-900 dark:text-gray-100">
-              <img src="/assets/images/live-match-player-2.png" alt="New York Hunter 7 Logo" className="w-80 h-80 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem] xl:w-[36rem] xl:h-[36rem] object-contain mb-3 sm:mb-4" />
+              <img src="/assets/images/live-match-player-2.png" alt="New York Hunter 7 Logo" className="w-80 h-80 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem] xl:w-[36rem] xl:h-[36rem] object-contain mb-3 sm:mb-4 mt-15" />
               <p className="text-2xl sm:text-3xl font-extrabold mb-2">FOX</p>
               <div className="bg-blue-600 dark:bg-orange-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-center">
                 <p className="text-xs sm:text-sm uppercase">New York</p>
