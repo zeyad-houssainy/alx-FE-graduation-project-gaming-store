@@ -92,9 +92,24 @@ export const AuthProvider = ({ children }) => {
     // Also clear cart data to ensure completely fresh start
     localStorage.removeItem('gaming-cart');
     setIsFreshStart(false);
-    console.log('🚪 App started - User is logged out by default');
-    console.log('🧹 Cleared all existing user data from localStorage');
   }, []); // Only run once on mount
+
+  // Clean up mock data on first load
+  useEffect(() => {
+    const hasCleanedUp = localStorage.getItem('gaming-cleanup-done');
+    if (!hasCleanedUp) {
+      try {
+        // Clean up any existing mock data
+        localStorage.removeItem('gaming-user');
+        localStorage.removeItem('gaming-orders');
+        localStorage.setItem('gaming-cleanup-done', 'true');
+      } catch {
+        // If there's an error parsing, clear everything
+        localStorage.clear();
+        localStorage.setItem('gaming-cleanup-done', 'true');
+      }
+    }
+  }, []);
 
   const login = () => {
     const userData = {
@@ -145,7 +160,6 @@ export const AuthProvider = ({ children }) => {
         );
         
         if (validOrders.length !== parsedOrders.length) {
-          console.log('Cleaned up mock data from localStorage');
           setOrders(validOrders);
           localStorage.setItem('gaming-orders', JSON.stringify(validOrders));
         }
@@ -167,19 +181,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('gaming-auth');
     localStorage.removeItem('gaming-orders');
     localStorage.removeItem('gaming-cart');
-    console.log('All localStorage data has been reset');
   };
 
-  // Reset to fresh start state
+  // Reset function for development/testing
   const resetToFreshStart = () => {
-    setIsLoggedIn(false);
     setUser(null);
-    setOrders([]);
-    setIsFreshStart(true);
-    localStorage.removeItem('gaming-auth');
-    localStorage.removeItem('gaming-orders');
-    localStorage.removeItem('gaming-cart');
-    console.log('Reset to fresh start state');
+    setAvatar(null);
+    localStorage.clear();
+    localStorage.setItem('gaming-cleanup-done', 'true');
   };
 
   // Add new order

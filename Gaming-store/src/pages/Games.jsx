@@ -92,17 +92,16 @@ export default function Games() {
     }
   }, [searchParams, setSearchParams]);
 
-  // Clear any existing search parameters when component mounts
+  // Clear URL search params and localStorage on component mount
   useEffect(() => {
-    // Clear URL search params to ensure clean start
-    if (searchParams.get('search')) {
-      console.log('🧹 Clearing URL search params on Games page load');
-      setSearchParams({});
-    }
-    // Clear localStorage search term to ensure clean start
+    setSearchParams({});
     localStorage.removeItem('gaming-search-term');
-    console.log('🎮 Games page loaded with clean search state');
-  }, []); // Only run once on mount
+  }, []);
+
+  // Log when component loads
+  useEffect(() => {
+    // Component loaded with clean search state
+  }, []);
 
   // Debounce search term
   useEffect(() => {
