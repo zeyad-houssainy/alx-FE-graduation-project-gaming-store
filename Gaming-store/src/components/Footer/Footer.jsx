@@ -31,15 +31,15 @@ export default function Footer() {
           <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
             <li className="flex items-start gap-2">
               <span className="text-blue-600 dark:text-orange-400">📍</span>
-              <span>Address : PO Box W75 Street Ian West new queens</span>
+              <span>Address : Alexandria, Egypt</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-600">📞</span>
-              <span>Phone : +24 1245 654 235</span>
+              <span>Phone : +20 1000388906</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-red-500">📧</span>
-              <span>Email : info@exemple.com</span>
+              <span>Email : zeyad.houssainy@gmail.com</span>
             </li>
           </ul>
         </div>
