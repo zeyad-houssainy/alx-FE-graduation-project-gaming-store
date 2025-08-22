@@ -5,10 +5,10 @@ export default function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24 flex items-center justify-center">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 sm:pt-24 flex items-center justify-center">
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 text-center">
         {/* 404 Icon */}
-        <div className="text-6xl sm:text-8xl lg:text-9xl font-black text-blue-600 dark:text-orange-400 mb-6 sm:mb-8 font-['Oxanium']">
+        <div className="text-6xl sm:text-8xl lg:text-9xl font-black text-blue-600 dark:text-orange-400 mb-6 sm:mb-8 font-bold">
           404
         </div>
         
@@ -16,8 +16,8 @@ export default function NotFound() {
         <div className="text-6xl sm:text-8xl mb-6 sm:mb-8 animate-bounce">🎮</div>
         
         {/* Error Message */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
-          GAME OVER!
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
+          Page Not Found
         </h1>
         
         <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4">
@@ -42,7 +42,7 @@ export default function NotFound() {
         
         {/* Fun Gaming Facts */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 max-w-2xl mx-auto">
-          <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 font-['Oxanium']">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 font-bold">
             🎯 Gaming Trivia While You're Here
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">

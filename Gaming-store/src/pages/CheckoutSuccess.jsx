@@ -25,7 +25,7 @@ export default function CheckoutSuccess() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24 flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 sm:pt-24 flex flex-col">
       <Header />
       <main className="flex-1 container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
@@ -33,8 +33,8 @@ export default function CheckoutSuccess() {
           <div className="text-8xl mb-6 animate-bounce">🎉</div>
           
           {/* Thank You Message */}
-          <h1 className="text-4xl font-black font-['Oxanium'] text-gray-900 dark:text-white mb-4">
-            Thank You for Your Purchase!
+          <h1 className="text-4xl font-black font-bold text-gray-900 dark:text-white mb-4">
+            Order Confirmed! 🎉
           </h1>
           
           {/* Order Details */}

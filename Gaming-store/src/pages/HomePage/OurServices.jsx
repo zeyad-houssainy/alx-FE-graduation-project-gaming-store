@@ -15,8 +15,8 @@ export default function OurServices() {
         {
             id: 3,
             image: "/assets/images/brand-3.png",
-            label: "gaming store",
-            alt: "Gaming Store"
+            label: "GAMING STORE",
+            alt: "GAMING STORE"
         },
         {
             id: 4,
@@ -43,7 +43,7 @@ export default function OurServices() {
             <div className="container mx-auto px-4 sm:px-6">
                 {/* Section Header */}
                 <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-white">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
                         Our <span className="text-blue-600 dark:text-orange-400">Services</span>
                     </h2>
                     <div className="w-20 sm:w-24 h-1 bg-blue-600 dark:bg-orange-400 mx-auto mb-4 sm:mb-6"></div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useFetchGames, useFetchGenres, useFetchPlatforms } from '../hooks/useFetchGames';
 import GameCard from '../components/GameCard';
 import SearchBar from '../components/SearchBar';
@@ -9,6 +10,8 @@ import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
 export default function Games() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   // Initialize states from localStorage if available
   const [currentPage, setCurrentPage] = useState(() => {
     const savedPage = localStorage.getItem('gaming-current-page');
@@ -16,6 +19,11 @@ export default function Games() {
   });
   
   const [searchTerm, setSearchTerm] = useState(() => {
+    // Check URL params first, then localStorage
+    const urlSearch = searchParams.get('search');
+    if (urlSearch) {
+      return urlSearch;
+    }
     const savedSearch = localStorage.getItem('gaming-search-term');
     return savedSearch || '';
   });
@@ -70,6 +78,31 @@ export default function Games() {
   const { genres } = useFetchGenres();
   const { platforms } = useFetchPlatforms();
 
+  // Update URL when search term changes
+  useEffect(() => {
+    if (searchTerm) {
+      setSearchParams({ search: searchTerm });
+    } else {
+      setSearchParams({});
+    }
+  }, [searchTerm, setSearchParams]);
+
+  // Update search term when URL params change
+  useEffect(() => {
+    const urlSearch = searchParams.get('search');
+    if (urlSearch && urlSearch !== searchTerm) {
+      setSearchTerm(urlSearch);
+    }
+  }, [searchParams, searchTerm]);
+
+  // Handle initial URL search parameter on component mount
+  useEffect(() => {
+    const urlSearch = searchParams.get('search');
+    if (urlSearch && !searchTerm) {
+      setSearchTerm(urlSearch);
+    }
+  }, []); // Only run once on mount
+
   // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -110,6 +143,9 @@ export default function Games() {
     setDebouncedSearchTerm('');
     setCurrentPage(1);
     
+    // Clear URL params
+    setSearchParams({});
+    
     // Clear localStorage
     localStorage.removeItem('gaming-selected-genres');
     localStorage.removeItem('gaming-selected-platforms');
@@ -129,7 +165,7 @@ export default function Games() {
     return (
       <>
         <Header />
-                 <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
+                 <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 sm:pt-24">
           <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
             <div className="text-center">
               <div className="text-6xl mb-4">😞</div>
@@ -152,11 +188,11 @@ export default function Games() {
   return (
     <>
       <Header />
-             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
+             <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 sm:pt-24">
         <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {/* Page Header */}
           <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
               GAME <span className="text-blue-600 dark:text-orange-400">STORE</span>
             </h1>
             <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed px-4">

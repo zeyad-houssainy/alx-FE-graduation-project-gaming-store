@@ -10,7 +10,7 @@ const CountdownTimer = ({ targetDate }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100 mb-4 font-['Oxanium']">
+      <div className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100 mb-4 font-bold">
         <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 dark:from-orange-500 dark:to-amber-500 bg-clip-text text-transparent animate-pulse">
           {formatNumber(days)}
         </span>

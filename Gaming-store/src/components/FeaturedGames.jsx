@@ -37,11 +37,11 @@ export default function FeaturedGames() {
     ];
 
     return (
-        <section className="py-12 sm:py-16 md:py-20 bg-gray-50 dark:bg-gray-800 relative">
+        <section className="py-12 sm:py-16 md:py-20 bg-white dark:bg-gray-800 relative">
             <div className="container mx-auto px-4 sm:px-6">
                 {/* Section Header */}
                 <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-white">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
                         FEATURED <span className="text-amber-500 dark:text-orange-400">GAMES</span>
                     </h2>
                     <div className="w-20 sm:w-24 h-1 bg-amber-500 dark:bg-orange-400 mx-auto mb-4 sm:mb-6"></div>
@@ -75,7 +75,7 @@ export default function FeaturedGames() {
                                 
                                 {/* Content Overlay */}
                                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
-                                    <h3 className="text-lg sm:text-xl font-black font-['Oxanium'] mb-2 leading-tight">
+                                    <h3 className="text-lg sm:text-xl font-black font-bold mb-2 leading-tight">
                                         {game.title}
                                     </h3>
                                     <p className="text-amber-400 font-bold text-xs sm:text-sm mb-2 sm:mb-3 uppercase tracking-wider">

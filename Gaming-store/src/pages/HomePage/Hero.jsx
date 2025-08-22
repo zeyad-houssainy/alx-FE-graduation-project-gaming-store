@@ -18,12 +18,15 @@ export default function Hero() {
     // Auto-change background every 5 seconds
     useEffect(() => {
         const interval = setInterval(() => {
-            const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
-            setBackgroundGradient(randomGradient);
+            setBackgroundGradient(prev => {
+                const currentIndex = gradients.indexOf(prev);
+                const nextIndex = (currentIndex + 1) % gradients.length;
+                return gradients[nextIndex];
+            });
         }, 5000); // Change every 5 seconds
 
         return () => clearInterval(interval); // Cleanup on unmount
-    }, [gradients]);
+    }, []); // Empty dependency array since gradients is static
 
     const changeBackgroundColor = () => {
         const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
@@ -62,7 +65,7 @@ export default function Hero() {
                          <p className="text-blue-600 dark:text-orange-400 text-sm font-bold uppercase mb-4 tracking-wider">
                              WORLD GAMING
                          </p>
-                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-['Oxanium'] font-black text-gray-900 dark:text-gray-100 leading-tight mb-4 sm:mb-6">
+                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold font-black text-gray-900 dark:text-gray-100 leading-tight mb-4 sm:mb-6">
                              Create <span className="text-amber-500 dark:text-orange-400">Manage</span><br />
                              Matches
                          </h1>

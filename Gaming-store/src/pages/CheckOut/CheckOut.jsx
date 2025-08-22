@@ -39,7 +39,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: "'Inter', 'Inter Fallback', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   },
 });
 
@@ -48,9 +48,17 @@ const steps = ['Shipping address', 'Payment details', 'Review your order'];
 function getStepContent(step, orderData) {
   switch (step) {
     case 0:
-      return <AddressForm onComplete={(data) => orderData.updateOrderData(0, data)} />;
+      return <AddressForm 
+        onComplete={(data) => orderData.updateOrderData(0, data)} 
+        savedAddresses={orderData.savedAddresses}
+        onUseSavedAddress={(address) => orderData.updateOrderData(0, address)}
+      />;
     case 1:
-      return <PaymentForm onComplete={(data) => orderData.updateOrderData(1, data)} />;
+      return <PaymentForm 
+        onComplete={(data) => orderData.updateOrderData(1, data)} 
+        savedPaymentMethods={orderData.savedPaymentMethods}
+        onUseSavedPayment={(payment) => orderData.updateOrderData(1, payment)}
+      />;
     case 2:
       return <Review shippingAddress={orderData.shippingAddress} paymentDetails={orderData.paymentDetails} />;
     default:
@@ -62,11 +70,13 @@ export default function CheckOut() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [orderData, setOrderData] = React.useState({
     shippingAddress: null,
-    paymentDetails: null
+    paymentDetails: null,
+    savedAddresses: getAddresses(),
+    savedPaymentMethods: getPaymentMethods()
   });
   const navigate = useNavigate();
   const { items, getCartTotal, clearCart } = useCart();
-  const { addOrder } = useAuth();
+  const { addOrder, getAddresses, getPaymentMethods } = useAuth();
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -141,6 +151,8 @@ export default function CheckOut() {
   const orderDataForSteps = {
     shippingAddress: orderData.shippingAddress,
     paymentDetails: orderData.paymentDetails,
+    savedAddresses: orderData.savedAddresses,
+    savedPaymentMethods: orderData.savedPaymentMethods,
     updateOrderData: updateOrderData
   };
 
@@ -185,8 +197,8 @@ export default function CheckOut() {
                 G
               </Typography>
             </Box>
-            <Typography variant="h6" sx={{ fontFamily: "'Oxanium', sans-serif", fontWeight: 'bold' }}>
-              Gamiz
+            <Typography variant="h6" sx={{ fontFamily: "'Inter', 'Inter Fallback', system-ui, sans-serif", fontWeight: 'bold' }}>
+              GAMING STORE
             </Typography>
           </Box>
           <Box

@@ -1,13 +1,24 @@
-// src/components/Logo.jsx
+import { Link } from "react-router-dom";
+
 export default function Logo() {
   return (
-    <div className="flex items-center text-gray-900 dark:text-white font-black text-2xl sm:text-3xl font-['Oxanium'] hover:text-blue-600 dark:hover:text-orange-400 transition-colors cursor-pointer relative z-10">
-      <span className="bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-        Gam
-      </span>
-      <span className="text-blue-600 dark:text-orange-400">iz</span>
-      {/* Gaming controller icon accent */}
-      <div className="ml-2 text-blue-600 dark:text-orange-400 text-sm">🎮</div>
-    </div>
+    <Link to="/" className="flex items-center space-x-2 group">
+      {/* Simple Logo Icon */}
+      <div className="w-8 h-8 bg-blue-600 dark:bg-orange-500 rounded-lg flex items-center justify-center">
+        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      
+      {/* Logo Text */}
+      <div className="flex flex-col">
+        <span className="text-lg font-semibold text-gray-900 dark:text-white">
+          GAMING
+        </span>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          STORE
+        </span>
+      </div>
+    </Link>
   );
 }

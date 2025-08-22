@@ -34,8 +34,8 @@ const Articles = () => {
       <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-white">
-            LATEST NEWS <span className="text-blue-600 dark:text-orange-400">& ARTICLES</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
+            GAMING <span className="text-blue-600 dark:text-orange-400">NEWS</span>
           </h2>
           <div className="w-20 sm:w-24 h-1 bg-blue-600 dark:bg-orange-400 mx-auto mb-4 sm:mb-6 rounded-full"></div>
           <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-4">
@@ -82,7 +82,7 @@ const Articles = () => {
                 </div>
                 
                 {/* Title */}
-                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white font-['Oxanium'] uppercase leading-tight">
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white font-bold uppercase leading-tight">
                   {article.title}
                 </h3>
                 

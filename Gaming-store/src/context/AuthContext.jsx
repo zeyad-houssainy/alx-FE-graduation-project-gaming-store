@@ -11,24 +11,11 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // Initialize state from localStorage if available
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    const savedAuth = localStorage.getItem('gaming-auth');
-    if (savedAuth) {
-      const parsedAuth = JSON.parse(savedAuth);
-      return parsedAuth.isLoggedIn || false;
-    }
-    return false;
-  });
-
-  const [user, setUser] = useState(() => {
-    const savedAuth = localStorage.getItem('gaming-auth');
-    if (savedAuth) {
-      const parsedAuth = JSON.parse(savedAuth);
-      return parsedAuth.user || null;
-    }
-    return null;
-  });
+  // Start with the user logged out, don't load from localStorage. This ensures a fresh
+  // start every time the app loads, requiring users to go through the login/signup forms.
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isFreshStart, setIsFreshStart] = useState(true);
 
   const [orders, setOrders] = useState(() => {
     const savedOrders = localStorage.getItem('gaming-orders');
@@ -48,6 +35,17 @@ export const AuthProvider = ({ children }) => {
     return [];
   });
 
+  // Saved addresses and payment methods
+  const [savedAddresses, setSavedAddresses] = useState(() => {
+    const saved = localStorage.getItem('gaming-saved-addresses');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [savedPaymentMethods, setSavedPaymentMethods] = useState(() => {
+    const saved = localStorage.getItem('gaming-saved-payment');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   // Save auth state to localStorage whenever it changes
   useEffect(() => {
     const authData = {
@@ -62,9 +60,25 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('gaming-orders', JSON.stringify(orders));
   }, [orders]);
 
+  // Save addresses and payment methods to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('gaming-saved-addresses', JSON.stringify(savedAddresses));
+  }, [savedAddresses]);
+
+  useEffect(() => {
+    localStorage.setItem('gaming-saved-payment', JSON.stringify(savedPaymentMethods));
+  }, [savedPaymentMethods]);
+
   // Clean up any existing mock data on mount
   useEffect(() => {
     cleanupMockData();
+    // Clear any existing auth data to ensure fresh start
+    localStorage.removeItem('gaming-auth');
+    // Also clear cart data to ensure completely fresh start
+    localStorage.removeItem('gaming-cart');
+    setIsFreshStart(false);
+    console.log('🚪 App started - User is logged out by default');
+    console.log('🧹 Cleared all existing user data from localStorage');
   }, []); // Only run once on mount
 
   const login = () => {
@@ -72,18 +86,23 @@ export const AuthProvider = ({ children }) => {
       id: 1,
       name: 'Test User',
       email: 'test@example.com',
-      avatar: '/assets/images/profile-avatar.jpg'
+      // No avatar - will use fallback initials (T) which looks clean and professional
     };
     setIsLoggedIn(true);
     setUser(userData);
+    setIsFreshStart(false);
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setUser(null);
-    // Clear localStorage on logout
+    setIsFreshStart(true);
+    // Clear all auth-related localStorage data
     localStorage.removeItem('gaming-auth');
     localStorage.removeItem('gaming-orders');
+    localStorage.removeItem('gaming-cart');
+    localStorage.removeItem('gaming-saved-addresses');
+    localStorage.removeItem('gaming-saved-payment');
   };
 
   // Clear any mock data and reset orders
@@ -129,10 +148,23 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUser(null);
     setOrders([]);
+    setIsFreshStart(true);
     localStorage.removeItem('gaming-auth');
     localStorage.removeItem('gaming-orders');
     localStorage.removeItem('gaming-cart');
     console.log('All localStorage data has been reset');
+  };
+
+  // Reset to fresh start state
+  const resetToFreshStart = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setOrders([]);
+    setIsFreshStart(true);
+    localStorage.removeItem('gaming-auth');
+    localStorage.removeItem('gaming-orders');
+    localStorage.removeItem('gaming-cart');
+    console.log('Reset to fresh start state');
   };
 
   // Add new order
@@ -152,6 +184,54 @@ export const AuthProvider = ({ children }) => {
     return orders;
   };
 
+  // Address management functions
+  const addAddress = (addressData) => {
+    const newAddress = {
+      id: `ADDR-${Date.now()}`,
+      ...addressData
+    };
+    setSavedAddresses(prev => [...prev, newAddress]);
+    return newAddress;
+  };
+
+  const updateAddress = (id, addressData) => {
+    setSavedAddresses(prev => 
+      prev.map(addr => addr.id === id ? { ...addr, ...addressData } : addr)
+    );
+  };
+
+  const deleteAddress = (id) => {
+    setSavedAddresses(prev => prev.filter(addr => addr.id !== id));
+  };
+
+  const getAddresses = () => {
+    return savedAddresses;
+  };
+
+  // Payment method management functions
+  const addPaymentMethod = (paymentData) => {
+    const newPayment = {
+      id: `PAY-${Date.now()}`,
+      ...paymentData
+    };
+    setSavedPaymentMethods(prev => [...prev, newPayment]);
+    return newPayment;
+  };
+
+  const updatePaymentMethod = (id, paymentData) => {
+    setSavedPaymentMethods(prev => 
+      prev.map(pay => pay.id === id ? { ...pay, ...paymentData } : pay)
+    );
+  };
+
+  const deletePaymentMethod = (id) => {
+    setSavedPaymentMethods(prev => prev.filter(pay => pay.id !== id));
+  };
+
+  const getPaymentMethods = () => {
+    return savedPaymentMethods;
+  };
+
   const value = {
     isLoggedIn,
     user,
@@ -162,7 +242,19 @@ export const AuthProvider = ({ children }) => {
     getOrders,
     clearMockData,
     cleanupMockData,
-    resetAllData
+    resetAllData,
+    resetToFreshStart,
+    isFreshStart,
+    // Address management
+    addAddress,
+    updateAddress,
+    deleteAddress,
+    getAddresses,
+    // Payment method management
+    addPaymentMethod,
+    updatePaymentMethod,
+    deletePaymentMethod,
+    getPaymentMethods
   };
 
   return (

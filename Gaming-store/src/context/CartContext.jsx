@@ -28,6 +28,12 @@ const cartReducer = (state, action) => {
       };
 
     case 'UPDATE_QUANTITY':
+      if (action.payload.quantity <= 0) {
+        return {
+          ...state,
+          items: state.items.filter(item => item.id !== action.payload.id),
+        };
+      }
       return {
         ...state,
         items: state.items.map(item =>

@@ -11,7 +11,7 @@ const FormGrid = styled(Grid)(() => ({
   flexDirection: 'column',
 }));
 
-export default function AddressForm({ onComplete }) {
+export default function AddressForm({ onComplete, savedAddresses, onUseSavedAddress }) {
   const [formData, setFormData] = React.useState({
     firstName: '',
     lastName: '',
@@ -47,6 +47,46 @@ export default function AddressForm({ onComplete }) {
 
   return (
     <Grid container spacing={3}>
+      {/* Saved Addresses Section */}
+      {savedAddresses && savedAddresses.length > 0 && (
+        <FormGrid size={{ xs: 12 }}>
+          <FormLabel>Use Saved Address</FormLabel>
+          <div className="space-y-2">
+            {savedAddresses.map((address) => (
+              <div
+                key={address.id}
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                onClick={() => onUseSavedAddress(address)}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      {address.firstName} {address.lastName}
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      {address.address1}<br />
+                      {address.address2 && `${address.address2}<br />`}
+                      {address.city}, {address.state} {address.zip}<br />
+                      {address.country}
+                    </p>
+                  </div>
+                  <button
+                    className="px-3 py-1 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white text-sm rounded transition-colors"
+                  >
+                    Use This Address
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              Or fill out the form below to enter a new address
+            </p>
+          </div>
+        </FormGrid>
+      )}
+
       <FormGrid size={{ xs: 12, md: 6 }}>
         <FormLabel htmlFor="firstName" required>
           First name

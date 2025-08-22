@@ -9,7 +9,7 @@ export default function AboutUs() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-32 sm:pt-36">
+      <div className="min-h-screen bg-white dark:bg-gray-900 pt-32 sm:pt-36">
         {/* Back to Home Button */}
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <button
@@ -31,11 +31,25 @@ export default function AboutUs() {
         <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {/* Page Header */}
           <div className="text-center mb-12 sm:mb-16">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
-              ABOUT <span className="text-blue-600 dark:text-orange-400">GAMIZ</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
+              ABOUT <span className="text-blue-600 dark:text-orange-400">GAMING STORE</span>
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed px-4">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
               We're passionate about gaming and committed to providing the best digital gaming experience for players worldwide.
+              Our journey began with a simple vision: to create a platform where gamers could discover, purchase, and enjoy
+              their favorite games with unparalleled ease and convenience.
+            </p>
+
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+              Founded in 2024, GAMING STORE was born from a simple belief: every gamer deserves access to the best titles,
+              regardless of their location or budget. We started as a small team of passionate gamers who wanted to
+              revolutionize how people discover and purchase games.
+            </p>
+
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+              Today, GAMING STORE stands as a testament to our commitment to the gaming community. We're not just selling
+              games; we're building a community where gamers can connect, share experiences, and discover new adventures together.
+              Our platform is designed to be more than just a store – it's your gateway to the world of gaming.
             </p>
           </div>
 
@@ -43,14 +57,14 @@ export default function AboutUs() {
           <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 mb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-['Oxanium'] mb-6">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-bold mb-6">
                   Our Story
                 </h2>
                 <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
                   <p>
-                    Founded in 2024, Gamiz was born from a simple belief: every gamer deserves access to the best titles, 
-                    regardless of their platform or location. What started as a small passion project has grown into a 
-                    comprehensive gaming marketplace serving millions of players worldwide.
+                    Founded in 2024, GAMING STORE was born from a simple belief: every gamer deserves access to the best titles, 
+                    regardless of their location or budget. We started as a small team of passionate gamers who wanted to
+                    revolutionize how people discover and purchase games.
                   </p>
                   <p>
                     Our team consists of dedicated gamers, developers, and industry professionals who understand what makes 
@@ -58,7 +72,7 @@ export default function AboutUs() {
                     provide endless hours of entertainment.
                   </p>
                   <p>
-                    Today, Gamiz stands as a testament to our commitment to the gaming community. We're not just selling 
+                    Today, GAMING STORE stands as a testament to our commitment to the gaming community. We're not just selling 
                     games; we're building a platform where gamers can discover, connect, and celebrate their shared passion.
                   </p>
                 </div>
@@ -78,7 +92,7 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="text-4xl mb-4">🎯</div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-['Oxanium'] mb-4">Our Mission</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-bold mb-4">Our Mission</h3>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                 To democratize gaming by providing seamless access to the world's best digital games, 
                 fostering a vibrant community, and supporting developers in creating amazing experiences.
@@ -87,7 +101,7 @@ export default function AboutUs() {
 
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="text-4xl mb-4">💎</div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-['Oxanium'] mb-4">Our Values</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-bold mb-4">Our Values</h3>
               <ul className="text-gray-700 dark:text-gray-300 space-y-2">
                 <li>• <strong>Quality:</strong> Only the best games make it to our platform</li>
                 <li>• <strong>Community:</strong> Gamers first, always</li>
@@ -100,7 +114,7 @@ export default function AboutUs() {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-16">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">1000+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-orange-400 mb-2">1000+</div>
               <div className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Games Available</div>
             </div>
             
@@ -122,19 +136,19 @@ export default function AboutUs() {
 
           {/* Team */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-['Oxanium'] mb-8 text-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-bold mb-8 text-center">
               Meet Our Team
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
-                  ZA
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-500 dark:from-orange-400 dark:to-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
+                  👨‍💻
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Zeyad Alhoussainy</h3>
-                <p className="text-blue-600 dark:text-blue-400 font-medium mb-2">Founder & CEO</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">John Doe</h3>
+                <p className="text-blue-600 dark:text-orange-400 font-medium mb-2">Founder & CEO</p>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Gaming enthusiast and tech visionary leading Gamiz into the future of digital gaming.
+                  Gaming enthusiast and tech visionary leading GAMING STORE into the future of digital gaming.
                 </p>
               </div>
               
@@ -164,7 +178,7 @@ export default function AboutUs() {
 
           {/* Contact Information */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-['Oxanium'] mb-8 text-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-bold mb-8 text-center">
               Get in Touch
             </h2>
             
@@ -172,11 +186,11 @@ export default function AboutUs() {
               <div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Contact Details</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-blue-600 dark:text-blue-400 text-xl">📍</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-blue-600 dark:text-orange-400 text-xl">📍</span>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Address</p>
-                      <p className="text-gray-600 dark:text-gray-300">PO Box W75 Street Ian West, New Queens</p>
+                      <p className="text-gray-600 dark:text-gray-300">123 Gaming Street, Digital City</p>
                     </div>
                   </div>
                   
@@ -192,7 +206,7 @@ export default function AboutUs() {
                     <span className="text-red-500 dark:text-red-400 text-xl">📧</span>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Email</p>
-                      <p className="text-gray-600 dark:text-gray-300">info@gamiz.com</p>
+                      <p className="text-gray-600 dark:text-gray-300">info@gamingstore.com</p>
                     </div>
                   </div>
                   
@@ -200,7 +214,7 @@ export default function AboutUs() {
                     <span className="text-purple-600 dark:text-purple-400 text-xl">🌐</span>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Website</p>
-                      <p className="text-gray-600 dark:text-gray-300">www.gamiz.com</p>
+                      <p className="text-gray-600 dark:text-gray-300">www.gamingstore.com</p>
                     </div>
                   </div>
                 </div>
@@ -217,7 +231,7 @@ export default function AboutUs() {
                 
                 <div className="mt-6">
                   <Button 
-                    onClick={() => window.location.href = 'mailto:info@gamiz.com'}
+                    onClick={() => window.location.href = 'mailto:info@gamingstore.com'}
                     className="w-full"
                   >
                     Send us a Message

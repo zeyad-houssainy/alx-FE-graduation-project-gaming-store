@@ -1,10 +1,39 @@
 import axios from 'axios';
+import { API_CONFIG, isAPIEnabled, getAPIBaseURL, getAPIKey, getAPITimeout } from '../config/api';
 
-// Using RAWG API for gaming data (free tier available)
-const API_BASE_URL = 'https://api.rawg.io/api';
-const API_KEY = 'd6c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0'; // This is a placeholder key
+/**
+ * GAMING STORE API Service
+ * 
+ * CORS SOLUTION: This service uses local fallback data by default to avoid CORS issues
+ * when making requests from the browser to external APIs like RAWG.
+ * 
+ * CONFIGURATION:
+ * - Set USE_API = false (default) to use local data (recommended for development)
+ * - Set USE_API = true to attempt API calls (may cause CORS errors in browser)
+ * 
+ * WHY CORS HAPPENS:
+ * - RAWG API doesn't support CORS for browser requests
+ * - This is a security feature that prevents malicious websites from accessing APIs
+ * - Server-to-server requests don't have this limitation
+ * 
+ * ALTERNATIVE SOLUTIONS:
+ * 1. Use a CORS proxy service (not recommended for production)
+ * 2. Build a backend server to proxy API calls
+ * 3. Use local data (current implementation - most reliable)
+ * 
+ * LOCAL DATA FEATURES:
+ * - 20+ high-quality games with realistic data
+ * - Full search, filtering, and sorting support
+ * - Pagination support
+ * - No API rate limits or CORS issues
+ */
 
-// Fallback data in case API fails
+// Configuration
+const USE_API = isAPIEnabled();
+const API_BASE_URL = getAPIBaseURL();
+const API_KEY = getAPIKey();
+
+// Enhanced fallback data with more games and better structure
 const fallbackGames = [
   {
     id: 1,
@@ -181,17 +210,67 @@ const fallbackGames = [
     genre: "FPS",
     released: "2023-09-27",
     description: "The latest evolution of the world's most popular tactical shooter game."
+  },
+  {
+    id: 17,
+    name: "Resident Evil 4 Remake",
+    background_image: "/assets/images/featured-game-1.jpg",
+    rating: 4.7,
+    price: 59.99,
+    platforms: ["PC", "PS5", "PS4", "Xbox Series X"],
+    genre: "Survival Horror",
+    released: "2023-03-24",
+    description: "A complete remake of the classic survival horror game with modern graphics and gameplay."
+  },
+  {
+    id: 18,
+    name: "Street Fighter 6",
+    background_image: "/assets/images/featured-game-2.jpg",
+    rating: 4.4,
+    price: 59.99,
+    platforms: ["PC", "PS5", "PS4", "Xbox Series X"],
+    genre: "Fighting",
+    released: "2023-06-02",
+    description: "The latest entry in the legendary fighting game franchise with new mechanics and characters."
+  },
+  {
+    id: 19,
+    name: "Diablo IV",
+    background_image: "/assets/images/featured-game-3.jpg",
+    rating: 4.3,
+    price: 69.99,
+    platforms: ["PC", "PS5", "PS4", "Xbox Series X", "Xbox One"],
+    genre: "Action RPG",
+    released: "2023-06-06",
+    description: "Return to the world of Sanctuary in this dark action role-playing game."
+  },
+  {
+    id: 20,
+    name: "Zelda: Tears of the Kingdom",
+    background_image: "/assets/images/featured-game-4.jpg",
+    rating: 4.9,
+    price: 59.99,
+    platforms: ["Nintendo Switch"],
+    genre: "Action-Adventure",
+    released: "2023-05-12",
+    description: "Explore the vast world of Hyrule in this epic adventure with new abilities and challenges."
   }
 ];
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: getAPITimeout(),
 });
 
 // API functions
 export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
+  // If API is disabled, use local data directly
+  if (!USE_API) {
+    console.log('Using local game data (API disabled to avoid CORS issues)');
+    return getLocalGames(page, pageSize, search, genre, platform, sortBy);
+  }
+
   try {
     const params = {
       key: API_KEY,
@@ -247,73 +326,106 @@ export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = [
       previous: response.data.previous,
     };
   } catch (error) {
-    console.warn('API call failed, using fallback data:', error.message);
-    
-    // Filter fallback data based on search, genre, and platform
-    let filteredGames = [...fallbackGames];
-    
-    // Apply search filter
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filteredGames = filteredGames.filter(game => 
-        game.name.toLowerCase().includes(searchLower) ||
-        game.description.toLowerCase().includes(searchLower) ||
-        game.genre.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    // Apply genre filter (multiple genres)
-    if (genre && genre.length > 0) {
-      filteredGames = filteredGames.filter(game => 
-        genre.some(g => game.genre.toLowerCase() === g.toLowerCase())
-      );
-    }
-    
-    // Apply platform filter (multiple platforms)
-    if (platform && platform.length > 0) {
-      filteredGames = filteredGames.filter(game => 
-        platform.some(p => game.platforms.some(gamePlatform => 
-          gamePlatform.toLowerCase().includes(p.toLowerCase())
-        ))
-      );
-    }
-    
-    // Apply sorting to fallback data
-    switch (sortBy) {
-      case 'name-asc':
-        filteredGames.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'name-desc':
-        filteredGames.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case 'price-low':
-        filteredGames.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        filteredGames.sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        filteredGames.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
-      default: // relevance - keep original order
-        break;
-    }
-    
-    // Apply pagination
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedGames = filteredGames.slice(startIndex, endIndex);
-    
-    return {
-      games: paginatedGames,
-      count: filteredGames.length,
-      next: endIndex < filteredGames.length ? page + 1 : null,
-      previous: page > 1 ? page - 1 : null,
-    };
+    console.warn('API call failed, using local fallback data:', error.message);
+    return getLocalGames(page, pageSize, search, genre, platform, sortBy);
   }
 };
 
+// Helper function to get local games with filtering and pagination
+const getLocalGames = (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
+  // Filter fallback data based on search, genre, and platform
+  let filteredGames = [...fallbackGames];
+  
+  // Apply search filter
+  if (search) {
+    const searchLower = String(search).toLowerCase();
+    filteredGames = filteredGames.filter(game => 
+      String(game.name || '').toLowerCase().includes(searchLower) ||
+      String(game.description || '').toLowerCase().includes(searchLower) ||
+      String(game.genre || '').toLowerCase().includes(searchLower)
+    );
+  }
+  
+  // Apply genre filter (multiple genres)
+  if (genre && genre.length > 0) {
+    filteredGames = filteredGames.filter(game => 
+      genre.some(g => {
+        // Ensure both values are strings before comparing
+        const gameGenre = String(game.genre || '').toLowerCase();
+        const filterGenre = String(g || '').toLowerCase();
+        return gameGenre === filterGenre;
+      })
+    );
+  }
+  
+  // Apply platform filter (multiple platforms)
+  if (platform && platform.length > 0) {
+    filteredGames = filteredGames.filter(game => 
+      platform.some(p => game.platforms.some(gamePlatform => {
+        // Ensure both values are strings before comparing
+        const gamePlatformStr = String(gamePlatform || '').toLowerCase();
+        const filterPlatform = String(p || '').toLowerCase();
+        return gamePlatformStr.includes(filterPlatform);
+      }))
+    );
+  }
+  
+  // Apply sorting to fallback data
+  switch (sortBy) {
+    case 'name-asc':
+      filteredGames.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+      break;
+    case 'name-desc':
+      filteredGames.sort((a, b) => String(b.name || '').localeCompare(String(a.name || '')));
+      break;
+    case 'price-low':
+      filteredGames.sort((a, b) => (a.price || 0) - (b.price || 0));
+      break;
+    case 'price-high':
+      filteredGames.sort((a, b) => (b.price || 0) - (a.price || 0));
+      break;
+    case 'rating':
+      filteredGames.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      break;
+    default: // relevance - keep original order
+      break;
+  }
+  
+  // Apply pagination
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedGames = filteredGames.slice(startIndex, endIndex);
+  
+  return {
+    games: paginatedGames,
+    count: filteredGames.length,
+    next: endIndex < filteredGames.length ? page + 1 : null,
+    previous: page > 1 ? page - 1 : null,
+  };
+};
+
 export const fetchGameById = async (id) => {
+  // If API is disabled, use local data directly
+  if (!USE_API) {
+    console.log('Using local game data (API disabled to avoid CORS issues)');
+    const localGame = fallbackGames.find(game => game.id === parseInt(id));
+    if (localGame) {
+      return {
+        ...localGame,
+        website: null,
+        metacritic: null,
+        screenshots: [localGame.background_image],
+      };
+    }
+    // Return first game if ID not found
+    return {
+      ...fallbackGames[0],
+      website: null,
+      metacritic: null,
+      screenshots: [fallbackGames[0].background_image],
+    };
+  }
+
   try {
     const response = await api.get(`/games/${id}`, {
       params: { key: API_KEY }
@@ -335,20 +447,30 @@ export const fetchGameById = async (id) => {
       screenshots: game.short_screenshots?.map(s => s.image) || [],
     };
   } catch (error) {
-    console.warn('API call failed, using fallback data:', error.message);
+    console.warn('API call failed, using local fallback data:', error.message);
     // Return fallback game if API fails
-    return fallbackGames.find(game => game.id === parseInt(id)) || fallbackGames[0];
+    const localGame = fallbackGames.find(game => game.id === parseInt(id));
+    if (localGame) {
+      return {
+        ...localGame,
+        website: null,
+        metacritic: null,
+        screenshots: [localGame.background_image],
+      };
+    }
+    return {
+      ...fallbackGames[0],
+      website: null,
+      metacritic: null,
+      screenshots: [fallbackGames[0].background_image],
+    };
   }
 };
 
 export const fetchGenres = async () => {
-  try {
-    const response = await api.get('/genres', {
-      params: { key: API_KEY }
-    });
-    return response.data.results;
-  } catch (error) {
-    console.warn('API call failed, using fallback genres:', error.message);
+  // If API is disabled, use local data directly
+  if (!USE_API) {
+    console.log('Using local genre data (API disabled to avoid CORS issues)');
     return [
       { id: 1, name: 'Action' },
       { id: 2, name: 'Adventure' },
@@ -364,18 +486,43 @@ export const fetchGenres = async () => {
       { id: 12, name: 'Battle Royale' },
       { id: 13, name: 'FPS' },
       { id: 14, name: 'Platformer' },
+      { id: 15, name: 'Survival Horror' },
+      { id: 16, name: 'Fighting' },
+    ];
+  }
+
+  try {
+    const response = await api.get('/genres', {
+      params: { key: API_KEY }
+    });
+    return response.data.results;
+  } catch (error) {
+    console.warn('API call failed, using local fallback genres:', error.message);
+    return [
+      { id: 1, name: 'Action' },
+      { id: 2, name: 'Adventure' },
+      { id: 3, name: 'RPG' },
+      { id: 4, name: 'Action RPG' },
+      { id: 5, name: 'Action-Adventure' },
+      { id: 6, name: 'Strategy' },
+      { id: 7, name: 'Sports' },
+      { id: 8, name: 'Racing' },
+      { id: 9, name: 'Puzzle' },
+      { id: 10, name: 'Indie' },
+      { id: 11, name: 'Sandbox' },
+      { id: 12, name: 'Battle Royale' },
+      { id: 13, name: 'FPS' },
+      { id: 14, name: 'Platformer' },
+      { id: 15, name: 'Survival Horror' },
+      { id: 16, name: 'Fighting' },
     ];
   }
 };
 
 export const fetchPlatforms = async () => {
-  try {
-    const response = await api.get('/platforms', {
-      params: { key: API_KEY }
-    });
-    return response.data.results;
-  } catch (error) {
-    console.warn('API call failed, using fallback platforms:', error.message);
+  // If API is disabled, use local data directly
+  if (!USE_API) {
+    console.log('Using local platform data (API disabled to avoid CORS issues)');
     return [
       { id: 1, name: 'PC' },
       { id: 2, name: 'PlayStation 5' },
@@ -383,6 +530,33 @@ export const fetchPlatforms = async () => {
       { id: 4, name: 'Nintendo Switch' },
       { id: 5, name: 'PlayStation 4' },
       { id: 6, name: 'Xbox One' },
+      { id: 7, name: 'Mobile' },
+    ];
+  }
+
+  try {
+    const response = await api.get('/platforms', {
+      params: { key: API_KEY }
+    });
+    return response.data.results;
+  } catch (error) {
+    console.warn('API call failed, using local fallback platforms:', error.message);
+    return [
+      { id: 1, name: 'PC' },
+      { id: 2, name: 'PlayStation 5' },
+      { id: 3, name: 'Xbox Series X' },
+      { id: 4, name: 'Nintendo Switch' },
+      { id: 5, name: 'PlayStation 4' },
+      { id: 6, name: 'Xbox One' },
+      { id: 7, name: 'Mobile' },
     ];
   }
 };
+
+// Log current configuration on service load
+console.log(`🎮 GAMING STORE API Service loaded:`);
+console.log(`   - API Enabled: ${USE_API ? '✅ Yes' : '❌ No (using local data)'}`);
+console.log(`   - CORS Issues: ${USE_API ? '⚠️  May occur' : '✅ Avoided'}`);
+console.log(`   - Data Source: ${USE_API ? 'RAWG API' : 'Local Fallback Data'}`);
+console.log(`   - Games Available: ${fallbackGames.length} high-quality games`);
+console.log(`   - Features: Search, Filter, Sort, Pagination all supported`);

@@ -1,9 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const ForgotPassword = ({ open, handleClose }) => {
+export default function ForgotPassword({ open, onClose }) {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const timeoutRef = useRef(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleClose = () => {
+    // Clear any pending timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    onClose();
+    setEmail('');
+    setMessage('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,8 +36,8 @@ const ForgotPassword = ({ open, handleClose }) => {
       
       if (email) {
         setMessage('Password reset link has been sent to your email address.');
-        setTimeout(() => {
-          handleClose();
+        timeoutRef.current = setTimeout(() => {
+          onClose();
           setEmail('');
           setMessage('');
         }, 3000);
@@ -38,7 +58,7 @@ const ForgotPassword = ({ open, handleClose }) => {
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-6 border border-gray-100 dark:border-gray-700">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white font-['Oxanium']">Reset Password</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white font-bold">Reset Password</h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -95,7 +115,7 @@ const ForgotPassword = ({ open, handleClose }) => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Sending...' : 'Continue'}
               </button>
@@ -106,5 +126,3 @@ const ForgotPassword = ({ open, handleClose }) => {
     </div>
   );
 };
-
-export default ForgotPassword;

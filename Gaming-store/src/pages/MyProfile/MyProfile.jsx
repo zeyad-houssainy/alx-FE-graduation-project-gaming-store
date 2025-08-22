@@ -6,10 +6,29 @@ import Footer from '../../components/Footer/Footer';
 
 export default function MyProfile() {
   const navigate = useNavigate();
-  const { user, logout, orders, clearMockData, cleanupMockData, resetAllData } = useAuth();
+  const { 
+    user, 
+    logout, 
+    orders, 
+    clearMockData, 
+    cleanupMockData, 
+    resetAllData,
+    addAddress,
+    updateAddress,
+    deleteAddress,
+    getAddresses,
+    addPaymentMethod,
+    updatePaymentMethod,
+    deletePaymentMethod,
+    getPaymentMethods
+  } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isAddingAddress, setIsAddingAddress] = useState(false);
+  const [isAddingPayment, setIsAddingPayment] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
+  const [editingPayment, setEditingPayment] = useState(null);
   
   // Profile edit form state
   const [profileForm, setProfileForm] = useState({
@@ -24,6 +43,27 @@ export default function MyProfile() {
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
+  });
+
+  // Address form state
+  const [addressForm, setAddressForm] = useState({
+    firstName: '',
+    lastName: '',
+    address1: '',
+    address2: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: 'United States'
+  });
+
+  // Payment method form state
+  const [paymentForm, setPaymentForm] = useState({
+    cardNumber: '',
+    cardholderName: '',
+    expiryMonth: '',
+    expiryYear: '',
+    cvv: ''
   });
 
   // Clear any existing mock data on component mount
@@ -45,6 +85,24 @@ export default function MyProfile() {
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Handle address form changes
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddressForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Handle payment form changes
+  const handlePaymentChange = (e) => {
+    const { name, value } = e.target;
+    setPaymentForm(prev => ({
       ...prev,
       [name]: value
     }));
@@ -74,6 +132,59 @@ export default function MyProfile() {
     setIsChangingPassword(false);
     setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     // Show success message
+  };
+
+  // Save address
+  const handleSaveAddress = () => {
+    if (editingAddress) {
+      updateAddress(editingAddress.id, addressForm);
+      setEditingAddress(null);
+    } else {
+      addAddress(addressForm);
+    }
+    setAddressForm({
+      firstName: '',
+      lastName: '',
+      address1: '',
+      address2: '',
+      city: '',
+      state: '',
+      zip: '',
+      country: 'United States'
+    });
+    setIsAddingAddress(false);
+  };
+
+  // Save payment method
+  const handleSavePayment = () => {
+    if (editingPayment) {
+      updatePaymentMethod(editingPayment.id, paymentForm);
+      setEditingPayment(null);
+    } else {
+      addPaymentMethod(paymentForm);
+    }
+    setPaymentForm({
+      cardNumber: '',
+      cardholderName: '',
+      expiryMonth: '',
+      expiryYear: '',
+      cvv: ''
+    });
+    setIsAddingPayment(false);
+  };
+
+  // Edit address
+  const handleEditAddress = (address) => {
+    setAddressForm(address);
+    setEditingAddress(address);
+    setIsAddingAddress(true);
+  };
+
+  // Edit payment method
+  const handleEditPayment = (payment) => {
+    setPaymentForm(payment);
+    setEditingPayment(payment);
+    setIsAddingPayment(true);
   };
 
   // Handle logout
@@ -127,6 +238,8 @@ export default function MyProfile() {
               {[
                 { id: 'profile', label: 'Profile', icon: '👤' },
                 { id: 'orders', label: 'My Orders', icon: '📦' },
+                { id: 'addresses', label: 'Addresses', icon: '📍' },
+                { id: 'payment', label: 'Payment Methods', icon: '💳' },
                 { id: 'security', label: 'Security', icon: '🔒' }
               ].map((tab) => (
                 <button
@@ -149,6 +262,32 @@ export default function MyProfile() {
               {/* Profile Tab */}
               {activeTab === 'profile' && (
                 <div className="space-y-6">
+                  {/* Profile Image Section */}
+                  <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-blue-600 dark:bg-orange-500 rounded-full text-white text-3xl font-bold mb-4">
+                      {user?.avatar ? (
+                        <img 
+                          src={user.avatar} 
+                          alt={user.name} 
+                          className="w-24 h-24 rounded-full object-cover"
+                        />
+                      ) : (
+                        user?.name?.charAt(0)?.toUpperCase() || 'U'
+                      )}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                      {user?.name || 'User'}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      {user?.email || 'user@example.com'}
+                    </p>
+                    
+                    {/* Upload Photo Button */}
+                    <button className="mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors text-sm font-medium">
+                      📷 Upload Photo
+                    </button>
+                  </div>
+
                   <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                       Personal Information
@@ -380,6 +519,423 @@ export default function MyProfile() {
                 </div>
               )}
 
+              {/* Addresses Tab */}
+              {activeTab === 'addresses' && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      Saved Addresses
+                    </h2>
+                    <button
+                      onClick={() => {
+                        setIsAddingAddress(true);
+                        setEditingAddress(null);
+                        setAddressForm({
+                          firstName: '',
+                          lastName: '',
+                          address1: '',
+                          address2: '',
+                          city: '',
+                          state: '',
+                          zip: '',
+                          country: 'United States'
+                        });
+                      }}
+                      className="px-4 py-2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white rounded-lg transition-colors"
+                    >
+                      + Add New Address
+                    </button>
+                  </div>
+
+                  {/* Add/Edit Address Form */}
+                  {isAddingAddress && (
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-gray-50 dark:bg-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                        {editingAddress ? 'Edit Address' : 'Add New Address'}
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            First Name
+                          </label>
+                          <input
+                            type="text"
+                            name="firstName"
+                            value={addressForm.firstName}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="First Name"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Last Name
+                          </label>
+                          <input
+                            type="text"
+                            name="lastName"
+                            value={addressForm.lastName}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="Last Name"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Address Line 1
+                          </label>
+                          <input
+                            type="text"
+                            name="address1"
+                            value={addressForm.address1}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="Street Address"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Address Line 2 (Optional)
+                          </label>
+                          <input
+                            type="text"
+                            name="address2"
+                            value={addressForm.address2}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="Apartment, suite, etc."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            City
+                          </label>
+                          <input
+                            type="text"
+                            name="city"
+                            value={addressForm.city}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="City"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            State
+                          </label>
+                          <input
+                            type="text"
+                            name="state"
+                            value={addressForm.state}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="State"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            ZIP Code
+                          </label>
+                          <input
+                            type="text"
+                            name="zip"
+                            value={addressForm.zip}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="ZIP Code"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Country
+                          </label>
+                          <input
+                            type="text"
+                            name="country"
+                            value={addressForm.country}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="Country"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-3 mt-6">
+                        <button
+                          onClick={() => {
+                            setIsAddingAddress(false);
+                            setEditingAddress(null);
+                            setAddressForm({
+                              firstName: '',
+                              lastName: '',
+                              address1: '',
+                              address2: '',
+                              city: '',
+                              state: '',
+                              zip: '',
+                              country: 'United States'
+                            });
+                          }}
+                          className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveAddress}
+                          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                        >
+                          {editingAddress ? 'Update Address' : 'Save Address'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Saved Addresses List */}
+                  <div className="space-y-4">
+                    {getAddresses().length === 0 ? (
+                      <div className="text-center py-12">
+                        <div className="text-6xl mb-4">📍</div>
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                          No Saved Addresses
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                          Add addresses to your profile for faster checkout
+                        </p>
+                      </div>
+                    ) : (
+                      getAddresses().map((address) => (
+                        <div
+                          key={address.id}
+                          className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                                {address.firstName} {address.lastName}
+                              </h4>
+                              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                                {address.address1}<br />
+                                {address.address2 && `${address.address2}<br />`}
+                                {address.city}, {address.state} {address.zip}<br />
+                                {address.country}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleEditAddress(address)}
+                                className="px-3 py-1 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white text-sm rounded transition-colors"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm('Are you sure you want to delete this address?')) {
+                                    deleteAddress(address.id);
+                                  }
+                                }}
+                                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Payment Methods Tab */}
+              {activeTab === 'payment' && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      Payment Methods
+                    </h2>
+                    <button
+                      onClick={() => {
+                        setIsAddingPayment(true);
+                        setEditingPayment(null);
+                        setPaymentForm({
+                          cardNumber: '',
+                          cardholderName: '',
+                          expiryMonth: '',
+                          expiryYear: '',
+                          cvv: ''
+                        });
+                      }}
+                      className="px-4 py-2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white rounded-lg transition-colors"
+                    >
+                      + Add Payment Method
+                    </button>
+                  </div>
+
+                  {/* Add/Edit Payment Form */}
+                  {isAddingPayment && (
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-gray-50 dark:bg-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                        {editingPayment ? 'Edit Payment Method' : 'Add New Payment Method'}
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Card Number
+                          </label>
+                          <input
+                            type="text"
+                            name="cardNumber"
+                            value={paymentForm.cardNumber}
+                            onChange={handlePaymentChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="1234 5678 9012 3456"
+                            maxLength="19"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Cardholder Name
+                          </label>
+                          <input
+                            type="text"
+                            name="cardholderName"
+                            value={paymentForm.cardholderName}
+                            onChange={handlePaymentChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="John Doe"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Expiry Month
+                          </label>
+                          <select
+                            name="expiryMonth"
+                            value={paymentForm.expiryMonth}
+                            onChange={handlePaymentChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                          >
+                            <option value="">Month</option>
+                            {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                              <option key={month} value={month.toString().padStart(2, '0')}>
+                                {month.toString().padStart(2, '0')}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Expiry Year
+                          </label>
+                          <select
+                            name="expiryYear"
+                            value={paymentForm.expiryYear}
+                            onChange={handlePaymentChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                          >
+                            <option value="">Year</option>
+                            {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => (
+                              <option key={year} value={year}>
+                                {year}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            CVV
+                          </label>
+                          <input
+                            type="text"
+                            name="cvv"
+                            value={paymentForm.cvv}
+                            onChange={handlePaymentChange}
+                            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                            placeholder="123"
+                            maxLength="4"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-3 mt-6">
+                        <button
+                          onClick={() => {
+                            setIsAddingPayment(false);
+                            setEditingPayment(null);
+                            setPaymentForm({
+                              cardNumber: '',
+                              cardholderName: '',
+                              expiryMonth: '',
+                              expiryYear: '',
+                              cvv: ''
+                            });
+                          }}
+                          className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSavePayment}
+                          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                        >
+                          {editingPayment ? 'Update Payment Method' : 'Save Payment Method'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Saved Payment Methods List */}
+                  <div className="space-y-4">
+                    {getPaymentMethods().length === 0 ? (
+                      <div className="text-center py-12">
+                        <div className="text-6xl mb-4">💳</div>
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                          No Saved Payment Methods
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                          Add payment methods to your profile for faster checkout
+                        </p>
+                      </div>
+                  ) : (
+                      getPaymentMethods().map((payment) => (
+                        <div
+                          key={payment.id}
+                          className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                                {payment.cardholderName}
+                              </h4>
+                              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                                **** **** **** {payment.cardNumber.slice(-4)}<br />
+                                Expires: {payment.expiryMonth}/{payment.expiryYear}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleEditPayment(payment)}
+                                className="px-3 py-1 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white text-sm rounded transition-colors"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm('Are you sure you want to delete this payment method?')) {
+                                    deletePaymentMethod(payment.id);
+                                  }
+                                }}
+                                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Security Tab */}
               {activeTab === 'security' && (
                 <div className="space-y-6">
@@ -408,6 +964,7 @@ export default function MyProfile() {
                             name="currentPassword"
                             value={passwordForm.currentPassword}
                             onChange={handlePasswordChange}
+                            autoComplete="current-password"
                             className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                             placeholder="Enter current password"
                           />
@@ -423,6 +980,7 @@ export default function MyProfile() {
                             name="newPassword"
                             value={passwordForm.newPassword}
                             onChange={handlePasswordChange}
+                            autoComplete="new-password"
                             className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                             placeholder="Enter new password"
                           />
@@ -438,6 +996,7 @@ export default function MyProfile() {
                             name="confirmPassword"
                             value={passwordForm.confirmPassword}
                             onChange={handlePasswordChange}
+                            autoComplete="new-password"
                             className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                             placeholder="Confirm new password"
                           />

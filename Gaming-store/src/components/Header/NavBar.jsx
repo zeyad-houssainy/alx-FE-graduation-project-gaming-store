@@ -3,7 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function NavBar() {
   const location = useLocation();
-  const links = [
+
+  const navItems = [
     { name: "HOME", path: "/" },
     { name: "LIVE", path: "/live" },
     { name: "FEATURES", path: "/features" },
@@ -13,28 +14,23 @@ export default function NavBar() {
   ];
 
   return (
-    <nav className="relative z-10">
-      <ul className="flex gap-8 text-gray-700 dark:text-gray-300 uppercase font-bold font-['Oxanium'] text-sm tracking-wider">
-        {links.map((link) => (
-          <li key={link.name} className="relative group">
-            <Link
-              to={link.path}
-              className="relative block px-4 py-3 hover:text-blue-600 dark:hover:text-orange-400 transition-all duration-300 transform hover:scale-105"
-            >
-              {/* Background hover effect */}
-              <div className="absolute inset-0 bg-blue-50 dark:bg-orange-500/20 transform -skew-x-12 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded"></div>
-              
-              {/* Text */}
-              <span className="relative z-10">{link.name}</span>
-              
-              {/* Active indicator */}
-              {location.pathname === link.path && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-blue-600 dark:bg-orange-400"></div>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <nav className="flex items-center space-x-1">
+      {navItems.map((item) => {
+        const isActive = location.pathname === item.path;
+        return (
+          <Link
+            key={item.name}
+            to={item.path}
+            className={`px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
+              isActive
+                ? "bg-blue-50 dark:bg-orange-900/20 text-blue-700 dark:text-orange-300"
+                : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-orange-400"
+            }`}
+          >
+            {item.name}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

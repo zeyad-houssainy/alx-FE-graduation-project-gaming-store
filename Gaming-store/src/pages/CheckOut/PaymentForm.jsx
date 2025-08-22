@@ -13,7 +13,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-export default function PaymentForm({ onComplete }) {
+export default function PaymentForm({ onComplete, savedPaymentMethods, onUseSavedPayment }) {
   const [paymentType, setPaymentType] = React.useState('creditCard');
   const [cardNumber, setCardNumber] = React.useState('');
   const [cvv, setCvv] = React.useState('');
@@ -83,6 +83,48 @@ export default function PaymentForm({ onComplete }) {
 
   return (
     <Stack spacing={{ xs: 3, sm: 6 }} useFlexGap>
+      {/* Saved Payment Methods Section */}
+      {savedPaymentMethods && savedPaymentMethods.length > 0 && (
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Use Saved Payment Method
+          </Typography>
+          <div className="space-y-2">
+            {savedPaymentMethods.map((payment) => (
+              <Card
+                key={payment.id}
+                className="border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                onClick={() => onUseSavedPayment(payment)}
+              >
+                <CardContent>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {payment.cardholderName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        **** **** **** {payment.cardNumber.slice(-4)}<br />
+                        Expires: {payment.expiryMonth}/{payment.expiryYear}
+                      </Typography>
+                    </div>
+                    <button
+                      className="px-3 py-1 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white text-sm rounded transition-colors"
+                    >
+                      Use This Card
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <Typography variant="body2" color="text.secondary">
+              Or fill out the form below to enter a new payment method
+            </Typography>
+          </div>
+        </Box>
+      )}
+
       <FormControl component="fieldset" fullWidth>
         <RadioGroup
           aria-label="Payment options"

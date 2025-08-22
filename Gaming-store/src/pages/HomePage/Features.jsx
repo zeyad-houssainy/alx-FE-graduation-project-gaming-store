@@ -15,7 +15,7 @@ export default function Features() {
         {
             id: 3,
             icon: "🛒",
-            title: "Gaming Store",
+            title: "GAMING STORE",
             description: "Shop for gaming accessories, merchandise, and exclusive collectibles."
         }
     ];
@@ -27,7 +27,7 @@ export default function Features() {
                     <p className="text-gray-500 dark:text-gray-400 font-bold text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
                         What We Offer
                     </p>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-white">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
                         Gaming <span className="text-blue-600 dark:text-orange-400">Excellence</span>
                     </h2>
                     <div className="w-20 sm:w-24 h-1 bg-blue-600 dark:bg-orange-400 mx-auto mb-4 sm:mb-6"></div>
@@ -41,7 +41,7 @@ export default function Features() {
                             className="group bg-white dark:bg-gray-700 p-6 sm:p-8 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-orange-400 hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105"
                         >
                             <div className="text-blue-600 dark:text-orange-400 text-3xl sm:text-4xl mb-3 sm:mb-4">{feature.icon}</div>
-                            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 font-['Oxanium'] text-gray-900 dark:text-white">
+                            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 font-bold text-gray-900 dark:text-white">
                                 {feature.title}
                             </h3>
                             <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">

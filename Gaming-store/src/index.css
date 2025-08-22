@@ -1,7 +1,73 @@
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+/* Modern Font Stack - Inter as Primary */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/* Fallback fonts for better performance and cross-platform compatibility */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Inter'), local('Segoe UI'), local('Roboto'), local('Helvetica Neue'), local('Arial'), local('sans-serif');
+  font-display: swap;
+}
 
 @import "tailwindcss";
+
+/* Base font settings for better typography */
+html {
+  font-family: 'Inter', 'Inter Fallback', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: inherit;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+/* Enhanced typography for headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+/* Better font rendering for different weights */
+.font-light {
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+.font-normal {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.font-medium {
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+.font-semibold {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.font-bold {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.font-extrabold {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.font-black {
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
 
 /* Custom dark mode variant */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -11,34 +77,30 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar for gaming theme */
+/* Minimal scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: #3b82f6; /* Blue for light theme */
+  border-radius: 3px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #f59e0b;
+  background: #f59e0b; /* Orange for dark theme */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb; /* Darker blue for light theme hover */
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #d97706;
+  background: #d97706; /* Darker orange for dark theme hover */
 }
 
 /* Search Overlay Active State */
@@ -47,9 +109,24 @@ body.search-overlay-active {
   transition: opacity 0.3s ease-in-out;
 }
 
-/* Ensure the search overlay itself maintains full opacity */
 body.search-overlay-active .search-overlay,
 body.search-overlay-active [data-search-overlay] {
   opacity: 1 !important;
+}
+
+/* Fade-in animation for search suggestions */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
 }
 

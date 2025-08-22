@@ -41,7 +41,7 @@ export default function GameDetail() {
 
   if (error || !game) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+      <div className="min-h-screen bg-white dark:bg-gray-900 pt-20">
         <div className="container mx-auto px-6 py-12">
           <div className="text-center">
             <div className="text-6xl mb-4">😞</div>
@@ -63,7 +63,7 @@ export default function GameDetail() {
     : [game.background_image];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pt-20">
       <div className="container mx-auto px-6 py-12">
         {/* Breadcrumb */}
         <nav className="mb-8">
@@ -130,7 +130,7 @@ export default function GameDetail() {
           <div className="space-y-6">
             {/* Title and Rating */}
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Oxanium'] mb-4 text-gray-900 dark:text-white leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-bold mb-4 text-gray-900 dark:text-white leading-tight">
                 {game.name}
               </h1>
               <RatingStars rating={game.rating} size="large" />
@@ -158,7 +158,7 @@ export default function GameDetail() {
 
             {/* Game Details */}
             <div className="bg-white dark:bg-gray-700 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-600 space-y-4">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white font-['Oxanium']">Game Details</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white font-bold">Game Details</h3>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -189,7 +189,7 @@ export default function GameDetail() {
 
             {/* Description */}
             <div className="bg-white dark:bg-gray-700 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-600">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white font-['Oxanium'] mb-4">About This Game</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white font-bold mb-4">About This Game</h3>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                 {game.description}
               </p>
@@ -198,7 +198,7 @@ export default function GameDetail() {
             {/* Additional Info */}
             {game.website && (
               <div className="bg-white dark:bg-gray-700 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-600">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white font-['Oxanium'] mb-4">Official Website</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white font-bold mb-4">Official Website</h3>
                 <a
                   href={game.website}
                   target="_blank"

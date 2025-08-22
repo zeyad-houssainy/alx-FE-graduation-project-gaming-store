@@ -35,11 +35,11 @@ export default function Cart() {
    }
 
    return (
-     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
+     <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 sm:pt-24">
        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
                  {/* Page Header */}
          <div className="text-center mb-8 sm:mb-12">
-           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-['Oxanium'] mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
+           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
              SHOPPING <span className="text-blue-600 dark:text-orange-400">CART</span>
            </h1>
            <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed px-4">
@@ -50,7 +50,7 @@ export default function Cart() {
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                      {/* Cart Items */}
            <div className="lg:col-span-2 space-y-6">
-             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 font-['Oxanium'] mb-6">
+             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 font-bold mb-6">
                Cart Items ({getCartItemCount()})
              </h2>
             
@@ -76,7 +76,7 @@ export default function Cart() {
                      {/* Order Summary */}
            <div className="lg:col-span-1">
              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 sticky top-24">
-               <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 font-['Oxanium'] mb-6">
+               <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 font-bold mb-6">
                  Order Summary
                </h3>
 
