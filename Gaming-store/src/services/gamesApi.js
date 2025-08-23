@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { API_CONFIG, isAPIEnabled, getAPIBaseURL, getAPIKey, getAPITimeout } from '../config/api';
+import { API_CONFIG, isAPIEnabled, getAPITimeout } from '../config/api';
+import * as cheapsharkApi from './cheapsharkApi';
 
 /**
  * GAMING STORE API Service
@@ -30,8 +31,6 @@ import { API_CONFIG, isAPIEnabled, getAPIBaseURL, getAPIKey, getAPITimeout } fro
 
 // Configuration
 const USE_API = isAPIEnabled();
-const API_BASE_URL = getAPIBaseURL();
-const API_KEY = getAPIKey();
 
 // Enhanced fallback data with more games and better structure
 const fallbackGames = [
@@ -257,11 +256,7 @@ const fallbackGames = [
   }
 ];
 
-// Create axios instance
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: getAPITimeout(),
-});
+// Note: We now use CheapShark API directly through the cheapsharkApi service
 
 // API functions
 export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
@@ -272,61 +267,28 @@ export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = [
   }
 
   try {
-    const params = {
-      key: API_KEY,
-      page,
-      page_size: pageSize,
-    };
-
-    // Apply sorting based on sortBy parameter
-    switch (sortBy) {
-      case 'name-asc':
-        params.ordering = 'name';
-        break;
-      case 'name-desc':
-        params.ordering = '-name';
-        break;
-      case 'price-low':
-        params.ordering = 'rating'; // Using rating as proxy for price
-        break;
-      case 'price-high':
-        params.ordering = '-rating'; // Using rating as proxy for price
-        break;
-      case 'rating':
-        params.ordering = '-rating';
-        break;
-      default: // relevance
-        params.ordering = '-rating';
-        break;
-    }
-
-    if (search) params.search = search;
-    if (genre && genre.length > 0) params.genres = genre.join(',');
-    if (platform && platform.length > 0) params.platforms = platform.join(',');
-
-    const response = await api.get('/games', { params });
+    console.log('🎮 Fetching games from CheapShark API...');
     
-    // Transform API data to match our structure
-    const transformedGames = response.data.results.map(game => ({
-      id: game.id,
-      name: game.name,
-      background_image: game.background_image || game.background_image_additional || '/assets/images/featured-game-1.jpg',
-      rating: game.rating,
-      price: Math.floor(Math.random() * 70) + 19.99, // Random price for demo
-      platforms: game.platforms?.map(p => p.platform.name) || ['PC'],
-      genre: game.genres?.[0]?.name || 'Action',
-      released: game.released,
-      description: game.description || 'No description available.',
-    }));
-
-    return {
-      games: transformedGames,
-      count: response.data.count,
-      next: response.data.next,
-      previous: response.data.previous,
+    // Use CheapShark API for real-time game prices
+    const cheapsharkOptions = {
+      search: search,
+      page: page,
+      pageSize: pageSize,
+      sortBy: sortBy,
+      stores: [], // Can be extended to filter by specific stores
+      maxPrice: null, // Can be extended to filter by price range
+      minPrice: null,
+      steamRating: null,
+      metacritic: null,
     };
+
+    const result = await cheapsharkApi.fetchGames(cheapsharkOptions);
+    
+    console.log(`✅ CheapShark API: Found ${result.count} games`);
+    return result;
+    
   } catch (error) {
-    console.warn('API call failed, using local fallback data:', error.message);
+    console.warn('CheapShark API call failed, using local fallback data:', error.message);
     return getLocalGames(page, pageSize, search, genre, platform, sortBy);
   }
 };
@@ -427,27 +389,16 @@ export const fetchGameById = async (id) => {
   }
 
   try {
-    const response = await api.get(`/games/${id}`, {
-      params: { key: API_KEY }
-    });
-
-    const game = response.data;
-    return {
-      id: game.id,
-      name: game.name,
-      background_image: game.background_image || game.background_image_additional || '/assets/images/featured-game-1.jpg',
-      rating: game.rating,
-      price: Math.floor(Math.random() * 70) + 19.99,
-      platforms: game.platforms?.map(p => p.platform.name) || ['PC'],
-      genre: game.genres?.[0]?.name || 'Action',
-      released: game.released,
-      description: game.description || 'No description available.',
-      website: game.website,
-      metacritic: game.metacritic,
-      screenshots: game.short_screenshots?.map(s => s.image) || [],
-    };
+    console.log(`🎮 Fetching game details from CheapShark API for ID: ${id}`);
+    
+    // Use CheapShark API for real-time game details
+    const game = await cheapsharkApi.fetchGameById(id);
+    
+    console.log(`✅ CheapShark API: Found game "${game.name}"`);
+    return game;
+    
   } catch (error) {
-    console.warn('API call failed, using local fallback data:', error.message);
+    console.warn('CheapShark API call failed, using local fallback data:', error.message);
     // Return fallback game if API fails
     const localGame = fallbackGames.find(game => game.id === parseInt(id));
     if (localGame) {
@@ -556,7 +507,8 @@ export const fetchPlatforms = async () => {
 // Log current configuration on service load
 console.log(`🎮 GAMING STORE API Service loaded:`);
 console.log(`   - API Enabled: ${USE_API ? '✅ Yes' : '❌ No (using local data)'}`);
-console.log(`   - CORS Issues: ${USE_API ? '⚠️  May occur' : '✅ Avoided'}`);
-console.log(`   - Data Source: ${USE_API ? 'RAWG API' : 'Local Fallback Data'}`);
-console.log(`   - Games Available: ${fallbackGames.length} high-quality games`);
-console.log(`   - Features: Search, Filter, Sort, Pagination all supported`);
+console.log(`   - CORS Issues: ${USE_API ? '✅ Avoided (CheapShark)' : '✅ Avoided'}`);
+console.log(`   - Data Source: ${USE_API ? 'CheapShark API (Real-time prices)' : 'Local Fallback Data'}`);
+console.log(`   - Games Available: ${fallbackGames.length} high-quality games (fallback)`);
+console.log(`   - Features: Search, Filter, Sort, Pagination, Real-time prices, Store comparison`);
+console.log(`   - CheapShark Benefits: No API key, No CORS, Real-time deals, Multiple stores`);

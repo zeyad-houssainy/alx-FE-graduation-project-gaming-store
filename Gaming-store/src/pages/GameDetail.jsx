@@ -6,6 +6,7 @@ import Header from '../components/Header/Header';
 import RatingStars from '../components/RatingStars';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
+import StoreInfo from '../components/StoreInfo';
 
 export default function GameDetail() {
   const { id } = useParams();
@@ -218,6 +219,9 @@ export default function GameDetail() {
                   </a>
                 </div>
               )}
+
+              {/* Store Information and Deals */}
+              <StoreInfo gameId={game.id} gameName={game.name} />
             </div>
           </div>
         </div>

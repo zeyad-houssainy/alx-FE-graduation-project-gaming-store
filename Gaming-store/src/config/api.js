@@ -8,9 +8,16 @@
 export const API_CONFIG = {
   // Set to false to avoid CORS issues (recommended for development)
   // Set to true to attempt API calls (may cause CORS errors in browser)
-  USE_API: false,
+  USE_API: true, // Changed to true to enable CheapShark API
   
-  // RAWG API Configuration
+  // CheapShark API Configuration (Primary - No CORS issues!)
+  CHEAPSHARK: {
+    BASE_URL: 'https://www.cheapshark.com/api/1.0',
+    TIMEOUT: 10000, // 10 seconds
+    FEATURES: ['Real-time prices', 'Store comparisons', 'Price history', 'Deals tracking'],
+  },
+  
+  // RAWG API Configuration (Fallback)
   RAWG: {
     BASE_URL: 'https://api.rawg.io/api',
     API_KEY: 'd6c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0', // Replace with your actual API key
@@ -34,14 +41,14 @@ export const API_CONFIG = {
 // Helper function to check if API is enabled
 export const isAPIEnabled = () => API_CONFIG.USE_API;
 
-// Helper function to get API base URL
-export const getAPIBaseURL = () => API_CONFIG.RAWG.BASE_URL;
+// Helper function to get CheapShark API base URL (Primary)
+export const getAPIBaseURL = () => API_CONFIG.CHEAPSHARK.BASE_URL;
 
-// Helper function to get API key
-export const getAPIKey = () => API_CONFIG.RAWG.API_KEY;
+// Helper function to get CheapShark API key (not needed for CheapShark)
+export const getAPIKey = () => null; // CheapShark doesn't require API key
 
 // Helper function to get timeout
-export const getAPITimeout = () => API_CONFIG.RAWG.TIMEOUT;
+export const getAPITimeout = () => API_CONFIG.CHEAPSHARK.TIMEOUT;
 
 // Export default config
 export default API_CONFIG;
