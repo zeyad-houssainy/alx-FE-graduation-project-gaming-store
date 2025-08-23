@@ -5,7 +5,8 @@ export default function SearchBar({
   onSearchChange, 
   onSearch, 
   placeholder = "Search games...",
-  className = ""
+  className = "",
+  activeStore = 'mock' // Add activeStore prop for store-specific hints
 }) {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,6 +24,33 @@ export default function SearchBar({
   // Ensure searchTerm is always a string
   const safeSearchTerm = searchTerm || '';
 
+  // Store-specific search hints
+  const getSearchHint = () => {
+    switch (activeStore) {
+      case 'rawg':
+        return 'Search 500,000+ video games by name, genre, or developer...';
+      case 'cheapshark':
+        return 'Search for the best game deals across 20+ stores...';
+      case 'bgg':
+        return 'Search 100,000+ board games by name, category, or mechanic...';
+      default: // mock
+        return 'Search our curated collection of popular games...';
+    }
+  };
+
+  const getPlaceholder = () => {
+    switch (activeStore) {
+      case 'rawg':
+        return 'Search games, genres, developers...';
+      case 'cheapshark':
+        return 'Search for game deals...';
+      case 'bgg':
+        return 'Search board games, categories...';
+      default: // mock
+        return 'Search games...';
+    }
+  };
+
   return (
     <div className={`relative ${className}`}>
       <form onSubmit={handleSubmit} className="relative" role="search">
@@ -30,7 +58,7 @@ export default function SearchBar({
           type="text"
           value={safeSearchTerm}
           onChange={handleInputChange}
-          placeholder={placeholder}
+          placeholder={placeholder || getPlaceholder()}
           className="w-full px-4 py-3 pl-12 pr-32 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500 focus:border-blue-500 dark:focus:border-orange-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 font-medium transition-colors"
           role="searchbox"
           aria-label="Search for games"
@@ -52,6 +80,11 @@ export default function SearchBar({
           Search
         </button>
       </form>
+      
+      {/* Search Hint */}
+      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+        {getSearchHint()}
+      </div>
     </div>
   );
 }

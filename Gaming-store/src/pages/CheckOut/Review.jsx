@@ -1,15 +1,14 @@
-import * as React from 'react';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { useCart } from '../../context/CartContext';
+import React from 'react';
+import { useCartStore } from '../../stores';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
+import CartItem from '../../components/CartItem';
+import Button from '../../components/Button';
+import { Link } from 'react-router-dom';
 
 export default function Review({ shippingAddress, paymentDetails }) {
-  const { items, getCartTotal } = useCart();
+  const { items, getCartTotal } = useCartStore();
   
   // Calculate totals
   const subtotal = getCartTotal();

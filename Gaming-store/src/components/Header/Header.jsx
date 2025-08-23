@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 import { useState } from "react";
-import { useCart } from "../../context/CartContext";
+import { useCartStore } from "../../stores";
 import Logo from "./Logo";
 import NavBar from "./NavBar";
 import News from "./News";
@@ -9,7 +9,7 @@ import MobileMenu from "./MobileMenu";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { getCartItemCount } = useCart();
+  const { getCartItemCount } = useCartStore();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);

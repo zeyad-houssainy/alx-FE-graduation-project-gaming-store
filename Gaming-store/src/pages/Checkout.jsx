@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import { useCartStore, useAuthStore } from '../stores';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
+import CartItem from '../components/CartItem';
+import Button from '../components/Button';
+import axios from 'axios';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, getCartTotal, clearCart } = useCart();
-  const { addOrder, isLoggedIn, user } = useAuth();
+  const { items, getCartTotal, clearCart } = useCartStore();
+  const { addOrder, isLoggedIn, user } = useAuthStore();
   
   const [formData, setFormData] = useState({
     firstName: '',

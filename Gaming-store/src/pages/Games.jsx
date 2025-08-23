@@ -1,36 +1,51 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useFetchGames, useFetchGenres, useFetchPlatforms } from '../hooks/useFetchGames';
-import { useAuth } from '../context/AuthContext';
-import GameCard from '../components/GameCard';
-import SearchBar from '../components/SearchBar';
+import React, { useState, useEffect } from 'react';
+import { useGamesStore, useAuthStore } from '../stores';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import FilterMenu from '../components/FilterMenu';
+import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
 import Loader from '../components/Loader';
+import MockStore from '../components/MockStore';
+import RAWGGames from '../components/RAWGGames';
+import CheapSharkGames from '../components/CheapSharkGames';
+import BGGGames from '../components/BGGGames';
+import { testAPIConnectivity } from '../services/cheapsharkApi';
+import { testRAWGConnectivity } from '../services/rawgApi';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
-import CheapSharkGames from '../components/CheapSharkGames';
-import RAWGGames from '../components/RAWGGames';
-import MockStore from '../components/MockStore';
 
 export default function Games() {
-  // Auth context (keeping for potential future use)
-  const { isAdmin: _isAdmin } = useAuth();
+  // Auth store
+  const { isAdmin: _isAdmin } = useAuthStore();
   
-  // API Configuration
-  const RAWG_API_KEY = '28849ae8cd824c84ae3af5da501b0d67';
-  const CHEAPSHARK_API_BASE = 'https://www.cheapshark.com/api/1.0';
-  const RAWG_API_BASE = 'https://api.rawg.io/api';
+  // Games store
+  const {
+    games,
+    filteredGames: _filteredGames,
+    loading: _loading,
+    error,
+    pagination,
+    filters,
+    activeStore,
+    setSearch,
+    setGenres,
+    setPlatforms,
+    setSortBy,
+    setPage,
+    setActiveStore,
+    fetchGames,
+  } = useGamesStore();
   
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeStore, setActiveStore] = useState('rawg'); // 'mock', 'cheapshark', 'rawg'
   const [isDebugOpen, setIsDebugOpen] = useState(false); // Track debug menu state
   
   // API Testing States
   const [cheapSharkTestResult, setCheapSharkTestResult] = useState(null);
   const [rawgTestResult, setRawgTestResult] = useState(null);
+  const [bggTestResult, setBggTestResult] = useState(null);
   const [isTestingCheapShark, setIsTestingCheapShark] = useState(false);
   const [isTestingRAWG, setIsTestingRAWG] = useState(false);
+  const [isTestingBGG, setIsTestingBGG] = useState(false);
   
   // Initialize states from localStorage if available
   const [currentPage, setCurrentPage] = useState(() => {
@@ -54,13 +69,11 @@ export default function Games() {
     return savedPlatforms ? JSON.parse(savedPlatforms) : [];
   });
   
-  const [sortBy, setSortBy] = useState(() => {
+  const [sortBy, setLocalSortBy] = useState(() => {
     const savedSort = localStorage.getItem('gaming-sort-by');
     return savedSort || 'relevance';
   });
   
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-
   // Save states to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('gaming-current-page', currentPage.toString());
@@ -82,26 +95,14 @@ export default function Games() {
     localStorage.setItem('gaming-sort-by', sortBy);
   }, [sortBy]);
 
-  // Fetch data
-  const { games, loading, error, pagination } = useFetchGames(
-    currentPage, 
-    12, 
-    debouncedSearchTerm, 
-    selectedGenre, 
-    selectedPlatform,
-    sortBy
-  );
-  const { genres } = useFetchGenres();
-  const { platforms } = useFetchPlatforms();
-
   // Update URL when search term changes
   useEffect(() => {
-    if (searchTerm) {
-      setSearchParams({ search: searchTerm });
+    if (filters.search) {
+      setSearchParams({ search: filters.search });
     } else {
       setSearchParams({});
     }
-  }, [searchTerm, setSearchParams]);
+  }, [filters.search, setSearchParams]);
 
   // Update body background when debug mode changes
   useEffect(() => {
@@ -119,6 +120,32 @@ export default function Games() {
       document.body.style.backgroundColor = '';
     };
   }, [isDebugOpen]);
+
+  // Initialize games on mount
+  useEffect(() => {
+    fetchGames();
+  }, [fetchGames]);
+
+  // Update store filters when local state changes
+  useEffect(() => {
+    setSearch(searchTerm);
+  }, [searchTerm, setSearch]);
+
+  useEffect(() => {
+    setGenres(selectedGenre);
+  }, [selectedGenre, setGenres]);
+
+  useEffect(() => {
+    setPlatforms(selectedPlatform);
+  }, [selectedPlatform, setPlatforms]);
+
+  useEffect(() => {
+    setSortBy(sortBy);
+  }, [sortBy, setSortBy]);
+
+  useEffect(() => {
+    setPage(currentPage);
+  }, [currentPage, setPage]);
 
   // Don't update search term from URL params - always start fresh
   // This prevents search terms from being carried over from homepage
@@ -140,23 +167,13 @@ export default function Games() {
     // Component loaded with clean search state
   }, []);
 
-  // Debounce search term
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      setCurrentPage(1); // Reset to first page when searching
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedGenre, selectedPlatform, sortBy]);
 
   const handleSearch = () => {
-    setDebouncedSearchTerm(searchTerm);
+    setSearchTerm(searchTerm);
     setCurrentPage(1);
   };
 
@@ -169,15 +186,14 @@ export default function Games() {
   };
 
   const handleSortChange = (sort) => {
-    setSortBy(sort);
+    setLocalSortBy(sort);
   };
 
   const handleClearFilters = () => {
     setSelectedGenre([]);
     setSelectedPlatform([]);
-    setSortBy('relevance');
+    setLocalSortBy('relevance');
     setSearchTerm('');
-    setDebouncedSearchTerm('');
     setCurrentPage(1);
     
     // Clear URL params
@@ -191,7 +207,7 @@ export default function Games() {
     localStorage.removeItem('gaming-current-page');
     
     // Force immediate search update
-    setDebouncedSearchTerm('');
+    setSearchTerm('');
   };
 
   const handlePageChange = (page) => {
@@ -209,14 +225,14 @@ export default function Games() {
       
       console.log('🧪 Testing CheapShark API...');
       
-      // Test stores endpoint
-      const storesResponse = await fetch(`${CHEAPSHARK_API_BASE}/stores`);
+      // Test stores endpoint to verify API accessibility
+      const storesResponse = await fetch('https://www.cheapshark.com/api/1.0/stores');
       
       if (storesResponse.ok) {
         const storesData = await storesResponse.json();
         
         // Also test games endpoint to get total count
-        const gamesResponse = await fetch(`${CHEAPSHARK_API_BASE}/games?limit=1`);
+        const gamesResponse = await fetch('https://www.cheapshark.com/api/1.0/games?limit=1');
         let totalGames = 'Unknown';
         
         if (gamesResponse.ok) {
@@ -312,6 +328,65 @@ export default function Games() {
     }
   };
 
+  const testBGGAPI = async () => {
+    try {
+      setIsTestingBGG(true);
+      setBggTestResult(null);
+      
+      console.log('🧪 Testing BGG API...');
+      
+      // Import the BGG API service function dynamically
+      const { testBGGConnectivity } = await import('../services/bggApi');
+      
+      // Use the BGG API service which handles XML parsing and connectivity
+      const result = await testBGGConnectivity();
+      
+      if (result.success) {
+        setBggTestResult({
+          success: true,
+          message: 'API is accessible and responding',
+          sampleGame: result.sampleGame,
+          note: 'BGG API is working - free access confirmed (XML-based)'
+        });
+        console.log('✅ BGG API test successful:', result);
+      } else {
+        setBggTestResult({
+          success: false,
+          message: result.message || 'API test failed',
+          error: result.error || 'Unknown error',
+          note: 'This may be due to network issues or XML parsing problems'
+        });
+      }
+    } catch (error) {
+      console.error('❌ BGG API test failed:', error);
+      
+      // Provide more specific error information
+      let errorMessage = error.message;
+      let note = 'This may be due to network issues or XML parsing problems';
+      
+      if (error.message === 'Failed to fetch') {
+        errorMessage = 'Network request failed';
+        note = 'This may be due to network connectivity issues or BGG service being temporarily unavailable.';
+      } else if (error.message.includes('XML')) {
+        errorMessage = 'XML parsing failed';
+        note = 'BGG API returns XML data which requires proper parsing. This may indicate a response format issue.';
+      } else if (error.message.includes('TypeError')) {
+        errorMessage = 'Request type error';
+        note = 'This may indicate a network connectivity issue or API endpoint problem.';
+      }
+      
+      const result = {
+        success: false,
+        message: 'BGG API connectivity test failed',
+        error: errorMessage,
+        note: note
+      };
+      setBggTestResult(result);
+    } finally {
+      setIsTestingBGG(false);
+    }
+  };
+
   // Store configurations
   const stores = [
     {
@@ -334,6 +409,13 @@ export default function Games() {
       description: 'Comprehensive gaming database',
       color: 'green',
       features: ['500,000+ games', 'Rich metadata', 'Advanced filtering']
+    },
+    {
+      id: 'bgg',
+      name: '🎲 BGG Store',
+      description: 'Board games and tabletop experiences',
+      color: 'orange',
+      features: ['Board games database', 'Community ratings', 'Game mechanics']
     }
   ];
 
@@ -511,6 +593,26 @@ export default function Games() {
                     </div>
                   )}
 
+                  {activeStore === 'bgg' && (
+                    <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                      <h5 className="text-lg font-semibold text-orange-800 dark:text-orange-200 mb-3">
+                        🎲 BGG API Debug
+                      </h5>
+                      <p className="text-orange-600 dark:text-orange-300 mb-3">
+                        BGG (Board Game Geek) API provides a comprehensive database of board games and community ratings.
+                      </p>
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
+                        <h6 className="font-semibold text-gray-900 dark:text-white mb-2">API Status:</h6>
+                        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                          <li>• Base URL: https://api.boardgamegeek.com/xmlapi2</li>
+                          <li>• No API key required</li>
+                          <li>• 100,000+ board games in database</li>
+                          <li>• Community ratings and mechanics</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+
                   {activeStore === 'mock' && (
                     <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
                       <h5 className="text-lg font-semibold text-purple-800 dark:text-purple-200 mb-3">
@@ -673,17 +775,58 @@ export default function Games() {
                         )}
                       </div>
                     </div>
+
+                    {/* BGG API Test */}
+                    <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                      <h5 className="text-lg font-semibold text-orange-800 dark:text-orange-200 mb-3">
+                        🎲 BGG API
+                      </h5>
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🔌</div>
+                        <p className="text-orange-600 dark:text-orange-300 text-sm mb-3">
+                          Test API connectivity
+                        </p>
+                        <button
+                          onClick={testBGGAPI}
+                          disabled={isTestingBGG}
+                          className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors duration-200 ${
+                            isTestingBGG 
+                              ? 'bg-orange-400 cursor-not-allowed' 
+                              : 'bg-orange-600 hover:bg-orange-700'
+                          }`}
+                        >
+                          {isTestingBGG ? 'Testing...' : 'Test API'}
+                        </button>
+                        {bggTestResult && (
+                          <div className="mt-3 bg-white dark:bg-gray-800 rounded-lg p-3 text-left">
+                            <div className="text-xs text-orange-600 dark:text-orange-400 space-y-1">
+                              <div>• Status: {bggTestResult.success ? '✅ Success' : '❌ Failed'}</div>
+                              <div>• Message: {bggTestResult.message}</div>
+                              {bggTestResult.sampleGame && (
+                                <div>• Sample Game: {bggTestResult.sampleGame.name}</div>
+                              )}
+                              {bggTestResult.note && (
+                                <div>• Note: {bggTestResult.note}</div>
+                              )}
+                              {bggTestResult.error && (
+                                <div>• Error: {bggTestResult.error}</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Comprehensive Results Analysis */}
-                  {(cheapSharkTestResult || rawgTestResult) && (
+                  {(cheapSharkTestResult || rawgTestResult || bggTestResult) && (
                     <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
                       <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                         📊 API Test Results Analysis
                       </h5>
                       
                       {/* Overall Status Summary */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
                           <div className="text-2xl mb-1">🎯</div>
                           <div className="font-medium text-gray-900 dark:text-white">Mock Store</div>
@@ -710,6 +853,16 @@ export default function Games() {
                             {rawgTestResult?.totalGames ? `${rawgTestResult.totalGames.toLocaleString()} games` : 'Status unknown'}
                           </div>
                         </div>
+                        <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                          <div className="text-2xl mb-1">🎲</div>
+                          <div className="font-medium text-gray-900 dark:text-white">BGG</div>
+                          <div className={`text-sm ${bggTestResult?.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                            {bggTestResult?.success ? '✅ Connected' : '❌ Failed'}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {bggTestResult?.success ? 'Board games' : 'Status unknown'}
+                          </div>
+                        </div>
                       </div>
 
                       {/* Detailed Analysis */}
@@ -722,6 +875,7 @@ export default function Games() {
                               <li>• Mock Store: Instant response (local data)</li>
                               <li>• CheapShark: {cheapSharkTestResult?.success ? 'API responding' : 'API failed'}</li>
                               <li>• RAWG: {rawgTestResult?.success ? 'API responding' : 'API failed'}</li>
+                              <li>• BGG: {bggTestResult?.success ? 'API responding' : 'API failed'}</li>
                             </ul>
                           </div>
                           <div>
@@ -730,6 +884,7 @@ export default function Games() {
                               <li>• Mock Store: 8 curated games</li>
                               <li>• CheapShark: {cheapSharkTestResult?.storesCount ? `${cheapSharkTestResult.storesCount} stores` : 'Unknown'}</li>
                               <li>• RAWG: {rawgTestResult?.totalGames ? `${rawgTestResult.totalGames.toLocaleString()}+ games` : 'Unknown'}</li>
+                              <li>• BGG: {bggTestResult?.success ? '100,000+ board games' : 'Unknown'}</li>
                             </ul>
                           </div>
                         </div>
@@ -870,11 +1025,11 @@ export default function Games() {
                       <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center justify-between">
                           <span>Genres:</span>
-                          <span className="font-medium">{genres.length}</span>
+                          <span className="font-medium">{filters.genres.length}</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Platforms:</span>
-                          <span className="font-medium">{platforms.length}</span>
+                          <span className="font-medium">{filters.platforms.length}</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Total Pages:</span>
@@ -962,6 +1117,7 @@ export default function Games() {
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
               onSearch={handleSearch}
+              activeStore={activeStore}
             />
           </div>
 
@@ -972,13 +1128,14 @@ export default function Games() {
               {/* Filter Button */}
               <div className="flex-shrink-0">
                 <FilterMenu
-                  genres={genres}
-                  platforms={platforms}
+                  genres={filters.genres}
+                  platforms={filters.platforms}
                   selectedGenre={selectedGenre}
                   selectedPlatform={selectedPlatform}
                   onGenreChange={handleGenreChange}
                   onPlatformChange={handlePlatformChange}
                   onClearFilters={handleClearFilters}
+                  activeStore={activeStore}
                 />
               </div>
 
@@ -1004,7 +1161,16 @@ export default function Games() {
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="rating">Highest Rated</option>
+                  {activeStore === 'rawg' && <option value="released">Newest First</option>}
+                  {activeStore === 'bgg' && <option value="released">Newest First</option>}
                 </select>
+                {/* Store-specific sorting info */}
+                <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                  {activeStore === 'rawg' && '🎮 Rich metadata'}
+                  {activeStore === 'cheapshark' && '💰 Price-focused'}
+                  {activeStore === 'bgg' && '🎲 Board games'}
+                  {activeStore === 'mock' && '🎯 Curated'}
+                </div>
               </div>
 
               {/* Clear Filters Button */}
@@ -1093,6 +1259,15 @@ export default function Games() {
             
             {activeStore === 'rawg' && (
               <RAWGGames 
+                searchTerm={searchTerm}
+                selectedGenre={selectedGenre}
+                selectedPlatform={selectedPlatform}
+                sortBy={sortBy}
+              />
+            )}
+
+            {activeStore === 'bgg' && (
+              <BGGGames 
                 searchTerm={searchTerm}
                 selectedGenre={selectedGenre}
                 selectedPlatform={selectedPlatform}

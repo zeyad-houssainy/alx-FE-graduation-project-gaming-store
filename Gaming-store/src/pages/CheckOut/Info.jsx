@@ -1,19 +1,14 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { useCart } from '../../context/CartContext';
+import React from 'react';
+import { useCartStore } from '../../stores';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
+import CartItem from '../../components/CartItem';
+import Button from '../../components/Button';
+import { Link } from 'react-router-dom';
 
-export default function Info({ totalPrice }) {
-  const { items, getCartTotal } = useCart();
+export default function Info() {
+  const { items, getCartTotal } = useCartStore();
   
   // Calculate totals
   const subtotal = getCartTotal();

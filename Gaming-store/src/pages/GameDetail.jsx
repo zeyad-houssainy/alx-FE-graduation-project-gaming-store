@@ -1,22 +1,66 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useFetchGameById } from '../hooks/useFetchGames';
-import { useCart } from '../context/CartContext';
+import { useCartStore } from '../stores';
 import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
+import Loader from '../components/Loader';
+import axios from 'axios';
 import RatingStars from '../components/RatingStars';
 import Button from '../components/Button';
-import Loader from '../components/Loader';
 import StoreInfo from '../components/StoreInfo';
 
 export default function GameDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
-  const { game, loading, error } = useFetchGameById(id);
+  const { addToCart } = useCartStore();
+  const [game, setGame] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
 
+  // Fetch game data
+  useEffect(() => {
+    const fetchGame = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Try to fetch from RAWG API first
+        const response = await axios.get(`https://api.rawg.io/api/games/${id}?key=28849ae8cd824c84ae3af5da501b0d67`);
+        
+        if (response.data) {
+          const gameData = response.data;
+          setGame({
+            id: gameData.id,
+            name: gameData.name,
+            background_image: gameData.background_image,
+            description: gameData.description,
+            rating: gameData.rating,
+            metacritic: gameData.metacritic,
+            released: gameData.released,
+            platforms: gameData.platforms?.map(p => p.platform.name) || [],
+            genres: gameData.genres?.map(g => g.name) || [],
+            screenshots: gameData.short_screenshots?.map(s => s.image) || [],
+            price: Math.floor(Math.random() * 60) + 20,
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching game:', err);
+        setError('Failed to load game data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchGame();
+    }
+  }, [id]);
+
   const handleAddToCart = () => {
-    addToCart(game);
+    if (game) {
+      addToCart(game);
+    }
   };
 
   const formatPrice = (price) => {

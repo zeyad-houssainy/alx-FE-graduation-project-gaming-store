@@ -1,85 +1,109 @@
 import React, { useState, useEffect } from 'react';
-import { fetchGames } from '../services/cheapsharkApi';
+import { fetchGames, searchGames } from '../services/cheapsharkApi';
 import GameCard from './GameCard';
+import Loader from './Loader';
 
 export default function CheapSharkGames({ searchTerm = '', selectedGenre = [], selectedPlatform = [], sortBy = 'relevance' }) {
   const [games, setGames] = useState([]);
-  const [filteredGames, setFilteredGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
-    // Load all games by default to show maximum variety
-    loadAllGames();
-  }, []);
+    loadGames();
+  }, [searchTerm, selectedGenre, selectedPlatform, sortBy]);
 
-  // Filter and sort games when props change
-  useEffect(() => {
-    if (games.length > 0) {
-      let filtered = [...games];
-
-      // Apply search term filter
-      if (searchTerm.trim()) {
-        const searchLower = searchTerm.toLowerCase();
-        filtered = filtered.filter(game => 
-          game.title && game.title.toLowerCase().includes(searchLower) ||
-          (game.external && game.external.toLowerCase().includes(searchLower))
-        );
-      }
-
-      // Apply genre filter (CheapShark has limited genre info)
-      if (selectedGenre.length > 0) {
-        // CheapShark doesn't provide detailed genre info, so we'll skip this filter
-        // or implement a basic text-based search if needed
-      }
-
-      // Apply platform filter (CheapShark has limited platform info)
-      if (selectedPlatform.length > 0) {
-        // CheapShark doesn't provide detailed platform info, so we'll skip this filter
-        // or implement a basic text-based search if needed
-      }
-
-      // Apply sorting
-      switch (sortBy) {
-        case 'name-asc':
-          filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-          break;
-        case 'name-desc':
-          filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
-          break;
-        case 'price-low':
-          filtered.sort((a, b) => (a.cheapestPrice || 0) - (b.cheapestPrice || 0));
-          break;
-        case 'price-high':
-          filtered.sort((a, b) => (b.cheapestPrice || 0) - (a.cheapestPrice || 0));
-          break;
-        default: // 'relevance' - keep original order
-          break;
-      }
-
-      setFilteredGames(filtered);
-    }
-  }, [games, searchTerm, selectedGenre, selectedPlatform, sortBy]);
-
-  const loadGames = async (search = '') => {
+  const loadGames = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      console.log('🎮 Loading games from CheapShark...');
-      
-      const result = await fetchGames({
-        search: search,
-        page: 1,
-        pageSize: 12,
-        sortBy: 'relevance'
+      console.log('💰 Loading games from CheapShark with filters:', { 
+        searchTerm, 
+        selectedGenre, 
+        selectedPlatform, 
+        sortBy 
       });
+      
+      let result;
+      
+      if (searchTerm && searchTerm.trim()) {
+        // Use search API when search term is provided
+        console.log('🔍 CheapShark: Searching for games with term:', searchTerm);
+        result = await searchGames(searchTerm, { limit: 30 });
+      } else {
+        // Load popular games when no search term
+        console.log('🔥 CheapShark: Loading popular games');
+        result = await fetchGames({
+          search: '',
+          page: 1,
+          pageSize: 30,
+          sortBy: 'relevance'
+        });
+      }
       
       console.log('📊 CheapShark result:', result);
       
       if (result && result.games) {
-        setGames(result.games);
-        console.log(`✅ Loaded ${result.games.length} games from CheapShark`);
+        let processedGames = result.games;
+        
+        // Apply genre filtering (CheapShark has limited genre info, so we'll do basic text matching)
+        if (selectedGenre.length > 0) {
+          processedGames = processedGames.filter(game => {
+            // Try to match genre from game title, description, or other available fields
+            const gameText = `${game.title || ''} ${game.external || ''} ${game.description || ''}`.toLowerCase();
+            return selectedGenre.some(genre => 
+              gameText.includes(genre.toLowerCase())
+            );
+          });
+        }
+        
+        // Apply platform filtering (CheapShark has limited platform info)
+        if (selectedPlatform.length > 0) {
+          processedGames = processedGames.filter(game => {
+            // CheapShark primarily deals with PC games, but we can check for platform hints
+            const gameText = `${game.title || ''} ${game.external || ''} ${game.description || ''}`.toLowerCase();
+            return selectedPlatform.some(platform => {
+              const platformLower = platform.toLowerCase();
+              // Check for common platform indicators
+              if (platformLower.includes('pc') || platformLower.includes('computer')) {
+                return true; // CheapShark is primarily PC-focused
+              }
+              if (platformLower.includes('steam')) {
+                return game.steamAppID; // Check if game has Steam ID
+              }
+              return gameText.includes(platformLower);
+            });
+          });
+        }
+        
+        // Apply sorting
+        switch (sortBy) {
+          case 'name-asc':
+            processedGames.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+            break;
+          case 'name-desc':
+            processedGames.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+            break;
+          case 'price-low':
+            processedGames.sort((a, b) => (a.cheapestPrice || 0) - (b.cheapestPrice || 0));
+            break;
+          case 'price-high':
+            processedGames.sort((a, b) => (b.cheapestPrice || 0) - (a.cheapestPrice || 0));
+            break;
+          case 'rating':
+            processedGames.sort((a, b) => (b.steamRating || 0) - (a.steamRating || 0));
+            break;
+          case 'released':
+            // CheapShark doesn't have release dates, so we'll sort by relevance
+            break;
+          default: // 'relevance' - keep original order
+            break;
+        }
+        
+        setGames(processedGames);
+        setTotalResults(processedGames.length);
+        console.log(`✅ Loaded ${processedGames.length} games from CheapShark with filters`);
       } else {
         throw new Error('Invalid response format from CheapShark');
       }
@@ -88,77 +112,104 @@ export default function CheapSharkGames({ searchTerm = '', selectedGenre = [], s
       console.error('❌ Failed to load games from CheapShark:', err);
       setError(err.message);
       setGames([]);
+      setTotalResults(0);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadAllGames = () => {
-    // Load games with a broad search to get more variety
-    loadGames('game');
-  };
-
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600 dark:text-gray-300">Loading games from CheapShark...</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center">
+            <Loader />
+            <p className="text-gray-600 dark:text-gray-300 mt-4">
+              Loading games from CheapShark...
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
-        <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
-          ❌ Failed to Load Games
-        </h3>
-        <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
-        <button
-          onClick={loadAllGames}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-        >
-          Try Again
-        </button>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center">
+            <div className="text-6xl mb-4">😞</div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Failed to load CheapShark games
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">{error}</p>
+            <button
+              onClick={loadGames}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (games.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              No games found
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              {searchTerm || selectedGenre.length > 0 || selectedPlatform.length > 0
+                ? 'Try adjusting your search terms or filters'
+                : 'No games available at the moment'
+              }
+            </p>
+            {(searchTerm || selectedGenre.length > 0 || selectedPlatform.length > 0) && (
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+      <div className="container mx-auto px-6 py-12">
+        {/* Results Header */}
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            💰 CheapShark Games
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300">
+            Found {totalResults} games
+            {searchTerm && ` matching "${searchTerm}"`}
+            {selectedGenre.length > 0 && ` in ${selectedGenre.join(', ')}`}
+            {selectedPlatform.length > 0 && ` for ${selectedPlatform.join(', ')}`}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            Best prices from 20+ online stores
+          </p>
+        </div>
 
-
-      {/* Results Info */}
-      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-        Showing {filteredGames.length} out of {games.length} games
-      </div>
-
-      {/* Games Grid */}
-      {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
-          {filteredGames.map((game) => (
+        {/* Games Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {games.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
-      ) : (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🎮</div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            No Games Found
-          </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            Try using the quick search buttons above or search for a specific game.
-          </p>
-          <button
-            onClick={loadAllGames}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
-          >
-            🎮 Load All Games
-          </button>
-        </div>
-      )}
-
-
+      </div>
     </div>
   );
 }

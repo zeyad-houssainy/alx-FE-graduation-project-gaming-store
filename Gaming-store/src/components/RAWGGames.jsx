@@ -1,91 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { fetchGamesWithFilters, testRAWGConnectivity, fetchPlatforms, fetchGenres } from '../services/rawgApi';
 import GameCard from './GameCard';
+import Loader from './Loader';
 
 export default function RAWGGames({ searchTerm = '', selectedGenre = [], selectedPlatform = [], sortBy = 'relevance' }) {
   const [games, setGames] = useState([]);
-  const [filteredGames, setFilteredGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
     loadGames();
   }, [searchTerm, selectedGenre, selectedPlatform, sortBy]);
-
-  // Filter and sort games when props change
-  useEffect(() => {
-    if (games.length > 0) {
-      let filtered = [...games];
-
-      // Apply search term filter
-      if (searchTerm.trim()) {
-        const searchLower = searchTerm.toLowerCase();
-        filtered = filtered.filter(game => 
-          game.name.toLowerCase().includes(searchLower) ||
-          (game.description && game.description.toLowerCase().includes(searchLower)) ||
-          (game.genres && game.genres.some(genre => 
-            genre.name && genre.name.toLowerCase().includes(searchLower)
-          ))
-        );
-      }
-
-      // Apply genre filter
-      if (selectedGenre.length > 0) {
-        filtered = filtered.filter(game => 
-          game.genres && game.genres.some(genre => 
-            selectedGenre.some(selected => 
-              genre.name && genre.name.toLowerCase().includes(selected.toLowerCase())
-            )
-          )
-        );
-      }
-
-      // Apply platform filter
-      if (selectedPlatform.length > 0) {
-        filtered = filtered.filter(game => 
-          game.platforms && game.platforms.some(platform => 
-            selectedPlatform.some(selected => 
-              platform.platform && platform.platform.name && 
-              platform.platform.name.toLowerCase().includes(selected.toLowerCase())
-            )
-          )
-        );
-      }
-
-      // Apply sorting
-      switch (sortBy) {
-        case 'name-asc':
-          filtered.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-        case 'name-desc':
-          filtered.sort((a, b) => b.name.localeCompare(a.name));
-          break;
-        case 'rating':
-          filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-          break;
-        case 'released':
-          filtered.sort((a, b) => new Date(b.released || 0) - new Date(a.released || 0));
-          break;
-        default: // 'relevance' - keep original order
-          break;
-      }
-
-      setFilteredGames(filtered);
-    }
-  }, [games, searchTerm, selectedGenre, selectedPlatform, sortBy]);
 
   const loadGames = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      console.log('🎮 Loading games from RAWG API with filters:', { selectedGenre, selectedPlatform, searchTerm, sortBy });
+      console.log('🎮 Loading games from RAWG API with filters:', { 
+        searchTerm, 
+        selectedGenre, 
+        selectedPlatform, 
+        sortBy 
+      });
+      
+      // Convert sortBy to RAWG API format
+      let rawgSortBy = 'relevance';
+      switch (sortBy) {
+        case 'name-asc':
+          rawgSortBy = 'name';
+          break;
+        case 'name-desc':
+          rawgSortBy = '-name';
+          break;
+        case 'rating':
+          rawgSortBy = '-rating';
+          break;
+        case 'released':
+          rawgSortBy = '-released';
+          break;
+        case 'price-low':
+        case 'price-high':
+          rawgSortBy = 'relevance'; // RAWG doesn't have price sorting
+          break;
+        default:
+          rawgSortBy = 'relevance';
+      }
       
       const result = await fetchGamesWithFilters({
         search: searchTerm,
         page: 1,
-        pageSize: 30, // Load more games for variety
-        sortBy: sortBy,
+        pageSize: 30,
+        sortBy: rawgSortBy,
         selectedGenre: selectedGenre,
         selectedPlatform: selectedPlatform
       });
@@ -93,8 +60,20 @@ export default function RAWGGames({ searchTerm = '', selectedGenre = [], selecte
       console.log('📊 RAWG result:', result);
       
       if (result && result.games) {
-        setGames(result.games);
-        console.log(`✅ Loaded ${result.games.length} games from RAWG with filters`);
+        let processedGames = result.games;
+        
+        // Apply additional client-side sorting for price if needed
+        if (sortBy === 'price-low' || sortBy === 'price-high') {
+          processedGames.sort((a, b) => {
+            const priceA = a.price || a.cheapestPrice || 0;
+            const priceB = b.price || b.cheapestPrice || 0;
+            return sortBy === 'price-low' ? priceA - priceB : priceB - priceA;
+          });
+        }
+        
+        setGames(processedGames);
+        setTotalResults(result.total || processedGames.length);
+        console.log(`✅ Loaded ${processedGames.length} games from RAWG with filters`);
       } else {
         throw new Error('Invalid response format from RAWG API');
       }
@@ -103,6 +82,7 @@ export default function RAWGGames({ searchTerm = '', selectedGenre = [], selecte
       console.error('❌ Failed to load games from RAWG:', err);
       setError(err.message);
       setGames([]);
+      setTotalResults(0);
     } finally {
       setLoading(false);
     }
@@ -110,65 +90,93 @@ export default function RAWGGames({ searchTerm = '', selectedGenre = [], selecte
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600 dark:text-gray-300">Loading games from RAWG API...</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center">
+            <Loader />
+            <p className="text-gray-600 dark:text-gray-300 mt-4">
+              Loading games from RAWG API...
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
-        <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
-          ❌ Failed to Load Games
-        </h3>
-        <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
-        <button
-          onClick={() => loadGames()}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-        >
-          Try Again
-        </button>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center">
+            <div className="text-6xl mb-4">😞</div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Failed to load RAWG games
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">{error}</p>
+            <button
+              onClick={loadGames}
+              className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (games.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              No games found
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              {searchTerm || selectedGenre.length > 0 || selectedPlatform.length > 0
+                ? 'Try adjusting your search terms or filters'
+                : 'No games available at the moment'
+              }
+            </p>
+            {(searchTerm || selectedGenre.length > 0 || selectedPlatform.length > 0) && (
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* RAWG Games Store Header */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          <span className="text-2xl">🎮</span>
-          <h2 className="text-xl font-bold">RAWG Games Store</h2>
-          <span className="text-2xl">🎮</span>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+      <div className="container mx-auto px-6 py-12">
+        {/* Results Header */}
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            🎮 RAWG Games
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300">
+            Found {totalResults} games
+            {searchTerm && ` matching "${searchTerm}"`}
+            {selectedGenre.length > 0 && ` in ${selectedGenre.join(', ')}`}
+            {selectedPlatform.length > 0 && ` for ${selectedPlatform.join(', ')}`}
+          </p>
         </div>
-        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">
-          All platforms - from PC to consoles, mobile to handheld
-        </p>
-      </div>
 
-      {/* Results Info */}
-      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-        Showing {filteredGames.length} out of {games.length} games
-      </div>
-
-      {/* Games Grid */}
-      {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
-          {filteredGames.map((game) => (
+        {/* Games Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {games.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
-      ) : (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🎮</div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">No games found</h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6 px-4">
-            Try adjusting your search terms or filters to find what you're looking for.
-          </p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

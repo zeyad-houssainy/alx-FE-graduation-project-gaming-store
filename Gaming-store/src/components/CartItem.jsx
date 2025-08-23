@@ -1,8 +1,8 @@
 import React from 'react';
-import { useCart } from '../context/CartContext';
+import { useCartStore } from '../stores';
 
 export default function CartItem({ item }) {
-  const { updateQuantity, removeFromCart } = useCart();
+  const { updateQuantity, removeFromCart } = useCartStore();
 
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity <= 0) {

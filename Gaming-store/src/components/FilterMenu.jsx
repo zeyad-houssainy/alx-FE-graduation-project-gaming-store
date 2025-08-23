@@ -1,6 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-export default function FilterMenu({ genres, platforms, selectedGenre, selectedPlatform, onGenreChange, onPlatformChange, onClearFilters }) {
+export default function FilterMenu({ 
+  genres, 
+  platforms, 
+  selectedGenre, 
+  selectedPlatform, 
+  onGenreChange, 
+  onPlatformChange, 
+  onClearFilters,
+  activeStore = 'mock' // Add activeStore prop to show store-specific filters
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [tempGenre, setTempGenre] = useState(selectedGenre);
   const [tempPlatform, setTempPlatform] = useState(selectedPlatform);
@@ -75,6 +84,42 @@ export default function FilterMenu({ genres, platforms, selectedGenre, selectedP
     return selectedGenre.length + selectedPlatform.length;
   };
 
+  // Store-specific filter information
+  const getStoreFilterInfo = () => {
+    switch (activeStore) {
+      case 'rawg':
+        return {
+          genreNote: 'Rich genre data with detailed categorization',
+          platformNote: 'Comprehensive platform support (PC, Consoles, Mobile)',
+          genreIcon: '🎮',
+          platformIcon: '🖥️'
+        };
+      case 'cheapshark':
+        return {
+          genreNote: 'Limited genre info - basic text matching',
+          platformNote: 'Primarily PC games with Steam integration',
+          genreIcon: '💰',
+          platformIcon: '💻'
+        };
+      case 'bgg':
+        return {
+          genreNote: 'Board game categories and mechanics',
+          platformNote: 'Tabletop mechanics and player counts',
+          genreIcon: '🎲',
+          platformIcon: '👥'
+        };
+      default: // mock
+        return {
+          genreNote: 'Curated genres for popular games',
+          platformNote: 'Multi-platform support',
+          genreIcon: '🎯',
+          platformIcon: '🖥️'
+        };
+    }
+  };
+
+  const storeInfo = getStoreFilterInfo();
+
   return (
     <>
       {/* Filter Button */}
@@ -100,87 +145,145 @@ export default function FilterMenu({ genres, platforms, selectedGenre, selectedP
           <div className="fixed inset-0 bg-black/50 z-40 animate-fade-in" />
           
           {/* Modal */}
-          <div
-            ref={modalRef}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-transparent"
-          >
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-md max-h-[90vh] overflow-hidden border border-gray-200 dark:border-gray-700">
-              {/* Modal Header */}
-              <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filter Games</h3>
-                  <button
-                    onClick={handleClose}
-                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div 
+              ref={modalRef}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Filter Games
+                </h3>
+                <button
+                  onClick={handleClose}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
 
-              {/* Modal Content */}
-              <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
-                {/* Genres Section */}
+              {/* Content */}
+              <div className="p-6 space-y-6">
+                {/* Store Info */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                    {activeStore === 'rawg' && '🎮 RAWG Store'}
+                    {activeStore === 'cheapshark' && '💰 CheapShark Store'}
+                    {activeStore === 'bgg' && '🎲 BGG Store'}
+                    {activeStore === 'mock' && '🎯 Mock Store'}
+                  </h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {activeStore === 'rawg' && 'Advanced filtering with rich metadata'}
+                    {activeStore === 'cheapshark' && 'Price-focused filtering with store comparison'}
+                    {activeStore === 'bgg' && 'Board game categories and mechanics'}
+                    {activeStore === 'mock' && 'Curated selection with instant access'}
+                  </p>
+                </div>
+
+                {/* Genres */}
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Genres</h4>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg">{storeInfo.genreIcon}</span>
+                    <h4 className="font-medium text-gray-900 dark:text-white">Genres</h4>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                    {storeInfo.genreNote}
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {genres.map((genre) => (
-                      <label
-                        key={genre.id}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-orange-400 transition-colors cursor-pointer"
+                      <button
+                        key={genre}
+                        onClick={() => handleGenreToggle(genre)}
+                        className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                          tempGenre.includes(genre)
+                            ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200'
+                            : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        }`}
                       >
-                        <input
-                          type="checkbox"
-                          checked={tempGenre.includes(genre.id)}
-                          onChange={() => handleGenreToggle(genre.id)}
-                          className="w-4 h-4 text-blue-600 dark:text-orange-500 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-orange-500"
-                        />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {genre.name}
-                        </span>
-                      </label>
+                        {genre}
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Platforms Section */}
+                {/* Platforms */}
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Platforms</h4>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg">{storeInfo.platformIcon}</span>
+                    <h4 className="font-medium text-gray-900 dark:text-white">Platforms</h4>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                    {storeInfo.platformNote}
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {platforms.map((platform) => (
-                      <label
-                        key={platform.id}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-orange-400 transition-colors cursor-pointer"
+                      <button
+                        key={platform}
+                        onClick={() => handlePlatformToggle(platform)}
+                        className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                          tempPlatform.includes(platform)
+                            ? 'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-800 dark:text-green-200'
+                            : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        }`}
                       >
-                        <input
-                          type="checkbox"
-                          checked={tempPlatform.includes(platform.id)}
-                          onChange={() => handlePlatformToggle(platform.id)}
-                          className="w-4 h-4 text-blue-600 dark:text-orange-500 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-orange-500"
-                        />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {platform.name}
-                        </span>
-                      </label>
+                        {platform}
+                      </button>
                     ))}
                   </div>
                 </div>
+
+                {/* Active Filters Summary */}
+                {(tempGenre.length > 0 || tempPlatform.length > 0) && (
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                    <h5 className="font-medium text-yellow-900 dark:text-yellow-100 mb-2">
+                      Active Filters
+                    </h5>
+                    <div className="space-y-2">
+                      {tempGenre.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-600 dark:text-yellow-400">🎮</span>
+                          <span className="text-sm text-yellow-700 dark:text-yellow-300">
+                            Genres: {tempGenre.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {tempPlatform.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-600 dark:text-yellow-400">🖥️</span>
+                          <span className="text-sm text-yellow-700 dark:text-yellow-300">
+                            Platforms: {tempPlatform.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Modal Footer */}
-              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+              {/* Footer */}
+              <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-600">
+                <button
+                  onClick={() => {
+                    setTempGenre([]);
+                    setTempPlatform([]);
+                  }}
+                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                >
+                  Clear All
+                </button>
                 <div className="flex gap-3">
                   <button
                     onClick={handleClose}
-                    className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors"
+                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleApply}
-                    className="flex-1 px-4 py-2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                   >
                     Apply Filters
                   </button>

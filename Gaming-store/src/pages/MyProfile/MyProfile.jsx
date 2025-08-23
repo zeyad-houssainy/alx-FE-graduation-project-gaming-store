@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useAuthStore } from '../../stores';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
+import Button from '../../components/Button';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyProfile() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function MyProfile() {
     getPaymentMethods,
     avatar,
     updateAvatar
-  } = useAuth();
+  } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -31,7 +32,7 @@ export default function MyProfile() {
   const [isAddingPayment, setIsAddingPayment] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [editingPayment, setEditingPayment] = useState(null);
-  const fileInputRef = useRef(null);
+  const fileInputRef = React.useRef(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   
   // Profile edit form state

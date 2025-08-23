@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useCartStore } from '../stores';
 import CartItem from './CartItem';
 
 export default function SlidingCartSummary() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const { items, getCartTotal, clearCart } = useCart();
+  const { items, getCartTotal, clearCart } = useCartStore();
   const navigate = useNavigate();
   const timeoutRef = useRef(null);
   const cartPanelRef = useRef(null);

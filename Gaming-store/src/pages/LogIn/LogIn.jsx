@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useAuthStore } from '../../stores';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
+import Button from '../../components/Button';
+import { Link } from 'react-router-dom';
 
 export default function LogIn() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = useAuthStore();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
