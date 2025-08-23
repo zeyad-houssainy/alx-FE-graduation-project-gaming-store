@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { fetchGames } from '../services/cheapsharkApi';
 import GameCard from './GameCard';
 
-export default function CheapSharkGames() {
+export default function CheapSharkGames({ searchTerm = '', selectedGenre = [], selectedPlatform = [], sortBy = 'relevance' }) {
   const [games, setGames] = useState([]);
+  const [filteredGames, setFilteredGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -11,6 +12,54 @@ export default function CheapSharkGames() {
     // Load all games by default to show maximum variety
     loadAllGames();
   }, []);
+
+  // Filter and sort games when props change
+  useEffect(() => {
+    if (games.length > 0) {
+      let filtered = [...games];
+
+      // Apply search term filter
+      if (searchTerm.trim()) {
+        const searchLower = searchTerm.toLowerCase();
+        filtered = filtered.filter(game => 
+          game.title && game.title.toLowerCase().includes(searchLower) ||
+          (game.external && game.external.toLowerCase().includes(searchLower))
+        );
+      }
+
+      // Apply genre filter (CheapShark has limited genre info)
+      if (selectedGenre.length > 0) {
+        // CheapShark doesn't provide detailed genre info, so we'll skip this filter
+        // or implement a basic text-based search if needed
+      }
+
+      // Apply platform filter (CheapShark has limited platform info)
+      if (selectedPlatform.length > 0) {
+        // CheapShark doesn't provide detailed platform info, so we'll skip this filter
+        // or implement a basic text-based search if needed
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case 'name-asc':
+          filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+          break;
+        case 'name-desc':
+          filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+          break;
+        case 'price-low':
+          filtered.sort((a, b) => (a.cheapestPrice || 0) - (b.cheapestPrice || 0));
+          break;
+        case 'price-high':
+          filtered.sort((a, b) => (b.cheapestPrice || 0) - (a.cheapestPrice || 0));
+          break;
+        default: // 'relevance' - keep original order
+          break;
+      }
+
+      setFilteredGames(filtered);
+    }
+  }, [games, searchTerm, selectedGenre, selectedPlatform, sortBy]);
 
   const loadGames = async (search = '') => {
     try {
@@ -79,10 +128,15 @@ export default function CheapSharkGames() {
     <div className="space-y-6">
 
 
+      {/* Results Info */}
+      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+        Showing {filteredGames.length} out of {games.length} games
+      </div>
+
       {/* Games Grid */}
-      {games.length > 0 ? (
+      {filteredGames.length > 0 ? (
         <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
-          {games.map((game) => (
+          {filteredGames.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>

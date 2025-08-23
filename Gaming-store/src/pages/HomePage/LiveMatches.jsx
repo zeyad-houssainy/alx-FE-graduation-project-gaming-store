@@ -44,7 +44,8 @@ const LiveMatches = () => {
       team2: { name: "New York Hunter", logo: "/assets/images/live-match-player-2.png", score: 1 },
       game: "CS2",
       time: "15:30",
-      status: "LIVE NOW"
+      status: "LIVE NOW",
+      countdownDate: "2025-01-15T15:30:00"
     },
     {
       id: 2,
@@ -52,7 +53,8 @@ const LiveMatches = () => {
       team2: { name: "Phoenix Rising", logo: "/assets/images/live-match-player-2.png", score: 0 },
       game: "Valorant",
       time: "17:00",
-      status: "UPCOMING"
+      status: "UPCOMING",
+      countdownDate: "2025-01-20T17:00:00"
     },
     {
       id: 3,
@@ -60,7 +62,8 @@ const LiveMatches = () => {
       team2: { name: "Thunder Cats", logo: "/assets/images/live-match-player-2.png", score: 0 },
       game: "League of Legends",
       time: "19:30",
-      status: "UPCOMING"
+      status: "UPCOMING",
+      countdownDate: "2025-01-25T19:30:00"
     }
   ];
 
@@ -251,7 +254,7 @@ const LiveMatches = () => {
 
                 {/* Countdown Timer */}
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-                  <CountdownTimer targetDate="2025-12-01T00:00:00" />
+                  <CountdownTimer targetDate={match.countdownDate} />
                 </div>
               </div>
             ))}

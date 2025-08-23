@@ -18,17 +18,28 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
       <News />
-      <div className="flex justify-between items-center px-4 sm:px-6 py-4">
-        <Logo />
-        
-        {/* Desktop Navigation */}
-        <div className="hidden lg:block">
-          <NavBar />
+      <div className="flex items-center px-4 sm:px-6 py-4">
+        {/* Desktop Layout */}
+        <div className="hidden lg:flex w-full items-center justify-between">
+          {/* Logo on the left */}
+          <div className="flex-shrink-0">
+            <Logo />
+          </div>
+          
+          {/* Desktop Navigation - Absolutely Centered */}
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <NavBar />
+          </div>
+          
+          {/* Desktop Utility - Right side */}
+          <div className="flex-shrink-0">
+            <Utility />
+          </div>
         </div>
         
-        {/* Desktop Utility */}
-        <div className="hidden lg:flex">
-          <Utility />
+        {/* Mobile Layout - Centered Logo */}
+        <div className="lg:hidden flex-1 flex justify-center">
+          <Logo />
         </div>
         
         {/* Mobile Controls */}

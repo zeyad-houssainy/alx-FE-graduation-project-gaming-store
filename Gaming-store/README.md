@@ -130,7 +130,7 @@ Make sure you have the following installed on your machine:
    ```
 
 4. **Open your browser**
-   Navigate to `http://localhost:5173` (or the port shown in your terminal)
+   Navigate to `http://localhost:5000` (or the port shown in your terminal)
 
 ### **Available Scripts**
 

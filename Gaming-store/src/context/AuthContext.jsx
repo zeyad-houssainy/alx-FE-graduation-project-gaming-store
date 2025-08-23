@@ -87,11 +87,27 @@ export const AuthProvider = ({ children }) => {
   // Clean up any existing mock data on mount
   useEffect(() => {
     cleanupMockData();
-    // Clear any existing auth data to ensure fresh start
-    localStorage.removeItem('gaming-auth');
+    // Don't clear auth data on mount - let it persist
+    // localStorage.removeItem('gaming-auth');
     // Also clear cart data to ensure completely fresh start
     localStorage.removeItem('gaming-cart');
     setIsFreshStart(false);
+    
+    // Restore admin login from localStorage if it exists
+    const savedAuth = localStorage.getItem('gaming-auth');
+    if (savedAuth) {
+      try {
+        const authData = JSON.parse(savedAuth);
+        if (authData.isLoggedIn && authData.user && authData.user.isAdmin) {
+          setIsLoggedIn(true);
+          setUser(authData.user);
+          console.log('🔐 Restored admin login from localStorage:', authData.user);
+        }
+      } catch (error) {
+        console.error('Error restoring auth data:', error);
+        localStorage.removeItem('gaming-auth');
+      }
+    }
   }, []); // Only run once on mount
 
   // Clean up mock data on first load
@@ -111,19 +127,68 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = () => {
-    const userData = {
-      id: 1,
-      name: 'Test User',
-      email: 'test@example.com',
-      // No avatar - will use fallback initials (T) which looks clean and professional
-    };
+  const login = (email, password) => {
+    let userData;
+    
+    // Check if it's admin login
+    if (email === 'admin@admin.com' && password === 'admin') {
+      userData = {
+        id: 'admin-1',
+        name: 'Admin User',
+        email: 'admin@admin.com',
+        role: 'admin',
+        isAdmin: true
+      };
+      console.log('🔐 Admin login successful:', userData);
+    } else {
+      // Regular user login (for testing purposes)
+      userData = {
+        id: 1,
+        name: 'Test User',
+        email: email || 'test@example.com',
+        role: 'user',
+        isAdmin: false
+      };
+      console.log('🔐 Regular user login successful:', userData);
+    }
+    
     setIsLoggedIn(true);
     setUser(userData);
     setIsFreshStart(false);
+    
+    // Persist login data to localStorage
+    localStorage.setItem('gaming-auth', JSON.stringify({
+      isLoggedIn: true,
+      user: userData
+    }));
+    
+    console.log('💾 Login data saved to localStorage');
   };
 
-  const logout = () => {
+  // Simple admin login for testing (no parameters needed)
+  const loginAsAdmin = () => {
+    const userData = {
+      id: 'admin-1',
+      name: 'Admin User',
+      email: 'admin@admin.com',
+      role: 'admin',
+      isAdmin: true
+    };
+    
+    setIsLoggedIn(true);
+    setUser(userData);
+    setIsFreshStart(false);
+    
+    // Persist admin login to localStorage
+    localStorage.setItem('gaming-auth', JSON.stringify({
+      isLoggedIn: true,
+      user: userData
+    }));
+    
+    console.log('🔐 Logged in as admin:', userData);
+  };
+
+  const logout = (onLogoutCallback) => {
     setIsLoggedIn(false);
     setUser(null);
     setIsFreshStart(true);
@@ -133,6 +198,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('gaming-cart');
     localStorage.removeItem('gaming-saved-addresses');
     localStorage.removeItem('gaming-saved-payment');
+    
+    // Call the callback function if provided (to close debug menu, etc.)
+    if (onLogoutCallback && typeof onLogoutCallback === 'function') {
+      onLogoutCallback();
+    }
+    
+    console.log('🔓 Logged out - cleared all auth data');
   };
 
   // Clear any mock data and reset orders
@@ -260,11 +332,17 @@ export const AuthProvider = ({ children }) => {
     setAvatar(newAvatar);
   };
 
+  // Check if current user is admin
+  const isAdmin = () => {
+    return user && user.isAdmin === true;
+  };
+
   const value = {
     isLoggedIn,
     user,
     orders,
     login,
+    loginAsAdmin,
     logout,
     addOrder,
     getOrders,
@@ -273,6 +351,8 @@ export const AuthProvider = ({ children }) => {
     resetAllData,
     resetToFreshStart,
     isFreshStart,
+    // Admin functionality
+    isAdmin: isAdmin(),
     // Address management
     addAddress,
     updateAddress,

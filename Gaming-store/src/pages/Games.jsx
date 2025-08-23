@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useFetchGames, useFetchGenres, useFetchPlatforms } from '../hooks/useFetchGames';
+import { useAuth } from '../context/AuthContext';
 import GameCard from '../components/GameCard';
 import SearchBar from '../components/SearchBar';
 import FilterMenu from '../components/FilterMenu';
@@ -13,8 +14,16 @@ import RAWGGames from '../components/RAWGGames';
 import MockStore from '../components/MockStore';
 
 export default function Games() {
+  // Auth context (keeping for potential future use)
+  const { isAdmin: _isAdmin } = useAuth();
+  
+  // API Configuration
+  const RAWG_API_KEY = '28849ae8cd824c84ae3af5da501b0d67';
+  const CHEAPSHARK_API_BASE = 'https://www.cheapshark.com/api/1.0';
+  const RAWG_API_BASE = 'https://api.rawg.io/api';
+  
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeStore, setActiveStore] = useState('mock'); // 'mock', 'cheapshark', 'rawg'
+  const [activeStore, setActiveStore] = useState('rawg'); // 'mock', 'cheapshark', 'rawg'
   const [isDebugOpen, setIsDebugOpen] = useState(false); // Track debug menu state
   
   // API Testing States
@@ -93,6 +102,23 @@ export default function Games() {
       setSearchParams({});
     }
   }, [searchTerm, setSearchParams]);
+
+  // Update body background when debug mode changes
+  useEffect(() => {
+    if (isDebugOpen) {
+      document.body.classList.add('debug-mode-active');
+      document.body.style.backgroundColor = '#f3e8ff'; // Light purple
+    } else {
+      document.body.classList.remove('debug-mode-active');
+      document.body.style.backgroundColor = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('debug-mode-active');
+      document.body.style.backgroundColor = '';
+    };
+  }, [isDebugOpen]);
 
   // Don't update search term from URL params - always start fresh
   // This prevents search terms from being carried over from homepage
@@ -183,21 +209,33 @@ export default function Games() {
       
       console.log('🧪 Testing CheapShark API...');
       
-      // Test with a simple endpoint
-      const response = await fetch('https://www.cheapshark.com/api/1.0/stores');
+      // Test stores endpoint
+      const storesResponse = await fetch(`${CHEAPSHARK_API_BASE}/stores`);
       
-      if (response.ok) {
-        const data = await response.json();
+      if (storesResponse.ok) {
+        const storesData = await storesResponse.json();
+        
+        // Also test games endpoint to get total count
+        const gamesResponse = await fetch(`${CHEAPSHARK_API_BASE}/games?limit=1`);
+        let totalGames = 'Unknown';
+        
+        if (gamesResponse.ok) {
+          // CheapShark doesn't provide total count directly, but we can show
+          // that games endpoint is accessible
+          totalGames = 'Available (requires search terms)';
+        }
+        
         const result = {
           success: true,
           message: 'API is accessible',
-          storesCount: data.length,
-          sampleStore: data[0]
+          storesCount: storesData.length,
+          totalGames: totalGames,
+          sampleStore: storesData[0]
         };
         setCheapSharkTestResult(result);
         console.log('✅ CheapShark API test successful:', result);
       } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(`HTTP ${storesResponse.status}: ${storesResponse.statusText}`);
       }
     } catch (error) {
       console.error('❌ CheapShark API test failed:', error);
@@ -219,41 +257,54 @@ export default function Games() {
       
       console.log('🧪 Testing RAWG API...');
       
-      // Test with a simple endpoint to check API connectivity
-      const response = await fetch('https://api.rawg.io/api/games?page_size=1');
+      // Import the RAWG API service function dynamically to avoid CORS issues
+      const { testRAWGConnectivity } = await import('../services/rawgApi');
       
-      if (response.ok) {
-        const data = await response.json();
-        const result = {
+      // Use the RAWG API service which handles CORS and authentication properly
+      const result = await testRAWGConnectivity();
+      
+      if (result.success) {
+        setRawgTestResult({
           success: true,
           message: 'API is accessible and responding',
-          totalGames: data.count,
-          sampleGame: data.results[0],
-          note: 'API is working - full access requires valid API key'
-        };
-        setRawgTestResult(result);
+          totalGames: result.totalGames,
+          sampleGame: result.sampleGame,
+          note: 'API is working - full access confirmed with valid API key'
+        });
         console.log('✅ RAWG API test successful:', result);
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        if (errorData.error && errorData.error.includes('key parameter')) {
-          const result = {
-            success: false,
-            message: 'API requires authentication',
-            error: 'API key is required for all endpoints',
-            note: 'RAWG API now requires an API key for all requests. Register at rawg.io/apidocs'
-          };
-          setRawgTestResult(result);
-        } else {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        setRawgTestResult({
+          success: false,
+          message: result.message || 'API test failed',
+          error: result.error || 'Unknown error',
+          note: result.message === 'API key invalid or expired' 
+            ? 'Please check if the API key is correct and has not expired'
+            : 'This may be due to network issues or API restrictions'
+        });
       }
     } catch (error) {
       console.error('❌ RAWG API test failed:', error);
+      
+      // Provide more specific error information
+      let errorMessage = error.message;
+      let note = 'This may be due to network issues or API restrictions';
+      
+      if (error.message === 'Failed to fetch') {
+        errorMessage = 'Network request failed';
+        note = 'This may be due to CORS restrictions, network issues, or API being blocked. RAWG API requires server-side requests or proper CORS headers.';
+      } else if (error.message.includes('CORS')) {
+        errorMessage = 'CORS policy blocked the request';
+        note = 'RAWG API has CORS restrictions. This API is designed for server-side use, not direct browser requests.';
+      } else if (error.message.includes('TypeError')) {
+        errorMessage = 'Request type error';
+        note = 'This may indicate a network connectivity issue or API endpoint problem.';
+      }
+      
       const result = {
         success: false,
         message: 'API connectivity test failed',
-        error: error.message,
-        note: 'This may be due to network issues or API restrictions'
+        error: errorMessage,
+        note: note
       };
       setRawgTestResult(result);
     } finally {
@@ -317,23 +368,27 @@ export default function Games() {
       <Header />
       <div className={`min-h-screen pt-20 sm:pt-24 transition-all duration-500 ${
         isDebugOpen 
-          ? 'bg-purple-50 dark:bg-purple-950' 
+          ? 'bg-purple-100 dark:bg-purple-950' 
           : 'bg-white dark:bg-gray-900'
       }`}>
-        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-          {/* Debug Mode Banner */}
-          {isDebugOpen && (
-            <div className="mb-6 bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">🧪</span>
-                <span className="font-semibold text-lg">DEBUG MODE ACTIVE</span>
-                <span className="text-2xl">🧪</span>
-              </div>
-              <p className="text-center text-purple-100 mt-2 text-sm">
-                Purple theme activated - All debugging tools are now available
-              </p>
+        <div className={`container mx-auto px-4 sm:px-6 py-8 sm:py-12 transition-all duration-500 ${
+          isDebugOpen ? 'bg-purple-50 dark:bg-gray-800' : ''
+        }`}>
+                  
+
+        {/* Debug Mode Banner */}
+        {isDebugOpen && (
+          <div className="mb-6 bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg shadow-lg">
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-2xl">🧪</span>
+              <span className="font-semibold text-lg">DEBUG MODE ACTIVE</span>
+              <span className="text-2xl">🧪</span>
             </div>
-          )}
+            <p className="text-center text-purple-100 mt-2 text-sm">
+              Purple theme activated - All debugging tools are now available
+            </p>
+          </div>
+        )}
           
           {/* Page Header */}
           <div className={`text-center mb-8 sm:mb-12 transition-all duration-500 ${
@@ -360,7 +415,7 @@ export default function Games() {
           </div>
 
           {/* Comprehensive Debugging Section */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
+          <div className="bg-purple-50 dark:bg-gray-700 rounded-lg p-6 mb-8 border border-purple-200 dark:border-gray-600">
             <details 
               className="group"
               onToggle={(e) => setIsDebugOpen(e.target.open)}
@@ -381,7 +436,7 @@ export default function Games() {
               
               <div className="mt-6 space-y-6">
                 {/* Store Selection Subsection */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                <div className="bg-purple-100 dark:bg-gray-800 rounded-lg p-6 border border-purple-300 dark:border-gray-600">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     🎯 Store Selection
                   </h4>
@@ -407,7 +462,7 @@ export default function Games() {
                 </div>
 
                 {/* API Debug Subsection */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                <div className="bg-purple-100 dark:bg-gray-800 rounded-lg p-6 border border-purple-300 dark:border-gray-600">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     🔍 API Debug & Testing
                   </h4>
@@ -478,12 +533,46 @@ export default function Games() {
                   )}
                 </div>
 
-                {/* API Testing Subsection */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                {/* Enhanced API Testing & Results Analysis */}
+                <div className="bg-purple-100 dark:bg-gray-800 rounded-lg p-6 border border-purple-300 dark:border-gray-600">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    🧪 API Testing
+                    🧪 API Testing & Results Analysis
                   </h4>
                   
+                  {/* Store Selection with Status */}
+                  <div className="mb-6">
+                    <h5 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      📊 Current Store Status
+                    </h5>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {stores.map((store) => (
+                        <div key={store.id} className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                          activeStore === store.id
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800'
+                        }`}>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-2xl">{store.name.split(' ')[0]}</span>
+                            <span className={`text-sm px-2 py-1 rounded-full ${
+                              activeStore === store.id
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-400 text-white'
+                            }`}>
+                              {activeStore === store.id ? 'ACTIVE' : 'INACTIVE'}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            {store.description}
+                          </p>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {store.features.join(' • ')}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* API Testing Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     {/* Mock Store Test */}
                     <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
@@ -500,6 +589,7 @@ export default function Games() {
                             <div>• Games: 8</div>
                             <div>• Status: Available</div>
                             <div>• Load Time: Instant</div>
+                            <div>• Offline: Yes</div>
                           </div>
                         </div>
                       </div>
@@ -533,6 +623,9 @@ export default function Games() {
                               <div>• Message: {cheapSharkTestResult.message}</div>
                               {cheapSharkTestResult.storesCount && (
                                 <div>• Stores: {cheapSharkTestResult.storesCount}</div>
+                              )}
+                              {cheapSharkTestResult.totalGames && (
+                                <div>• Total Games: {cheapSharkTestResult.totalGames}</div>
                               )}
                             </div>
                           </div>
@@ -582,30 +675,62 @@ export default function Games() {
                     </div>
                   </div>
 
-                  {/* Test Results Summary */}
+                  {/* Comprehensive Results Analysis */}
                   {(cheapSharkTestResult || rawgTestResult) && (
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-                      <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                        📊 Test Results Summary
+                    <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                      <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        📊 API Test Results Analysis
                       </h5>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="text-center">
+                      
+                      {/* Overall Status Summary */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
                           <div className="text-2xl mb-1">🎯</div>
                           <div className="font-medium text-gray-900 dark:text-white">Mock Store</div>
-                          <div className="text-green-600 dark:text-green-400">✅ Always Available</div>
+                          <div className="text-green-600 dark:text-green-400 text-sm">✅ Always Available</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">8 games • Instant load</div>
                         </div>
-                        <div className="text-center">
+                        <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
                           <div className="text-2xl mb-1">💰</div>
                           <div className="font-medium text-gray-900 dark:text-white">CheapShark</div>
-                          <div className={cheapSharkTestResult?.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+                          <div className={`text-sm ${cheapSharkTestResult?.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                             {cheapSharkTestResult?.success ? '✅ Connected' : '❌ Failed'}
                           </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {cheapSharkTestResult?.storesCount ? `${cheapSharkTestResult.storesCount} stores` : 'Status unknown'}
+                          </div>
                         </div>
-                        <div className="text-center">
+                        <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
                           <div className="text-2xl mb-1">🎮</div>
                           <div className="font-medium text-gray-900 dark:text-white">RAWG</div>
-                          <div className={rawgTestResult?.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+                          <div className={`text-sm ${rawgTestResult?.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                             {rawgTestResult?.success ? '✅ Connected' : '❌ Failed'}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {rawgTestResult?.totalGames ? `${rawgTestResult.totalGames.toLocaleString()} games` : 'Status unknown'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Detailed Analysis */}
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                        <h6 className="font-semibold text-gray-900 dark:text-white mb-3">🔍 Detailed Analysis:</h6>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <h7 className="font-medium text-gray-700 dark:text-gray-300">API Performance:</h7>
+                            <ul className="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                              <li>• Mock Store: Instant response (local data)</li>
+                              <li>• CheapShark: {cheapSharkTestResult?.success ? 'API responding' : 'API failed'}</li>
+                              <li>• RAWG: {rawgTestResult?.success ? 'API responding' : 'API failed'}</li>
+                            </ul>
+                          </div>
+                          <div>
+                            <h7 className="font-medium text-gray-700 dark:text-gray-300">Data Availability:</h7>
+                            <ul className="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                              <li>• Mock Store: 8 curated games</li>
+                              <li>• CheapShark: {cheapSharkTestResult?.storesCount ? `${cheapSharkTestResult.storesCount} stores` : 'Unknown'}</li>
+                              <li>• RAWG: {rawgTestResult?.totalGames ? `${rawgTestResult.totalGames.toLocaleString()}+ games` : 'Unknown'}</li>
+                            </ul>
                           </div>
                         </div>
                       </div>
@@ -614,7 +739,7 @@ export default function Games() {
                 </div>
 
                 {/* Debug & Testing Subsection */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                <div className="bg-purple-100 dark:bg-gray-800 rounded-lg p-6 border border-purple-300 dark:border-gray-600">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     🧪 Debug & Testing
                   </h4>
@@ -689,7 +814,7 @@ export default function Games() {
                 </div>
 
                 {/* Debug Information Subsection */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                <div className="bg-purple-100 dark:bg-gray-800 rounded-lg p-6 border border-purple-300 dark:border-gray-600">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     📋 Debug Information
                   </h4>
@@ -801,10 +926,6 @@ export default function Games() {
               </div>
             </details>
           </div>
-
-
-
-
 
           {/* Results Count */}
           <div className={`flex justify-between sm:justify-end items-center mb-6 transition-all duration-500 ${
@@ -953,62 +1074,32 @@ export default function Games() {
           {/* Store Content Based on Selection */}
           <div className="mb-8">
             {activeStore === 'mock' && (
-              <MockStore />
+              <MockStore 
+                searchTerm={searchTerm}
+                selectedGenre={selectedGenre}
+                selectedPlatform={selectedPlatform}
+                sortBy={sortBy}
+              />
             )}
             
             {activeStore === 'cheapshark' && (
-              <CheapSharkGames />
+              <CheapSharkGames 
+                searchTerm={searchTerm}
+                selectedGenre={selectedGenre}
+                selectedPlatform={selectedPlatform}
+                sortBy={sortBy}
+              />
             )}
             
             {activeStore === 'rawg' && (
-              <RAWGGames />
+              <RAWGGames 
+                searchTerm={searchTerm}
+                selectedGenre={selectedGenre}
+                selectedPlatform={selectedPlatform}
+                sortBy={sortBy}
+              />
             )}
           </div>
-
-
-
-          {/* Games Grid - Only show for Mock Store since others have their own display */}
-          {activeStore === 'mock' && (
-            <>
-              {/* Loading State */}
-              {loading && <Loader />}
-
-              {/* Games Grid */}
-              {!loading && games.length > 0 && (
-                <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6 mb-8">
-                  {games.map((game) => (
-                    <GameCard key={game.id} game={game} />
-                  ))}
-                </div>
-              )}
-
-              {/* No Results */}
-              {!loading && games.length === 0 && (
-                <div className="text-center py-12 mb-8">
-                  <div className="text-6xl mb-4">🎮</div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">No games found</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6 px-4">
-                    Try adjusting your search terms or filters to find what you're looking for.
-                  </p>
-                  <button
-                    onClick={handleClearFilters}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200"
-                  >
-                    Clear All Filters
-                  </button>
-                </div>
-              )}
-
-              {/* Pagination */}
-              {!loading && games.length > 0 && totalPages > 1 && (
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              )}
-            </>
-          )}
         </div>
       </div>
       <Footer />

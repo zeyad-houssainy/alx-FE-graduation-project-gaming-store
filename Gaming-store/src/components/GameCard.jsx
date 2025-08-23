@@ -50,7 +50,7 @@ export default function GameCard({ game }) {
           <img
             src={game.background_image || game.image || '/placeholder-game.jpg'}
             alt={game.name || 'Game'}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-300"
           />
           
           {/* Rating Badge */}
@@ -95,12 +95,10 @@ export default function GameCard({ game }) {
             {!isInCart ? (
               <button
                 onClick={handleAddToCart}
-                className="flex-1 px-2 sm:px-3 py-2 sm:py-3 lg:py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300 relative overflow-hidden bg-transparent border-2 border-blue-600 dark:border-orange-500 text-blue-600 dark:text-orange-500 hover:text-white hover:shadow-lg hover:border-blue-700 dark:hover:border-orange-600 active:scale-95 touch-manipulation"
+                className="flex-1 px-2 sm:px-3 py-2 sm:py-3 lg:py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300 bg-transparent border-2 border-blue-600 dark:border-orange-500 text-blue-600 dark:text-orange-500 hover:bg-blue-100 dark:hover:bg-orange-100 hover:text-blue-700 dark:hover:text-orange-700 hover:shadow-lg hover:border-blue-700 dark:hover:border-orange-600 active:scale-95 touch-manipulation"
                 style={{ minHeight: '36px' }} // Smaller for mobile 3-column
               >
-                {/* Sliding Background Effect */}
-                <span className="absolute inset-0 bg-blue-600 dark:bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                <span className="relative z-10">Add to Cart</span>
+                Add to Cart
               </button>
             ) : (
               <div 

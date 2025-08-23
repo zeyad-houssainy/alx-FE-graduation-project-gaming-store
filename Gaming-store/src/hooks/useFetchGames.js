@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchGames, fetchGameById, fetchGenres, fetchPlatforms } from '../services/gamesApi';
+import { fetchGamesWithFilters, fetchGameById, fetchGenres, fetchPlatforms } from '../services/rawgApi';
 
 export const useFetchGames = (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
   const [games, setGames] = useState([]);
@@ -21,7 +21,14 @@ export const useFetchGames = (page = 1, pageSize = 20, search = '', genre = [], 
         setLoading(true);
         setError(null);
         
-        const result = await fetchGames(page, pageSize, search, genre, platform, sortBy);
+        const result = await fetchGamesWithFilters({
+          page,
+          pageSize,
+          search,
+          selectedGenre: genre,
+          selectedPlatform: platform,
+          sortBy
+        });
         
         setGames(result.games);
         setPagination({

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import ForgotPassword from './ForgotPassword';
 
 const LogIn = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -28,11 +30,9 @@ const LogIn = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, accept any email/password
       if (formData.email && formData.password) {
-        // Store login state (in real app, store JWT token)
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userEmail', formData.email);
+        // Use AuthContext login function
+        login(formData.email, formData.password);
         
         // Redirect to home page
         navigate('/');
@@ -127,6 +127,30 @@ const LogIn = () => {
               >
                 {isLoading ? 'Signing In...' : 'Sign In'}
               </button>
+
+              {/* Admin Quick Login */}
+              <div className="mt-4 p-3 bg-gradient-to-r from-green-500 to-green-600 rounded-lg">
+                <div className="text-center text-white text-sm mb-2">
+                  <span className="font-medium">🧪 Testing Mode</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({ email: 'admin@admin.com', password: 'admin' });
+                    // Auto-submit after a brief delay to show the values
+                    setTimeout(() => {
+                      const form = document.querySelector('form');
+                      if (form) form.dispatchEvent(new Event('submit', { bubbles: true }));
+                    }, 100);
+                  }}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                >
+                  Quick Admin Login
+                </button>
+                <div className="text-center text-green-100 text-xs mt-2">
+                  Uses: admin@admin.com / admin
+                </div>
+              </div>
             </form>
 
             {/* Divider */}

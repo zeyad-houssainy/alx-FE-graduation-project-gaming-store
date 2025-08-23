@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import GameCard from './GameCard';
 
-export default function MockStore() {
+export default function MockStore({ searchTerm = '', selectedGenre = [], selectedPlatform = [], sortBy = 'relevance' }) {
 
   // Mock game data
   const mockGames = [
@@ -135,6 +135,66 @@ export default function MockStore() {
     }
   ];
 
+  // Filter and sort games based on search parameters
+  const filteredGames = useMemo(() => {
+    let filtered = [...mockGames];
+
+    // Apply search term filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(game => 
+        game.name.toLowerCase().includes(searchLower) ||
+        game.description.toLowerCase().includes(searchLower) ||
+        game.genre.toLowerCase().includes(searchLower) ||
+        game.developers.some(dev => dev.toLowerCase().includes(searchLower)) ||
+        game.publishers.some(pub => pub.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply genre filter
+    if (selectedGenre.length > 0) {
+      filtered = filtered.filter(game => 
+        selectedGenre.some(genre => 
+          game.genre.toLowerCase().includes(genre.toLowerCase())
+        )
+      );
+    }
+
+    // Apply platform filter
+    if (selectedPlatform.length > 0) {
+      filtered = filtered.filter(game => 
+        selectedPlatform.some(platform => 
+          game.platforms.some(gamePlatform => 
+            gamePlatform.toLowerCase().includes(platform.toLowerCase())
+          )
+        )
+      );
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'name-asc':
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      default: // 'relevance' - keep original order
+        break;
+    }
+
+    return filtered;
+  }, [searchTerm, selectedGenre, selectedPlatform, sortBy]);
+
 
 
   return (
@@ -142,43 +202,25 @@ export default function MockStore() {
 
 
       {/* Games Grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
-        {mockGames.map((game) => (
-          <GameCard key={game.id} game={game} />
-        ))}
-      </div>
-
-      {/* Store Features */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
-          ✨ Mock Store Features
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-3xl mb-2">⚡</div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Instant Loading</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              No API calls, no waiting. Games load instantly from local storage.
-            </p>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-3xl mb-2">🔒</div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Always Available</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Works offline, no internet connection required. Perfect for testing and development.
-            </p>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-3xl mb-2">🎨</div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Curated Content</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Hand-picked selection of popular games with high-quality metadata and images.
-            </p>
-          </div>
+      {filteredGames.length > 0 ? (
+        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
+          {filteredGames.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
         </div>
+      ) : (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🎮</div>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">No games found</h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 px-4">
+            Try adjusting your search terms or filters to find what you're looking for.
+          </p>
+        </div>
+      )}
+
+      {/* Results Info */}
+      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+        Showing {filteredGames.length} out of {mockGames.length} games
       </div>
     </div>
   );
