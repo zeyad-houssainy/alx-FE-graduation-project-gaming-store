@@ -5,7 +5,7 @@ import axios from 'axios';
 // API Configuration
 const API_CONFIG = {
   RAWG_BASE_URL: 'https://api.rawg.io/api',
-  RAWG_API_KEY: '28849ae8cd824c84ae3af5da501b0d67',
+  RAWG_API_KEY: 'b996c3910d6443059eb56fd7e61b5711',
   CHEAPSHARK_BASE_URL: 'https://www.cheapshark.com/api/1.0',
   TIMEOUT: 30000,
 };
