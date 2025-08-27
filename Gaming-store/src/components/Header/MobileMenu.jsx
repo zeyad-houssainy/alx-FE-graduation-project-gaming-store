@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { useCartStore } from '../../stores';
-import { useAuth } from "../../context/AuthContext";
+import { useCartStore, useAuthStore } from '../../stores';
 import ThemeToggle from "../ThemeToggle";
 
 export default function MobileMenu({ isOpen, onClose }) {
   const location = useLocation();
   const { getCartItemCount } = useCartStore();
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, user, logout } = useAuthStore();
   
   const links = [
     { name: "HOME", path: "/", icon: "🏠" },

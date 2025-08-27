@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import Home from './pages/HomePage/HomePage';
 import Deals from './pages/Deals';
 import Games from './pages/Games';
@@ -17,28 +16,26 @@ import SlidingCartSummary from './components/SlidingCartSummary';
 
 export default function AppRouter() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/deals" element={<Deals />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/games/:id" element={<GameDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout/success" element={<CheckoutSuccess />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/profile" element={<MyProfile />} />
-          <Route path="/live" element={<UnderConstruction />} />
-          <Route path="/features" element={<UnderConstruction />} />
-          <Route path="/blog" element={<UnderConstruction />} />
-          <Route path="/contact" element={<UnderConstruction />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <SlidingCartSummary />
-      </Router>
-    </AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/deals" element={<Deals />} />
+        <Route path="/games" element={<Games />} />
+        <Route path="/games/:id" element={<GameDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout/success" element={<CheckoutSuccess />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/profile" element={<MyProfile />} />
+        <Route path="/live" element={<UnderConstruction />} />
+        <Route path="/features" element={<UnderConstruction />} />
+        <Route path="/blog" element={<UnderConstruction />} />
+        <Route path="/contact" element={<UnderConstruction />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <SlidingCartSummary />
+    </Router>
   );
 }

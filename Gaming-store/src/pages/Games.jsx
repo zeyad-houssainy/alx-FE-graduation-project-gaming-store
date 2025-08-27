@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useGamesStore, useCartStore } from '../stores';
-import { useAuth } from '../context/AuthContext';
+import { useGamesStore, useCartStore, useAuthStore } from '../stores';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import FilterMenu from '../components/FilterMenu';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
@@ -47,7 +47,7 @@ export default function Games() {
     globalSearch,
   } = useGamesStore();
   const { addToCart } = useCartStore();
-  const { isAdmin: _isAdmin } = useAuth();
+  const { isAdmin: _isAdmin } = useAuthStore();
   
   const [searchParams, setSearchParams] = useSearchParams();
   const [isDebugOpen, setIsDebugOpen] = useState(false); // Track debug menu state
@@ -303,16 +303,18 @@ export default function Games() {
       console.log('🧪 Testing CheapShark API...');
       
       // Test stores endpoint to verify API accessibility
-      const storesResponse = await fetch('https://www.cheapshark.com/api/1.0/stores');
+      const storesResponse = await axios.get('https://www.cheapshark.com/api/1.0/stores');
       
-      if (storesResponse.ok) {
-        const storesData = await storesResponse.json();
+      if (storesResponse.status === 200) {
+        const storesData = storesResponse.data;
         
         // Also test games endpoint to get total count
-        const gamesResponse = await fetch('https://www.cheapshark.com/api/1.0/games?limit=1');
+        const gamesResponse = await axios.get('https://www.cheapshark.com/api/1.0/games', {
+          params: { limit: 1 }
+        });
         let totalGames = 'Unknown';
         
-        if (gamesResponse.ok) {
+        if (gamesResponse.status === 200) {
           // CheapShark doesn't provide total count directly, but we can show
           // that games endpoint is accessible
           totalGames = 'Available (requires search terms)';

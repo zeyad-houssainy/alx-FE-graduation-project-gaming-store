@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useCartStore } from '../stores';
-import { useAuth } from '../context/AuthContext';
+import { useCartStore, useAuthStore } from '../stores';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import CartItem from '../components/CartItem';
@@ -11,7 +10,7 @@ import { FaArrowLeft, FaCreditCard, FaMapMarkerAlt, FaCheckCircle } from 'react-
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, clearCart, getCartTotal } = useCartStore();
-  const { addOrder, isLoggedIn, user } = useAuth();
+  const { addOrder, isLoggedIn, user } = useAuthStore();
   
   const [formData, setFormData] = useState({
     firstName: '',

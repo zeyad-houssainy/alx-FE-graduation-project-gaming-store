@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuthStore } from '../../stores';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import Button from '../../components/Button';
@@ -25,7 +25,7 @@ export default function MyProfile() {
     getPaymentMethods,
     avatar,
     updateAvatar
-  } = useAuth();
+  } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
