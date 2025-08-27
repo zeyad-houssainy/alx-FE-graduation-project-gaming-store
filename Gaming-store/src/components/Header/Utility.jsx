@@ -1,7 +1,8 @@
 // src/components/Utility.jsx
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useCartStore, useAuthStore } from "../../stores";
+import { useCartStore } from "../../stores";
+import { useAuth } from "../../context/AuthContext";
 import SearchOverlay from "./SearchOverlay";
 import ThemeToggle from "../ThemeToggle";
 
@@ -9,7 +10,7 @@ export default function Utility() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { getCartItemCount } = useCartStore();
-  const { isLoggedIn, user, logout } = useAuthStore();
+  const { isLoggedIn, user, logout } = useAuth();
   const profileMenuRef = useRef(null);
 
   // Close profile menu when clicking outside

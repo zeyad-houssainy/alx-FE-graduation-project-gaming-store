@@ -31,8 +31,7 @@ export default function SearchBar({
         return 'Search 500,000+ video games by name, genre, or developer...';
       case 'cheapshark':
         return 'Search for the best game deals across 20+ stores...';
-      case 'bgg':
-        return 'Search 100,000+ board games by name, category, or mechanic...';
+
       default: // mock
         return 'Search our curated collection of popular games...';
     }
@@ -44,8 +43,7 @@ export default function SearchBar({
         return 'Search games, genres, developers...';
       case 'cheapshark':
         return 'Search for game deals...';
-      case 'bgg':
-        return 'Search board games, categories...';
+
       default: // mock
         return 'Search games...';
     }

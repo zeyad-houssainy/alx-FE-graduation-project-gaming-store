@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuthStore } from '../../stores';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,8 +42,8 @@ export default function SignUp() {
           return;
         }
         
-        // Auto-login after successful signup
-        login();
+        // Use the login function from AuthContext
+        login(formData.email, formData.password);
         navigate('/');
       } else {
         setError('Please fill in all fields');
@@ -67,8 +67,10 @@ export default function SignUp() {
       // For testing purposes, simulate successful social signup
       console.log(`Signing up with ${provider}...`);
       
-      // Auto-login after successful social authentication
-      login();
+      // Use the login function from AuthContext with generated credentials
+      const email = `user_${Date.now()}@${provider}.com`;
+      const password = 'password123';
+      login(email, password);
       navigate('/');
     } catch (err) {
       setError(`${provider} signup failed. Please try again.`);

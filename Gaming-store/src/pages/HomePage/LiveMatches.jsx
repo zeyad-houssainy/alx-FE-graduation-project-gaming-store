@@ -45,7 +45,7 @@ const LiveMatches = () => {
       game: "CS2",
       time: "15:30",
       status: "LIVE NOW",
-      countdownDate: "2025-01-15T15:30:00"
+      countdownDate: "2025-09-15T15:30:00"
     },
     {
       id: 2,
@@ -54,7 +54,7 @@ const LiveMatches = () => {
       game: "Valorant",
       time: "17:00",
       status: "UPCOMING",
-      countdownDate: "2025-01-20T17:00:00"
+      countdownDate: "2025-10-22T17:00:00"
     },
     {
       id: 3,
@@ -63,7 +63,7 @@ const LiveMatches = () => {
       game: "League of Legends",
       time: "19:30",
       status: "UPCOMING",
-      countdownDate: "2025-01-25T19:30:00"
+      countdownDate: "2025-12-08T19:30:00"
     }
   ];
 

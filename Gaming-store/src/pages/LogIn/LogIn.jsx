@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuthStore } from '../../stores';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 export default function LogIn() {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -35,7 +35,8 @@ export default function LogIn() {
       
       // For testing purposes, accept any email/password combination
       if (formData.email && formData.password) {
-        login();
+        // Use the login function from AuthContext
+        login(formData.email, formData.password);
         navigate('/');
       } else {
         setError('Please enter both email and password');
@@ -59,8 +60,10 @@ export default function LogIn() {
       // For testing purposes, simulate successful social login
       console.log(`Signing in with ${provider}...`);
       
-      // Auto-login after successful social authentication
-      login();
+      // Use the login function from AuthContext with generated credentials
+      const email = `user_${Date.now()}@${provider}.com`;
+      const password = 'password123';
+      login(email, password);
       navigate('/');
     } catch (err) {
       setError(`${provider} login failed. Please try again.`);

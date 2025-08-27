@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useGamesStore, useAuthStore } from '../stores';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useGamesStore, useCartStore } from '../stores';
+import { useAuth } from '../context/AuthContext';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import FilterMenu from '../components/FilterMenu';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
@@ -8,22 +9,26 @@ import Loader from '../components/Loader';
 import MockStore from '../components/MockStore';
 import RAWGGames from '../components/RAWGGames';
 import CheapSharkGames from '../components/CheapSharkGames';
-import BGGGames from '../components/BGGGames';
-import { testAPIConnectivity } from '../services/cheapsharkApi';
+
+import { testCheapSharkConnectivity } from '../services/cheapsharkApi';
 import { testRAWGConnectivity } from '../services/rawgApi';
+import { FaFilter, FaTimes, FaEye, FaEyeSlash, FaBug, FaCog, FaPlay, FaPause, FaStop } from 'react-icons/fa';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
 export default function Games() {
-  // Auth store
-  const { isAdmin: _isAdmin } = useAuthStore();
-  
-  // Games store
-  const {
-    games,
-    filteredGames: _filteredGames,
-    loading: _loading,
-    error,
+  const navigate = useNavigate();
+  const { 
+    games, 
+    loading, 
+    error, 
+    fetchGames, 
+    clearGames, 
+    setLoading, 
+    setError,
+    currentPage,
+    totalPages,
+    setCurrentPage,
     pagination,
     filters,
     activeStore,
@@ -33,8 +38,16 @@ export default function Games() {
     setSortBy,
     setPage,
     setActiveStore,
-    fetchGames,
+    getGenres,
+    getPlatforms,
+    getQuickFilters,
+    applyQuickFilter,
+    resetFiltersForStore,
+    getFilterStatus,
+    globalSearch,
   } = useGamesStore();
+  const { addToCart } = useCartStore();
+  const { isAdmin: _isAdmin } = useAuth();
   
   const [searchParams, setSearchParams] = useSearchParams();
   const [isDebugOpen, setIsDebugOpen] = useState(false); // Track debug menu state
@@ -42,13 +55,11 @@ export default function Games() {
   // API Testing States
   const [cheapSharkTestResult, setCheapSharkTestResult] = useState(null);
   const [rawgTestResult, setRawgTestResult] = useState(null);
-  const [bggTestResult, setBggTestResult] = useState(null);
   const [isTestingCheapShark, setIsTestingCheapShark] = useState(false);
   const [isTestingRAWG, setIsTestingRAWG] = useState(false);
-  const [isTestingBGG, setIsTestingBGG] = useState(false);
   
   // Initialize states from localStorage if available
-  const [currentPage, setCurrentPage] = useState(() => {
+  const [currentPageState, setCurrentPageState] = useState(() => {
     const savedPage = localStorage.getItem('gaming-current-page');
     return savedPage ? parseInt(savedPage) : 1;
   });
@@ -73,11 +84,51 @@ export default function Games() {
     const savedSort = localStorage.getItem('gaming-sort-by');
     return savedSort || 'relevance';
   });
+
+  // Global search state
+  const [globalSearchResults, setGlobalSearchResults] = useState(null);
+  const [isGlobalSearch, setIsGlobalSearch] = useState(false);
   
   // Save states to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('gaming-current-page', currentPage.toString());
-  }, [currentPage]);
+    localStorage.setItem('gaming-current-page', currentPageState.toString());
+  }, [currentPageState]);
+
+  // Handle global search from URL or header search
+  useEffect(() => {
+    const handleGlobalSearch = async () => {
+      // Check if there's a search query in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchQuery = urlParams.get('search');
+      
+      if (searchQuery && searchQuery.trim()) {
+        try {
+          setIsGlobalSearch(true);
+          setLoading(true);
+          
+          // Perform global search
+          const results = await globalSearch(searchQuery.trim());
+          setGlobalSearchResults(results);
+          
+          // Update the search term in the store
+          setSearch(searchQuery.trim());
+          
+          // Clear the URL search parameter
+          const newUrl = new URL(window.location);
+          newUrl.searchParams.delete('search');
+          window.history.replaceState({}, '', newUrl);
+          
+        } catch (error) {
+          console.error('Global search error:', error);
+          setError('Search failed. Please try again.');
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    handleGlobalSearch();
+  }, [globalSearch, setSearch, setLoading, setError]);
 
   useEffect(() => {
     localStorage.setItem('gaming-search-term', searchTerm);
@@ -144,8 +195,8 @@ export default function Games() {
   }, [sortBy, setSortBy]);
 
   useEffect(() => {
-    setPage(currentPage);
-  }, [currentPage, setPage]);
+    setPage(currentPageState);
+  }, [currentPageState, setPage]);
 
   // Don't update search term from URL params - always start fresh
   // This prevents search terms from being carried over from homepage
@@ -169,12 +220,36 @@ export default function Games() {
 
   // Reset page when filters change
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPageState(1);
   }, [selectedGenre, selectedPlatform, sortBy]);
 
-  const handleSearch = () => {
-    setSearchTerm(searchTerm);
-    setCurrentPage(1);
+  const handleSearch = async (searchQuery) => {
+    if (searchQuery && searchQuery.trim()) {
+      try {
+        // Clear global search state since we're searching within the current store
+        setIsGlobalSearch(false);
+        setGlobalSearchResults(null);
+        
+        // Update the search term in the store
+        setSearchTerm(searchQuery.trim());
+        setSearch(searchQuery.trim());
+        
+        // Reset to first page
+        setCurrentPageState(1);
+        
+        // The search will automatically trigger a new fetchGames() call
+        // which will apply the search filter to the current active store
+        
+      } catch (error) {
+        console.error('Search error:', error);
+        setError('Search failed. Please try again.');
+      }
+    } else {
+      // Clear search
+      setSearchTerm('');
+      setSearch('');
+      setCurrentPageState(1);
+    }
   };
 
   const handleGenreChange = (genres) => {
@@ -194,7 +269,11 @@ export default function Games() {
     setSelectedPlatform([]);
     setLocalSortBy('relevance');
     setSearchTerm('');
-    setCurrentPage(1);
+    setCurrentPageState(1);
+    
+    // Clear global search
+    setIsGlobalSearch(false);
+    setGlobalSearchResults(null);
     
     // Clear URL params
     setSearchParams({});
@@ -211,11 +290,9 @@ export default function Games() {
   };
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setCurrentPageState(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const totalPages = Math.ceil(pagination.count / 12);
 
   // API Testing Functions
   const testCheapSharkAPI = async () => {
@@ -328,64 +405,7 @@ export default function Games() {
     }
   };
 
-  const testBGGAPI = async () => {
-    try {
-      setIsTestingBGG(true);
-      setBggTestResult(null);
-      
-      console.log('🧪 Testing BGG API...');
-      
-      // Import the BGG API service function dynamically
-      const { testBGGConnectivity } = await import('../services/bggApi');
-      
-      // Use the BGG API service which handles XML parsing and connectivity
-      const result = await testBGGConnectivity();
-      
-      if (result.success) {
-        setBggTestResult({
-          success: true,
-          message: 'API is accessible and responding',
-          sampleGame: result.sampleGame,
-          note: 'BGG API is working - free access confirmed (XML-based)'
-        });
-        console.log('✅ BGG API test successful:', result);
-      } else {
-        setBggTestResult({
-          success: false,
-          message: result.message || 'API test failed',
-          error: result.error || 'Unknown error',
-          note: 'This may be due to network issues or XML parsing problems'
-        });
-      }
-    } catch (error) {
-      console.error('❌ BGG API test failed:', error);
-      
-      // Provide more specific error information
-      let errorMessage = error.message;
-      let note = 'This may be due to network issues or XML parsing problems';
-      
-      if (error.message === 'Failed to fetch') {
-        errorMessage = 'Network request failed';
-        note = 'This may be due to network connectivity issues or BGG service being temporarily unavailable.';
-      } else if (error.message.includes('XML')) {
-        errorMessage = 'XML parsing failed';
-        note = 'BGG API returns XML data which requires proper parsing. This may indicate a response format issue.';
-      } else if (error.message.includes('TypeError')) {
-        errorMessage = 'Request type error';
-        note = 'This may indicate a network connectivity issue or API endpoint problem.';
-      }
-      
-      const result = {
-        success: false,
-        message: 'BGG API connectivity test failed',
-        error: errorMessage,
-        note: note
-      };
-      setBggTestResult(result);
-    } finally {
-      setIsTestingBGG(false);
-    }
-  };
+
 
   // Store configurations
   const stores = [
@@ -410,13 +430,7 @@ export default function Games() {
       color: 'green',
       features: ['500,000+ games', 'Rich metadata', 'Advanced filtering']
     },
-    {
-      id: 'bgg',
-      name: '🎲 BGG Store',
-      description: 'Board games and tabletop experiences',
-      color: 'orange',
-      features: ['Board games database', 'Community ratings', 'Game mechanics']
-    }
+
   ];
 
   const activeStoreInfo = stores.find(store => store.id === activeStore);
@@ -526,7 +540,15 @@ export default function Games() {
                     {stores.map((store) => (
                       <button
                         key={store.id}
-                        onClick={() => setActiveStore(store.id)}
+                        onClick={() => {
+                          setActiveStore(store.id);
+                          setSelectedGenre([]);
+                          setSelectedPlatform([]);
+                          setSearchTerm('');
+                          // Clear global search when switching stores
+                          setIsGlobalSearch(false);
+                          setGlobalSearchResults(null);
+                        }}
                         className={`flex items-center gap-3 px-6 py-4 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 ${
                           activeStore === store.id
                             ? `bg-${store.color}-600 text-white shadow-lg shadow-${store.color}-600/30`
@@ -593,25 +615,7 @@ export default function Games() {
                     </div>
                   )}
 
-                  {activeStore === 'bgg' && (
-                    <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
-                      <h5 className="text-lg font-semibold text-orange-800 dark:text-orange-200 mb-3">
-                        🎲 BGG API Debug
-                      </h5>
-                      <p className="text-orange-600 dark:text-orange-300 mb-3">
-                        BGG (Board Game Geek) API provides a comprehensive database of board games and community ratings.
-                      </p>
-                      <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
-                        <h6 className="font-semibold text-gray-900 dark:text-white mb-2">API Status:</h6>
-                        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                          <li>• Base URL: https://api.boardgamegeek.com/xmlapi2</li>
-                          <li>• No API key required</li>
-                          <li>• 100,000+ board games in database</li>
-                          <li>• Community ratings and mechanics</li>
-                        </ul>
-                      </div>
-                    </div>
-                  )}
+
 
                   {activeStore === 'mock' && (
                     <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
@@ -776,50 +780,11 @@ export default function Games() {
                       </div>
                     </div>
 
-                    {/* BGG API Test */}
-                    <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
-                      <h5 className="text-lg font-semibold text-orange-800 dark:text-orange-200 mb-3">
-                        🎲 BGG API
-                      </h5>
-                      <div className="text-center">
-                        <div className="text-4xl mb-2">🔌</div>
-                        <p className="text-orange-600 dark:text-orange-300 text-sm mb-3">
-                          Test API connectivity
-                        </p>
-                        <button
-                          onClick={testBGGAPI}
-                          disabled={isTestingBGG}
-                          className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors duration-200 ${
-                            isTestingBGG 
-                              ? 'bg-orange-400 cursor-not-allowed' 
-                              : 'bg-orange-600 hover:bg-orange-700'
-                          }`}
-                        >
-                          {isTestingBGG ? 'Testing...' : 'Test API'}
-                        </button>
-                        {bggTestResult && (
-                          <div className="mt-3 bg-white dark:bg-gray-800 rounded-lg p-3 text-left">
-                            <div className="text-xs text-orange-600 dark:text-orange-400 space-y-1">
-                              <div>• Status: {bggTestResult.success ? '✅ Success' : '❌ Failed'}</div>
-                              <div>• Message: {bggTestResult.message}</div>
-                              {bggTestResult.sampleGame && (
-                                <div>• Sample Game: {bggTestResult.sampleGame.name}</div>
-                              )}
-                              {bggTestResult.note && (
-                                <div>• Note: {bggTestResult.note}</div>
-                              )}
-                              {bggTestResult.error && (
-                                <div>• Error: {bggTestResult.error}</div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+
                   </div>
 
                   {/* Comprehensive Results Analysis */}
-                  {(cheapSharkTestResult || rawgTestResult || bggTestResult) && (
+                  {(cheapSharkTestResult || rawgTestResult) && (
                     <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
                       <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                         📊 API Test Results Analysis
@@ -853,16 +818,7 @@ export default function Games() {
                             {rawgTestResult?.totalGames ? `${rawgTestResult.totalGames.toLocaleString()} games` : 'Status unknown'}
                           </div>
                         </div>
-                        <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                          <div className="text-2xl mb-1">🎲</div>
-                          <div className="font-medium text-gray-900 dark:text-white">BGG</div>
-                          <div className={`text-sm ${bggTestResult?.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                            {bggTestResult?.success ? '✅ Connected' : '❌ Failed'}
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {bggTestResult?.success ? 'Board games' : 'Status unknown'}
-                          </div>
-                        </div>
+
                       </div>
 
                       {/* Detailed Analysis */}
@@ -875,7 +831,7 @@ export default function Games() {
                               <li>• Mock Store: Instant response (local data)</li>
                               <li>• CheapShark: {cheapSharkTestResult?.success ? 'API responding' : 'API failed'}</li>
                               <li>• RAWG: {rawgTestResult?.success ? 'API responding' : 'API failed'}</li>
-                              <li>• BGG: {bggTestResult?.success ? 'API responding' : 'API failed'}</li>
+
                             </ul>
                           </div>
                           <div>
@@ -884,7 +840,7 @@ export default function Games() {
                               <li>• Mock Store: 8 curated games</li>
                               <li>• CheapShark: {cheapSharkTestResult?.storesCount ? `${cheapSharkTestResult.storesCount} stores` : 'Unknown'}</li>
                               <li>• RAWG: {rawgTestResult?.totalGames ? `${rawgTestResult.totalGames.toLocaleString()}+ games` : 'Unknown'}</li>
-                              <li>• BGG: {bggTestResult?.success ? '100,000+ board games' : 'Unknown'}</li>
+
                             </ul>
                           </div>
                         </div>
@@ -937,7 +893,7 @@ export default function Games() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Current Page:</span>
-                          <span className="font-medium">{currentPage}</span>
+                          <span className="font-medium">{currentPageState}</span>
                         </div>
                       </div>
                     </div>
@@ -959,7 +915,7 @@ export default function Games() {
                         🧹 Clear All Filters
                       </button>
                       <button
-                        onClick={() => console.log('Debug info:', { games: games.length, pagination, currentPage, totalPages })}
+                        onClick={() => console.log('Debug info:', { games: games.length, pagination, currentPageState, totalPages })}
                         className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
                       >
                         📊 Log Debug Info
@@ -1091,7 +1047,10 @@ export default function Games() {
                 ? 'text-purple-700 dark:text-purple-300' 
                 : 'text-gray-600 dark:text-gray-300'
             }`}>
-              {games.length} of {pagination.count} games
+              {isGlobalSearch && globalSearchResults 
+                ? `${globalSearchResults.count} games found across all stores`
+                : `${games.length} of ${pagination.count} games`
+              }
             </p>
             <div className="text-right">
               <p className={`text-sm hidden sm:block transition-all duration-500 ${
@@ -1099,14 +1058,20 @@ export default function Games() {
                   ? 'text-purple-700 dark:text-purple-300' 
                   : 'text-gray-600 dark:text-gray-300'
               }`}>
-                Showing {games.length} of {pagination.count} games
+                {isGlobalSearch && globalSearchResults 
+                  ? `Found ${globalSearchResults.count} games across all stores`
+                  : `Showing ${games.length} of ${pagination.count} games`
+                }
               </p>
               <div className={`text-xs transition-all duration-500 ${
                 isDebugOpen 
                   ? 'text-purple-500 dark:text-purple-400' 
                   : 'text-gray-500 dark:text-gray-400'
               }`}>
-                Page {currentPage} of {totalPages}
+                {isGlobalSearch && globalSearchResults 
+                  ? 'Global search results'
+                  : `Page ${currentPageState} of ${totalPages}`
+                }
               </div>
             </div>
           </div>
@@ -1121,6 +1086,66 @@ export default function Games() {
             />
           </div>
 
+          {/* Global Search Results */}
+          {isGlobalSearch && globalSearchResults && (
+            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
+                🔍 Global Search Results
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {globalSearchResults.stores.rawg.count}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">RAWG Games</div>
+                </div>
+                <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {globalSearchResults.stores.cheapshark.count}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">CheapShark Deals</div>
+                </div>
+                <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {globalSearchResults.stores.mock.count}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Mock Store</div>
+                </div>
+              </div>
+              <div className="text-sm text-blue-700 dark:text-blue-300">
+                Found {globalSearchResults.count} total games across all stores
+              </div>
+            </div>
+          )}
+
+          {/* Quick Filters */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Quick Filters
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(getQuickFilters()).map(([key, filter]) => (
+                <button
+                  key={key}
+                  onClick={() => applyQuickFilter(key)}
+                  className="px-3 py-2 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600"
+                >
+                  {filter.name}
+                </button>
+              ))}
+            </div>
+            
+            {/* Filter Status Display */}
+            <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+              <span className="mr-4">Store: {getFilterStatus().activeStore}</span>
+              <span className="mr-4">Games: {getFilterStatus().totalGames}</span>
+              <span className="mr-4">Filtered: {getFilterStatus().filteredGames}</span>
+              {getFilterStatus().hasActiveFilters && (
+                <span className="text-blue-600 dark:text-blue-400">Active Filters</span>
+              )}
+            </div>
+          </div>
+
           {/* Filters and Actions Header */}
           <div className="flex flex-col gap-4 mb-6">
             {/* Filter Button and Active Filters */}
@@ -1128,8 +1153,8 @@ export default function Games() {
               {/* Filter Button */}
               <div className="flex-shrink-0">
                 <FilterMenu
-                  genres={filters.genres}
-                  platforms={filters.platforms}
+                  genres={getGenres()}
+                  platforms={getPlatforms()}
                   selectedGenre={selectedGenre}
                   selectedPlatform={selectedPlatform}
                   onGenreChange={handleGenreChange}
@@ -1161,14 +1186,26 @@ export default function Games() {
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="rating">Highest Rated</option>
-                  {activeStore === 'rawg' && <option value="released">Newest First</option>}
-                  {activeStore === 'bgg' && <option value="released">Newest First</option>}
+                  {activeStore === 'rawg' && (
+                    <>
+                      <option value="released">Newest First</option>
+                      <option value="metacritic">Highest Metacritic</option>
+                      <option value="added">Most Popular</option>
+                    </>
+                  )}
+                  {activeStore === 'cheapshark' && (
+                    <>
+                      <option value="price-low">Best Deals</option>
+                      <option value="rating">Highest Rated</option>
+                    </>
+                  )}
+
                 </select>
                 {/* Store-specific sorting info */}
                 <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
                   {activeStore === 'rawg' && '🎮 Rich metadata'}
                   {activeStore === 'cheapshark' && '💰 Price-focused'}
-                  {activeStore === 'bgg' && '🎲 Board games'}
+
                   {activeStore === 'mock' && '🎯 Curated'}
                 </div>
               </div>
@@ -1266,14 +1303,7 @@ export default function Games() {
               />
             )}
 
-            {activeStore === 'bgg' && (
-              <BGGGames 
-                searchTerm={searchTerm}
-                selectedGenre={selectedGenre}
-                selectedPlatform={selectedPlatform}
-                sortBy={sortBy}
-              />
-            )}
+
           </div>
         </div>
       </div>

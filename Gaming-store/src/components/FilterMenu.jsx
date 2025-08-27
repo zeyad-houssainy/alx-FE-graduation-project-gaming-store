@@ -101,13 +101,7 @@ export default function FilterMenu({
           genreIcon: '💰',
           platformIcon: '💻'
         };
-      case 'bgg':
-        return {
-          genreNote: 'Board game categories and mechanics',
-          platformNote: 'Tabletop mechanics and player counts',
-          genreIcon: '🎲',
-          platformIcon: '👥'
-        };
+
       default: // mock
         return {
           genreNote: 'Curated genres for popular games',
@@ -172,13 +166,13 @@ export default function FilterMenu({
                   <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
                     {activeStore === 'rawg' && '🎮 RAWG Store'}
                     {activeStore === 'cheapshark' && '💰 CheapShark Store'}
-                    {activeStore === 'bgg' && '🎲 BGG Store'}
+
                     {activeStore === 'mock' && '🎯 Mock Store'}
                   </h4>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
                     {activeStore === 'rawg' && 'Advanced filtering with rich metadata'}
                     {activeStore === 'cheapshark' && 'Price-focused filtering with store comparison'}
-                    {activeStore === 'bgg' && 'Board game categories and mechanics'}
+
                     {activeStore === 'mock' && 'Curated selection with instant access'}
                   </p>
                 </div>

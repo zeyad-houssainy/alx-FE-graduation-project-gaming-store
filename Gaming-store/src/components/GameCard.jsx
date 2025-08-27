@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCartStore } from '../stores';
 import { Link } from 'react-router-dom';
 
 export default function GameCard({ game }) {
+  // Image handling state
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
   // Safety check - if game is undefined, don't render
   if (!game) {
     return null;
@@ -13,6 +17,24 @@ export default function GameCard({ game }) {
   const cartItem = items.find(item => item.id === game.id);
   const quantity = cartItem ? cartItem.quantity : 0;
   const isGameInCart = isInCart(game.id);
+
+  // Image handling functions
+  const getImageUrl = () => {
+    if (imageError) {
+      return '/assets/images/featured-game-1.jpg'; // Fallback image
+    }
+    return game.background_image || game.image || '/assets/images/featured-game-1.jpg';
+  };
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageLoading(false);
+    setImageError(true);
+  };
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -46,12 +68,39 @@ export default function GameCard({ game }) {
     <Link to={`/games/${game.id}`} className="block h-full group">
       <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 h-full flex flex-col hover:shadow-lg dark:hover:shadow-gray-900/50">
         {/* Image Container - Fixed Height */}
-        <div className="relative overflow-hidden aspect-[4/3] flex-shrink-0">
+        <div className="relative overflow-hidden aspect-[4/3] flex-shrink-0 bg-gray-100 dark:bg-gray-700">
+          {/* Loading State */}
+          {imageLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-600">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-orange-400"></div>
+            </div>
+          )}
+          
+          {/* Main Image with Enhanced Positioning */}
           <img
-            src={game.background_image || game.image || '/placeholder-game.jpg'}
+            src={getImageUrl()}
             alt={game.name || 'Game'}
-            className="w-full h-full object-cover transition-transform duration-300"
+            className={`w-full h-full transition-all duration-300 ${
+              imageLoading ? 'opacity-0' : 'opacity-100'
+            } ${
+              imageError ? 'object-contain p-4' : 'object-cover'
+            }`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            loading="lazy"
+            decoding="async"
+            style={{
+              objectPosition: 'center center',
+              imageRendering: 'auto'
+            }}
           />
+          
+          {/* Image Quality Indicator */}
+          {!imageError && !imageLoading && (
+            <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+              HD
+            </div>
+          )}
           
           {/* Rating Badge */}
           <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-lg text-xs font-medium text-gray-900 dark:text-white">

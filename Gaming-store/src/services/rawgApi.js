@@ -338,18 +338,18 @@ export const fetchGames = async (options = {}) => {
     const {
       search = '',
       page = 1,
-      pageSize = 20,
-      ordering = '-rating',
+      pageSize = 30,
+      ordering = '-rating,-metacritic,-added',
       platforms = [],
       genres = [],
-      dates = '',
-      metacritic = null,
+      dates = '2020-01-01,2025-12-31', // Focus on recent games (2020-2025)
+      metacritic = 70, // Focus on games with good ratings
       tags = [],
       publishers = [],
       developers = [],
       stores = [],
       creators = '',
-      rating = '',
+      rating = '4.0,5.0', // Focus on highly rated games
       updated = false,
       owned = false,
       retired = false,
@@ -368,20 +368,31 @@ export const fetchGames = async (options = {}) => {
       page: validatedPage,
       page_size: validatedPageSize,
       ordering: ordering,
+      dates: dates, // Always include date filter for recent games
+      metacritic: metacritic, // Always include metacritic filter for quality
+      rating: rating, // Always include rating filter for popular games
     };
     
     // Add optional parameters only if they have values
     if (search.trim()) params.search = search.trim();
-    if (platforms.length > 0) params.platforms = platforms.join(',');
+    if (platforms.length > 0) {
+      // Filter out mobile platforms and add to exclusions
+      const mobilePlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile
+      const filteredPlatforms = platforms.filter(p => !mobilePlatforms.includes(p.toString()));
+      if (filteredPlatforms.length > 0) {
+        params.platforms = filteredPlatforms.join(',');
+      }
+    } else {
+      // Default to exclude mobile platforms if no specific platforms provided
+      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile
+    }
+    
     if (genres.length > 0) params.genres = genres.join(',');
-    if (dates) params.dates = dates;
-    if (metacritic !== null && metacritic >= 0) params.metacritic = metacritic;
     if (tags.length > 0) params.tags = tags.join(',');
     if (publishers.length > 0) params.publishers = publishers.join(',');
     if (developers.length > 0) params.developers = developers.join(',');
     if (stores.length > 0) params.stores = stores.join(',');
     if (creators.trim()) params.creators = creators.trim();
-    if (rating) params.rating = rating;
     if (updated) params.updated = 'true';
     if (owned) params.owned = 'true';
     if (retired) params.retired = 'true';
@@ -419,7 +430,13 @@ export const fetchGames = async (options = {}) => {
         source: 'RAWG API',
         version: 'v1',
         timestamp: new Date().toISOString(),
-        totalResults: response.data.count
+        totalResults: response.data.count,
+        filters: {
+          excludedPlatforms: 'Mobile (Android, iOS)',
+          minMetacritic: metacritic,
+          minRating: rating.split(',')[0],
+          dateRange: dates
+        }
       }
     };
 
@@ -679,7 +696,7 @@ export const searchGames = async (searchTerm, options = {}) => {
     const response = await api.get('/games', {
       params: {
         search: searchTerm,
-        page_size: options.pageSize || 20,
+        page_size: options.pageSize || 30,
         ordering: options.ordering || '-rating',
         ...options
       }
@@ -714,7 +731,7 @@ export const fetchGamesWithFilters = async (options = {}) => {
     const {
       search = '',
       page = 1,
-      pageSize = 20,
+      pageSize = 30,
       sortBy = 'relevance',
       selectedGenre = [],
       selectedPlatform = []
@@ -759,10 +776,23 @@ export const fetchGamesWithFilters = async (options = {}) => {
       page: page,
       page_size: pageSize,
       ordering: orderingMap[sortBy] || orderingMap.relevance,
+      dates: '2020-01-01,2025-12-31', // Focus on recent games (2020-2025)
+      metacritic: 70, // Focus on games with good ratings
+      rating: '4.0,5.0', // Focus on highly rated games
     };
     
     if (search) params.search = search;
-    if (platformIds.length > 0) params.platforms = platformIds.join(',');
+    if (platformIds.length > 0) {
+      // Filter out mobile platforms
+      const mobilePlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile
+      const filteredPlatformIds = platformIds.filter(id => !mobilePlatforms.includes(id.toString()));
+      if (filteredPlatformIds.length > 0) {
+        params.platforms = filteredPlatformIds.join(',');
+      }
+    } else {
+      // Default to exclude mobile platforms if no specific platforms provided
+      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile
+    }
     if (genreIds.length > 0) params.genres = genreIds.join(',');
 
     console.log('🔍 RAWG API params:', params);
@@ -1019,7 +1049,7 @@ const getFallbackGames = (options) => {
     previous: options.page > 1 ? options.page - 1 : null,
     totalPages: Math.ceil(filteredGames.length / options.pageSize),
     currentPage: options.page || 1,
-    pageSize: options.pageSize || 20,
+    pageSize: options.pageSize || 30,
     apiInfo: {
       source: 'Fallback Data',
       reason: 'RAWG API unavailable',

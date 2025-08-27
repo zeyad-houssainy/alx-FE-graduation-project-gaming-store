@@ -113,6 +113,65 @@ export const testAPIConnectivity = async () => {
 };
 
 /**
+ * Test CheapShark API connectivity
+ * @returns {Object} Test result with success status and details
+ */
+export const testCheapSharkConnectivity = async () => {
+  try {
+    console.log('🧪 Testing CheapShark API connectivity...');
+    
+    // Test stores endpoint to verify API accessibility
+    const storesResponse = await api.get('/stores');
+    
+    if (storesResponse.status === 200) {
+      const storesData = storesResponse.data;
+      
+      // Also test games endpoint to get sample data
+      const gamesResponse = await api.get('/games?limit=1');
+      let sampleGame = null;
+      
+      if (gamesResponse.status === 200 && gamesResponse.data.length > 0) {
+        sampleGame = gamesResponse.data[0];
+      }
+      
+      const result = {
+        success: true,
+        message: 'API is accessible and responding',
+        storesCount: storesData.length,
+        sampleStore: storesData[0],
+        sampleGame: sampleGame,
+        note: 'CheapShark API is working correctly'
+      };
+      
+      console.log('✅ CheapShark API test successful:', result);
+      return result;
+    } else {
+      throw new Error(`HTTP ${storesResponse.status}: ${storesResponse.statusText}`);
+    }
+  } catch (error) {
+    console.error('❌ CheapShark API test failed:', error);
+    
+    let errorMessage = error.message;
+    let note = 'This may be due to network issues or API restrictions';
+    
+    if (error.message === 'Failed to fetch') {
+      errorMessage = 'Network request failed';
+      note = 'This may be due to CORS restrictions or network issues. CheapShark API requires proper network access.';
+    } else if (error.response?.status === 429) {
+      errorMessage = 'Rate limit exceeded';
+      note = 'Too many requests. Please wait before trying again.';
+    }
+    
+    return {
+      success: false,
+      message: errorMessage,
+      error: error.message,
+      note: note
+    };
+  }
+};
+
+/**
  * Fetch games with search, filtering, and pagination
  * @param {Object} options - Search options
  * @param {string} options.search - Search term

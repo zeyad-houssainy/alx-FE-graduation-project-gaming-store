@@ -49,6 +49,11 @@ export const AuthProvider = ({ children }) => {
   // Avatar state
   const [avatar, setAvatar] = useState(() => {
     const savedAvatar = localStorage.getItem('gaming-avatar');
+    console.log('Loading avatar from localStorage:', {
+      savedAvatar: savedAvatar ? savedAvatar.substring(0, 100) + '...' : null,
+      length: savedAvatar ? savedAvatar.length : 0,
+      isValid: savedAvatar && savedAvatar.startsWith('data:image/')
+    });
     return savedAvatar || null;
   });
 
@@ -78,9 +83,25 @@ export const AuthProvider = ({ children }) => {
   // Save avatar to localStorage whenever it changes
   useEffect(() => {
     if (avatar) {
-      localStorage.setItem('gaming-avatar', avatar);
+      console.log('Saving avatar to localStorage:', {
+        avatarLength: avatar.length,
+        avatarStart: avatar.substring(0, 100) + '...',
+        isValid: avatar.startsWith('data:image/')
+      });
+      try {
+        localStorage.setItem('gaming-avatar', avatar);
+        console.log('Avatar saved successfully to localStorage');
+      } catch (error) {
+        console.error('Error saving avatar to localStorage:', error);
+        // If the avatar is too large, try to compress it or store a smaller version
+        if (error.name === 'QuotaExceededError') {
+          console.warn('Avatar too large for localStorage, removing it');
+          setAvatar(null);
+        }
+      }
     } else {
       localStorage.removeItem('gaming-avatar');
+      console.log('Avatar removed from localStorage');
     }
   }, [avatar]);
 

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCartStore, useAuthStore } from '../stores';
+import { useCartStore } from '../stores';
+import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import CartItem from '../components/CartItem';
 import Button from '../components/Button';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft, FaCreditCard, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, getCartTotal, clearCart } = useCartStore();
-  const { addOrder, isLoggedIn, user } = useAuthStore();
+  const { items, clearCart, getCartTotal } = useCartStore();
+  const { addOrder, isLoggedIn, user } = useAuth();
   
   const [formData, setFormData] = useState({
     firstName: '',

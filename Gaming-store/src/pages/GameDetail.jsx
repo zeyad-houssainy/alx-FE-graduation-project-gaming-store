@@ -8,6 +8,7 @@ import axios from 'axios';
 import RatingStars from '../components/RatingStars';
 import Button from '../components/Button';
 import StoreInfo from '../components/StoreInfo';
+import { FaHeart, FaShare, FaDownload, FaCalendar, FaGamepad, FaStar, FaShoppingCart, FaArrowLeft, FaTrophy } from 'react-icons/fa';
 
 export default function GameDetail() {
   const { id } = useParams();

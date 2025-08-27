@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuthStore } from '../../stores';
+import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import Button from '../../components/Button';
@@ -9,6 +9,7 @@ export default function MyProfile() {
   const navigate = useNavigate();
   const { 
     user, 
+    isLoggedIn,
     logout, 
     orders, 
     clearMockData, 
@@ -24,7 +25,7 @@ export default function MyProfile() {
     getPaymentMethods,
     avatar,
     updateAvatar
-  } = useAuthStore();
+  } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -71,11 +72,38 @@ export default function MyProfile() {
     cvv: ''
   });
 
-  // Clear any existing mock data on component mount
+  // Check authentication on component mount
   useEffect(() => {
+    if (!isLoggedIn || !user) {
+      navigate('/login');
+      return;
+    }
+    
     // Clean up any mock data that might exist
     cleanupMockData();
-  }, [cleanupMockData]);
+  }, [isLoggedIn, user, navigate, cleanupMockData]);
+
+  // Update profile form when user data changes
+  useEffect(() => {
+    if (user) {
+      setProfileForm({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.address || ''
+      });
+    }
+  }, [user]);
+
+  // Debug avatar state
+  useEffect(() => {
+    console.log('Avatar state in MyProfile:', {
+      avatar,
+      avatarType: typeof avatar,
+      avatarLength: avatar ? avatar.length : 0,
+      user: user?.name
+    });
+  }, [avatar, user]);
 
   // Handle profile form changes
   const handleProfileChange = (e) => {
@@ -133,7 +161,10 @@ export default function MyProfile() {
       const reader = new FileReader();
       
       reader.onload = (event) => {
-        updateAvatar(event.target.result);
+        const dataUrl = event.target.result;
+        console.log('Photo uploaded, data URL length:', dataUrl.length);
+        console.log('Data URL starts with:', dataUrl.substring(0, 50));
+        updateAvatar(dataUrl);
         setIsUploadingPhoto(false);
         // Show success message
         alert('Photo uploaded successfully!');
@@ -307,14 +338,28 @@ export default function MyProfile() {
                 <div className="space-y-6">
                   {/* Profile Image Section */}
                   <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-24 h-24 bg-blue-600 dark:bg-orange-500 rounded-full text-white text-3xl font-bold mb-4 relative">
-                      {avatar ? (
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-blue-600 dark:bg-orange-500 rounded-full text-white text-3xl font-bold mb-4 relative overflow-hidden">
+                      {avatar && avatar !== 'null' && avatar !== 'undefined' && avatar.trim() !== '' && avatar.startsWith('data:image/') ? (
                         <>
                           <img 
                             src={avatar} 
-                            alt={user.name} 
+                            alt={user?.name || 'User'} 
                             className="w-24 h-24 rounded-full object-cover"
+                            onError={(e) => {
+                              console.log('Avatar image failed to load:', avatar);
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                            onLoad={() => {
+                              console.log('Avatar image loaded successfully:', avatar);
+                            }}
                           />
+                          <div 
+                            className="absolute inset-0 bg-blue-600 dark:bg-orange-500 flex items-center justify-center text-white text-3xl font-bold"
+                            style={{ display: 'none' }}
+                          >
+                            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                          </div>
                           <button
                             onClick={() => updateAvatar(null)}
                             className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
@@ -324,9 +369,10 @@ export default function MyProfile() {
                           </button>
                         </>
                       ) : (
-                        user?.name?.charAt(0)?.toUpperCase() || 'U'
+                        <span>{user?.name?.charAt(0)?.toUpperCase() || 'U'}</span>
                       )}
                     </div>
+                    
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                       {user?.name || 'User'}
                     </h3>
@@ -349,6 +395,34 @@ export default function MyProfile() {
                       accept="image/*"
                       className="hidden" 
                     />
+                    
+                    {/* Debug info - remove in production */}
+                    <div className="text-xs text-gray-500 mt-2">
+                      Avatar: {avatar ? 'Set' : 'Not set'} | User: {user?.name || 'Unknown'}
+                    </div>
+                    
+                    {/* Test avatar functionality */}
+                    <div className="mt-2 space-x-2">
+                      <button 
+                        onClick={() => {
+                          console.log('Current avatar:', avatar);
+                          console.log('Avatar type:', typeof avatar);
+                          console.log('Avatar length:', avatar ? avatar.length : 0);
+                          if (avatar) {
+                            console.log('Avatar starts with:', avatar.substring(0, 100));
+                          }
+                        }}
+                        className="px-2 py-1 bg-gray-200 dark:bg-gray-600 text-xs rounded"
+                      >
+                        Debug Avatar
+                      </button>
+                      <button 
+                        onClick={() => updateAvatar(null)}
+                        className="px-2 py-1 bg-red-200 dark:bg-red-600 text-xs rounded"
+                      >
+                        Clear Avatar
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between">

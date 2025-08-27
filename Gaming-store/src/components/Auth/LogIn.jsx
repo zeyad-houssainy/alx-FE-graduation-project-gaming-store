@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../stores';
+import { useAuth } from '../../context/AuthContext';
 import ForgotPassword from './ForgotPassword';
 
 const LogIn = () => {
-  const { login } = useAuthStore();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -31,7 +31,7 @@ const LogIn = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       if (formData.email && formData.password) {
-        // Use AuthContext login function
+        // Use the login function from AuthContext
         login(formData.email, formData.password);
         
         // Redirect to home page
