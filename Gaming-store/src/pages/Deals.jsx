@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchDeals, fetchStores } from '../services/cheapsharkApi';
 import { useCartStore } from '../stores';
-import { FaShoppingCart, FaEye, FaHeart, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { FaShoppingCart, FaEye, FaHeart, FaArrowLeft, FaArrowRight, FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
@@ -15,6 +15,7 @@ const Deals = () => {
   const [wishlist, setWishlist] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('relevance');
+  const [showAllDeals, setShowAllDeals] = useState(false);
   
   const { addToCart } = useCartStore();
 
@@ -80,6 +81,36 @@ const Deals = () => {
         ? prev.filter(id => id !== dealId)
         : [...prev, dealId]
     );
+  };
+
+  // Reset showAllDeals when switching sections
+  const handleSectionChange = (sectionId) => {
+    setActiveSection(sectionId);
+    setShowAllDeals(false); // Reset to show only 2 rows
+  };
+
+  // Handle view more with smooth scroll
+  const handleViewMore = () => {
+    setShowAllDeals(true);
+    // Smooth scroll to deals section
+    setTimeout(() => {
+      document.querySelector('.deals-section')?.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
+  };
+
+  // Handle show less with smooth scroll
+  const handleShowLess = () => {
+    setShowAllDeals(false);
+    // Smooth scroll to top of deals section
+    setTimeout(() => {
+      document.querySelector('.deals-section')?.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
   };
 
   const filteredDeals = deals.filter(deal => {
@@ -170,7 +201,7 @@ const Deals = () => {
                    {storeSections.map((section, index) => (
                      <button
                        key={section.id}
-                       onClick={() => setActiveSection(section.id)}
+                                               onClick={() => handleSectionChange(section.id)}
                        className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-500 transform hover:scale-110 hover:rotate-1 overflow-hidden ${
                          activeSection === section.id
                            ? `bg-gradient-to-r ${section.color} text-white shadow-2xl shadow-${section.color.split('-')[1]}/50 scale-105`
@@ -300,30 +331,65 @@ const Deals = () => {
           </div>
 
           {/* Deals Sections */}
-          <div className="container mx-auto px-4 py-16">
+          <div className="container mx-auto px-4 py-16 deals-section">
             {/* Section Header */}
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-black dark:text-white mb-4">
                 {storeSections.find(s => s.id === activeSection)?.name || 'All Deals'}
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">
-                {filteredDeals.length} amazing deals waiting for you
+                {showAllDeals ? filteredDeals.length : Math.min(8, filteredDeals.length)} of {filteredDeals.length} amazing deals waiting for you
               </p>
+              {!showAllDeals && filteredDeals.length > 8 && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  Click "View More" to see all {filteredDeals.length} deals
+                </p>
+              )}
             </div>
 
             {/* Deals Grid */}
             {filteredDeals.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {filteredDeals.map((deal) => (
-                  <DealCard 
-                    key={deal.id} 
-                    deal={deal} 
-                    onAddToCart={handleAddToCart}
-                    onAddToWishlist={handleAddToWishlist}
-                    isInWishlist={wishlist.includes(deal.id)}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                  {filteredDeals
+                    .slice(0, showAllDeals ? filteredDeals.length : 8) // Show only 8 games (2 rows) initially
+                    .map((deal) => (
+                      <DealCard 
+                        key={deal.id} 
+                        deal={deal} 
+                        onAddToCart={handleAddToCart}
+                        onAddToWishlist={handleAddToWishlist}
+                        isInWishlist={wishlist.includes(deal.id)}
+                      />
+                    ))}
+                </div>
+                
+                                  {/* View More Button */}
+                  {!showAllDeals && filteredDeals.length > 8 && (
+                    <div className="text-center mt-12">
+                      <button
+                        onClick={handleViewMore}
+                        className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/30 border-0 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                      >
+                        <span className="text-lg">View More Deals</span>
+                        <FaArrowDown className="w-5 h-5 animate-bounce" />
+                      </button>
+                    </div>
+                  )}
+                
+                  {/* Show Less Button */}
+                  {showAllDeals && (
+                    <div className="text-center mt-12">
+                      <button
+                        onClick={handleShowLess}
+                        className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-xl border-0 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
+                      >
+                        <span className="text-lg">Show Less</span>
+                        <FaArrowUp className="w-5 h-5 animate-bounce" />
+                      </button>
+                    </div>
+                  )}
+                </>
             ) : (
               <div className="text-center text-gray-900 dark:text-white py-20">
                 <div className="text-6xl mb-4">😔</div>
