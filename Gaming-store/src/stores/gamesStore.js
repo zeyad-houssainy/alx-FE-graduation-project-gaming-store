@@ -43,7 +43,7 @@ export const useGamesStore = create(
         currentPage: 1,
         totalPages: 1,
         totalResults: 0,
-        pageSize: 30, // Increased from 20 to 30 games per page
+        pageSize: 60, // Increased from 50 to 60 games per page
       },
       filters: {
         search: '',
@@ -207,7 +207,7 @@ export const useGamesStore = create(
                 currentPage: result.currentPage || 1,
                 totalPages: result.totalPages || 1,
                 totalResults: result.count || result.games.length,
-                pageSize: result.pageSize || 20,
+                pageSize: result.pageSize || 60,
               },
             });
             get().applyFilters();
@@ -383,7 +383,7 @@ export const useGamesStore = create(
           games: filteredGames,
           count: filteredGames.length,
           currentPage: 1,
-          pageSize: 20,
+          pageSize: 60,
           totalPages: 1,
         };
       },
@@ -413,7 +413,7 @@ export const useGamesStore = create(
             currentPage: 1,
             totalPages: 1,
             totalResults: 0,
-            pageSize: 20,
+            pageSize: 60,
           },
           filters: {
             search: '',
@@ -488,7 +488,7 @@ export const useGamesStore = create(
           case 'rawg':
             return [
               'PC', 'PlayStation 5', 'PlayStation 4', 'Xbox Series X', 'Xbox One',
-              'Nintendo Switch', 'Linux', 'macOS', 'Android', 'iOS'
+              'Nintendo Switch', 'Linux', 'macOS'
             ];
           case 'cheapshark':
             return [

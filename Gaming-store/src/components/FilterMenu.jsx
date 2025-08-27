@@ -90,7 +90,7 @@ export default function FilterMenu({
       case 'rawg':
         return {
           genreNote: 'Rich genre data with detailed categorization',
-          platformNote: 'Comprehensive platform support (PC, Consoles, Mobile)',
+          platformNote: 'Comprehensive platform support (PC, Consoles)',
           genreIcon: '🎮',
           platformIcon: '🖥️'
         };

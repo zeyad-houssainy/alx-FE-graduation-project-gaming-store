@@ -51,7 +51,7 @@ export default function RAWGGames({ searchTerm = '', selectedGenre = [], selecte
       const result = await fetchGamesWithFilters({
         search: searchTerm,
         page: 1,
-        pageSize: 30,
+        pageSize: 60,
         sortBy: rawgSortBy,
         selectedGenre: selectedGenre,
         selectedPlatform: selectedPlatform

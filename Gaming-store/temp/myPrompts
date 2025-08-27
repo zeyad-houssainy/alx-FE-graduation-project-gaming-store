@@ -1,0 +1,59 @@
+# My Prompts - Complete Session Commands
+
+## Session: "cursor_fully_remove_the_bgg_api"
+
+1. **do not change any core styling of the project. just add new features and fix bugs.**
+
+2. **make is using zustand for the state management and axios for the api calls**
+
+3. **fully remove the testing files from the project, i don't need them for now and will add them later. don't remove the testing packages from json**
+
+4. **create a new page called "Deals" and add it to navbar this page will use the cheapshark API to fetch the games with sales i want a big hero section for this page from your own design make the design very modern with flashy colors and backgrounds and add sections that the deals section needs i prefer if you added sections inside it based on the store example: epic games storedeals steam deals playstation store deals xbox deals i don't want any mobile games on the deals page also, when creating game tickets, i want their design to have horizontal scroll . and each game ticket will be a portrait iimage with glass design. when hover over the game, it will show two buttons, one add to cart and other view game details and of course both will do their function correctly**
+
+5. **there's a bug in the project after logging in when clicking on "my profile" page, it directs me to the login page again search for the reason for this bug and fix it**
+
+6. **redesign the Gaming Excellence in the home page make it more modern and catching and having glassy design like the iphone also add suitable backgrounds for them from the internet**
+
+7. **add more sections with games with horizontal scroll with auto scroll with timer feature make the design for them similar for the one in the deals page game ticket. and create a horizontal scroll button and make the scroll button to be upper right part of the section.. do styling for them**
+
+8. **redesign the game details page make it more fancy and modern with catchy glassy and modern design**
+
+9. **the images in the game tickets are not will positioneed make them positioned good way to prevent from low quality images. adjust them to have more accurate and good quality images in the game ticket**
+
+10. **add for any horizontal scroll add the arrows to right and left and add auto scroll each 5 seconds**
+
+11. **add light and dark theme styling for the deals page and make the background color to be same as the rest of the project .. after that, go through the whole project and make sure that all the project has proper dark and light themre. don't change any styling. just change the colors**
+
+12. **in all the project make sure all game tickets in the same section have all the same height this is will cause good looking.. some game tickets have more height than other. unify them**
+
+13. **when fetching the RAWG API data. exclude the mobile games including android and ios games and remove very old games i prefer the games that are popular to be included that includes AAA games i want the results to show in my shop**
+
+14. **make the Gaming Excellence in home page background to be same as the rest of the project and use images and icons from the internet with suitable deisgn and make the " learn more" button work**
+
+15. **for Upcoming Matches in home page add random countdown dates to make the dates count all dates should be from september 2025 to december 2025 pick 3 dates and put them in the sections**
+
+16. **add horizontal scroll arrows to all the sections that have horizontal scroll**
+
+17. **game tickets in the deals page doesn't have the same ticket height the height should be unified**
+
+18. **when logged in add a feature, add to wishlist it will be an empty heart icon on the game ticket on the upper right part and i can get back to this list in my profile page**
+
+19. **add shadow to the game ticket in the deals page**
+
+20. **add cart and view details buttons in the deals page are not good redesign the buttons to be better. you can use the existing buttons design from the whole project**
+
+21. **add a feature to give rank for games this can be done only in the game details page the rank you do is saved in "my profile" inside a new tab called "rmy ranked games"**
+
+22. **RAWG API fetches plenty of games and yet still you only Found 27 games i want 100 games in my shop and the shop will be in pages. each page will have 30 games add this feature and increas the number of games limit**
+
+23. **the tickets in the Gaming Excellence in the home page i want them more smooth and elegent use images from the internet to make my design better**
+
+24. **for the Gaming Excellence section in home page. the current background images are good but i want to edit something i want the images to be with 70% opacity and the glass effect shows when hovering over the ticket**
+
+25. **in home page WATCH LIVE MATCHES when clicking on live streams buttons, that doesn't change the embedded youtube video. i want you to change the embedded video when selecting specific video**
+
+26. **make the horizontal scroll buttons to skip 3 tickets with smooth animation**
+
+27. **add more sections with games with horizontal scroll with auto scroll with timer feature make the design for them similar for the one in the deals page game ticket**
+
+36. add header and footer to the deals page 

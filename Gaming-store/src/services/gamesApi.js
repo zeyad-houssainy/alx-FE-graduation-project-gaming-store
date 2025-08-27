@@ -106,7 +106,7 @@ const fallbackGames = [
     background_image: "/assets/images/latest-game-3.jpg",
     rating: 4.7,
     price: 26.95,
-    platforms: ["PC", "PS4", "Xbox One", "Nintendo Switch", "Mobile"],
+    platforms: ["PC", "PS4", "Xbox One", "Nintendo Switch"],
     genre: "Sandbox",
     released: "2011-11-18",
     description: "A 3D sandbox game that has no specific goals to accomplish."
@@ -117,7 +117,7 @@ const fallbackGames = [
     background_image: "/assets/images/shop-img-1.jpg",
     rating: 4.3,
     price: 0,
-    platforms: ["PC", "PS4", "Xbox One", "Nintendo Switch", "Mobile"],
+    platforms: ["PC", "PS4", "Xbox One", "Nintendo Switch"],
     genre: "Battle Royale",
     released: "2017-07-25",
     description: "A free-to-play battle royale game developed and published by Epic Games."
@@ -259,7 +259,7 @@ const fallbackGames = [
 // Note: We now use CheapShark API directly through the cheapsharkApi service
 
 // API functions
-export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
+export const fetchGames = async (page = 1, pageSize = 60, search = '', genre = [], platform = [], sortBy = 'relevance') => {
   // If API is disabled, use local data directly
   if (!USE_API) {
     console.log('Using local game data (API disabled to avoid CORS issues)');
@@ -294,7 +294,7 @@ export const fetchGames = async (page = 1, pageSize = 20, search = '', genre = [
 };
 
 // Helper function to get local games with filtering and pagination
-const getLocalGames = (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
+const getLocalGames = (page = 1, pageSize = 60, search = '', genre = [], platform = [], sortBy = 'relevance') => {
   // Filter fallback data based on search, genre, and platform
   let filteredGames = [...fallbackGames];
   
@@ -481,7 +481,6 @@ export const fetchPlatforms = async () => {
       { id: 4, name: 'Nintendo Switch' },
       { id: 5, name: 'PlayStation 4' },
       { id: 6, name: 'Xbox One' },
-      { id: 7, name: 'Mobile' },
     ];
   }
 
@@ -499,7 +498,6 @@ export const fetchPlatforms = async () => {
       { id: 4, name: 'Nintendo Switch' },
       { id: 5, name: 'PlayStation 4' },
       { id: 6, name: 'Xbox One' },
-      { id: 7, name: 'Mobile' },
     ];
   }
 };

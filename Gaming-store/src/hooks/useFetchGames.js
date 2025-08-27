@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchGamesWithFilters, fetchGameById, fetchGenres, fetchPlatforms } from '../services/rawgApi';
 
-export const useFetchGames = (page = 1, pageSize = 20, search = '', genre = [], platform = [], sortBy = 'relevance') => {
+export const useFetchGames = (page = 1, pageSize = 60, search = '', genre = [], platform = [], sortBy = 'relevance') => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

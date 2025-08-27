@@ -195,7 +195,7 @@ export const fetchGames = async (options = {}) => {
     const {
       search = '',
       page = 1,
-      pageSize = 20,
+      pageSize = 60,
       sortBy = 'relevance',
       stores = [],
       maxPrice = null,
@@ -557,7 +557,7 @@ export const fetchDeals = async (options = {}) => {
     const {
       storeID = null,
       pageNumber = 0,
-      pageSize = 20,
+      pageSize = 60,
       sortBy = 'Deal Rating',
       lowerPrice = null,
       upperPrice = null,

@@ -3,15 +3,16 @@ import { Link } from 'react-router-dom';
 import { useFetchGames } from '../../hooks/useFetchGames';
 import GameCard from '../../components/GameCard';
 import Loader from '../../components/Loader';
-import { FaChevronLeft, FaChevronRight, FaPlay, FaPause } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 export default function FeaturedGames() {
     const { games, loading } = useFetchGames(1, 20); // Fetch more games for multiple sections
     const [activeSection, setActiveSection] = useState(0);
     const [isAutoScrolling, setIsAutoScrolling] = useState(true);
-    const [scrollSpeed, setScrollSpeed] = useState(3000); // 3 seconds
+    const [scrollSpeed, setScrollSpeed] = useState(3000); // 3 seconds (normal speed)
     const scrollRefs = useRef([]);
     const autoScrollTimers = useRef([]);
+    const [hoveredSection, setHoveredSection] = useState(null);
 
     // Game sections configuration
     const gameSections = [
@@ -42,17 +43,20 @@ export default function FeaturedGames() {
     useEffect(() => {
         if (isAutoScrolling && games.length > 0) {
             gameSections.forEach((section, index) => {
-                const timer = setInterval(() => {
-                    scrollToNext(index);
-                }, scrollSpeed);
-                autoScrollTimers.current[index] = timer;
+                // Only start auto-scroll if this section is not being hovered
+                if (hoveredSection !== index) {
+                    const timer = setInterval(() => {
+                        scrollToNext(index);
+                    }, scrollSpeed);
+                    autoScrollTimers.current[index] = timer;
+                }
             });
 
             return () => {
                 autoScrollTimers.current.forEach(timer => clearInterval(timer));
             };
         }
-    }, [isAutoScrolling, scrollSpeed, games.length]);
+    }, [isAutoScrolling, scrollSpeed, games.length, hoveredSection]);
 
     // Scroll to next set of games
     const scrollToNext = (sectionIndex) => {
@@ -87,15 +91,27 @@ export default function FeaturedGames() {
         }
     };
 
-    // Toggle auto-scroll
-    const toggleAutoScroll = () => {
-        setIsAutoScrolling(!isAutoScrolling);
+
+
+    // Handle hover events to pause/resume auto-scroll
+    const handleMouseEnter = (sectionIndex) => {
+        setHoveredSection(sectionIndex);
+        // Clear the timer for this section when hovering
+        if (autoScrollTimers.current[sectionIndex]) {
+            clearInterval(autoScrollTimers.current[sectionIndex]);
+            autoScrollTimers.current[sectionIndex] = null;
+        }
     };
 
-    // Change scroll speed
-    const changeSpeed = (newSpeed) => {
-        setScrollSpeed(newSpeed);
-        setIsAutoScrolling(true);
+    const handleMouseLeave = (sectionIndex) => {
+        setHoveredSection(null);
+        // Restart auto-scroll for this section when not hovering
+        if (isAutoScrolling) {
+            const timer = setInterval(() => {
+                scrollToNext(sectionIndex);
+            }, scrollSpeed);
+            autoScrollTimers.current[sectionIndex] = timer;
+        }
     };
 
     if (loading) {
@@ -129,55 +145,6 @@ export default function FeaturedGames() {
                     <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
                         Discover our collection of the latest and most exciting games available across all platforms
                     </p>
-                    
-                    {/* Auto-scroll Controls */}
-                    <div className="flex items-center justify-center gap-4 mt-8">
-                        <button
-                            onClick={toggleAutoScroll}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                                isAutoScrolling 
-                                    ? 'bg-green-600 text-white hover:bg-green-700' 
-                                    : 'bg-gray-600 text-white hover:bg-gray-700'
-                            }`}
-                        >
-                            {isAutoScrolling ? <FaPause /> : <FaPlay />}
-                            {isAutoScrolling ? 'Pause' : 'Play'} Auto-scroll
-                        </button>
-                        
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">Speed:</span>
-                            <button
-                                onClick={() => changeSpeed(2000)}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                                    scrollSpeed === 2000 
-                                        ? 'bg-blue-600 text-white' 
-                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                }`}
-                            >
-                                Fast
-                            </button>
-                            <button
-                                onClick={() => changeSpeed(3000)}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                                    scrollSpeed === 3000 
-                                        ? 'bg-blue-600 text-white' 
-                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                }`}
-                            >
-                                Normal
-                            </button>
-                            <button
-                                onClick={() => changeSpeed(5000)}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                                    scrollSpeed === 5000 
-                                        ? 'bg-blue-600 text-white' 
-                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                }`}
-                            >
-                                Slow
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Game Sections */}
@@ -217,6 +184,8 @@ export default function FeaturedGames() {
                                 ref={el => scrollRefs.current[sectionIndex] = el}
                                 className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
                                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                                onMouseEnter={() => handleMouseEnter(sectionIndex)}
+                                onMouseLeave={() => handleMouseLeave(sectionIndex)}
                             >
                                 {section.games.map((game) => (
                                     <div key={game.id} className="flex-shrink-0 w-80">

@@ -30,14 +30,14 @@ export default function CheapSharkGames({ searchTerm = '', selectedGenre = [], s
       if (searchTerm && searchTerm.trim()) {
         // Use search API when search term is provided
         console.log('🔍 CheapShark: Searching for games with term:', searchTerm);
-        result = await searchGames(searchTerm, { limit: 30 });
+        result = await searchGames(searchTerm, { limit: 60 });
       } else {
         // Load popular games when no search term
         console.log('🔥 CheapShark: Loading popular games');
         result = await fetchGames({
           search: '',
           page: 1,
-          pageSize: 30,
+          pageSize: 60,
           sortBy: 'relevance'
         });
       }

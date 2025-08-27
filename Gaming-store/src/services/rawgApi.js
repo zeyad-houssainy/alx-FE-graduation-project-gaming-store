@@ -28,7 +28,7 @@ const RAWG_CONFIG = {
   BASE_URL: 'https://api.rawg.io/api',
   API_KEY: accessToken,
   TIMEOUT: 30000, // 30 seconds for better reliability
-  MAX_PAGE_SIZE: 40, // RAWG allows up to 40 items per page
+  MAX_PAGE_SIZE: 60, // RAWG allows up to 60 items per page
 };
 
 // Create axios instance for RAWG with proper configuration
@@ -338,7 +338,7 @@ export const fetchGames = async (options = {}) => {
     const {
       search = '',
       page = 1,
-      pageSize = 30,
+      pageSize = 60,
       ordering = '-rating,-metacritic,-added',
       platforms = [],
       genres = [],
@@ -376,15 +376,15 @@ export const fetchGames = async (options = {}) => {
     // Add optional parameters only if they have values
     if (search.trim()) params.search = search.trim();
     if (platforms.length > 0) {
-      // Filter out mobile platforms and add to exclusions
-      const mobilePlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile
-      const filteredPlatforms = platforms.filter(p => !mobilePlatforms.includes(p.toString()));
+      // Filter out mobile and web platforms and add to exclusions
+      const excludedPlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile, Web
+      const filteredPlatforms = platforms.filter(p => !excludedPlatforms.includes(p.toString()));
       if (filteredPlatforms.length > 0) {
         params.platforms = filteredPlatforms.join(',');
       }
     } else {
-      // Default to exclude mobile platforms if no specific platforms provided
-      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile
+      // Default to exclude mobile and web platforms if no specific platforms provided
+      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile, Web
     }
     
     if (genres.length > 0) params.genres = genres.join(',');
@@ -432,7 +432,7 @@ export const fetchGames = async (options = {}) => {
         timestamp: new Date().toISOString(),
         totalResults: response.data.count,
         filters: {
-          excludedPlatforms: 'Mobile (Android, iOS)',
+          excludedPlatforms: 'Mobile (Android, iOS), Web, Mobile',
           minMetacritic: metacritic,
           minRating: rating.split(',')[0],
           dateRange: dates
@@ -490,7 +490,13 @@ export const fetchPlatforms = async () => {
       }
     });
     
-    const platforms = response.data.results.map(platform => ({
+    // Filter out mobile and web platforms
+    const excludedPlatformIds = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile, Web
+    const filteredPlatforms = response.data.results.filter(platform => 
+      !excludedPlatformIds.includes(platform.id.toString())
+    );
+    
+    const platforms = filteredPlatforms.map(platform => ({
       id: platform.id,
       name: platform.name,
       slug: platform.slug,
@@ -507,7 +513,7 @@ export const fetchPlatforms = async () => {
       requirements: platform.requirements || {},
     }));
     
-    console.log(`✅ Fetched ${platforms.length} platforms from RAWG`);
+    console.log(`✅ Fetched ${platforms.length} platforms from RAWG (mobile platforms excluded)`);
     return platforms;
   } catch (error) {
     const enhancedError = handleRAWGError(error, 'Fetch platforms');
@@ -693,18 +699,20 @@ export const searchGames = async (searchTerm, options = {}) => {
   try {
     console.log(`🔍 Searching for games: "${searchTerm}"`);
     
-    const response = await api.get('/games', {
-      params: {
-        search: searchTerm,
-        page_size: options.pageSize || 30,
-        ordering: options.ordering || '-rating',
-        ...options
-      }
-    });
+    // Build search parameters with mobile platform exclusion
+    const params = {
+      search: searchTerm,
+      page_size: options.pageSize || 60,
+      ordering: options.ordering || '-rating',
+      exclude_platforms: '4,8,21,34,37', // Exclude Android, iOS, Mobile, Web
+      ...options
+    };
+    
+    const response = await api.get('/games', { params });
 
     const transformedGames = response.data.results.map(transformRAWGGame);
     
-    console.log(`✅ Search completed: ${transformedGames.length} results for "${searchTerm}"`);
+    console.log(`✅ Search completed: ${transformedGames.length} results for "${searchTerm}" (mobile platforms excluded)`);
     return transformedGames;
   } catch (error) {
     const enhancedError = handleRAWGError(error, `Search games: "${searchTerm}"`);
@@ -731,7 +739,7 @@ export const fetchGamesWithFilters = async (options = {}) => {
     const {
       search = '',
       page = 1,
-      pageSize = 30,
+      pageSize = 60,
       sortBy = 'relevance',
       selectedGenre = [],
       selectedPlatform = []
@@ -783,15 +791,15 @@ export const fetchGamesWithFilters = async (options = {}) => {
     
     if (search) params.search = search;
     if (platformIds.length > 0) {
-      // Filter out mobile platforms
-      const mobilePlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile
-      const filteredPlatformIds = platformIds.filter(id => !mobilePlatforms.includes(id.toString()));
+      // Filter out mobile and web platforms
+      const excludedPlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile, Web
+      const filteredPlatformIds = platformIds.filter(id => !excludedPlatforms.includes(id.toString()));
       if (filteredPlatformIds.length > 0) {
         params.platforms = filteredPlatformIds.join(',');
       }
     } else {
-      // Default to exclude mobile platforms if no specific platforms provided
-      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile
+      // Default to exclude mobile and web platforms if no specific platforms provided
+      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile, Web
     }
     if (genreIds.length > 0) params.genres = genreIds.join(',');
 
@@ -1042,20 +1050,20 @@ const getFallbackGames = (options) => {
   const endIndex = startIndex + options.pageSize;
   const paginatedGames = filteredGames.slice(startIndex, endIndex);
 
-  return {
-    games: paginatedGames,
-    count: filteredGames.length,
-    next: endIndex < filteredGames.length ? options.page + 1 : null,
-    previous: options.page > 1 ? options.page - 1 : null,
-    totalPages: Math.ceil(filteredGames.length / options.pageSize),
-    currentPage: options.page || 1,
-    pageSize: options.pageSize || 30,
-    apiInfo: {
-      source: 'Fallback Data',
-      reason: 'RAWG API unavailable',
-      timestamp: new Date().toISOString()
-    }
-  };
+      return {
+      games: paginatedGames,
+      count: filteredGames.length,
+      next: endIndex < filteredGames.length ? options.page + 1 : null,
+      previous: options.page > 1 ? options.page - 1 : null,
+      totalPages: Math.ceil(filteredGames.length / options.pageSize),
+      currentPage: options.page || 1,
+      pageSize: options.pageSize || 60,
+      apiInfo: {
+        source: 'Fallback Data',
+        reason: 'RAWG API unavailable',
+        timestamp: new Date().toISOString()
+      }
+    };
 };
 
 // Export default for convenience

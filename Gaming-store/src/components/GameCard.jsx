@@ -190,7 +190,6 @@ export default function GameCard({ game }) {
             
             {/* View Details Button */}
             <button 
-              onClick={handleCartControlClick}
               className="px-2 sm:px-3 py-2 sm:py-3 lg:py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-xs sm:text-sm transition-colors active:scale-95 touch-manipulation"
               style={{ minHeight: '36px' }} // Smaller for mobile 3-column
             >

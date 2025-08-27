@@ -1,22 +1,35 @@
 // src/components/SearchOverlay.jsx
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SearchOverlay({ onClose }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [suggestions, setSuggestions] = useState([
     'Action Games',
     'RPG Games',
     'Strategy Games',
     'Sports Games',
     'Racing Games',
-    'Puzzle Games'
+    'Puzzle Games',
+    'Adventure Games',
+    'Shooter Games',
+    'Indie Games',
+    'AAA Games'
   ]);
   const searchRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         onClose();
+      }
+    };
+
+    const handleEnter = (e) => {
+      if (e.key === 'Enter' && searchTerm.trim()) {
+        handleSubmit(e);
       }
     };
 
@@ -30,20 +43,32 @@ export default function SearchOverlay({ onClose }) {
     document.body.classList.add('search-overlay-active');
 
     document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleEnter);
     document.addEventListener('mousedown', handleClickOutside);
     
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleEnter);
       document.removeEventListener('mousedown', handleClickOutside);
       // Remove opacity class when search closes
       document.body.classList.remove('search-overlay-active');
     };
-  }, [onClose]);
+  }, [onClose, searchTerm]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle search submission
-    onClose();
+    if (searchTerm.trim()) {
+      setIsSearching(true);
+      try {
+        // Navigate to games page with search query
+        navigate(`/games?search=${encodeURIComponent(searchTerm.trim())}`);
+        onClose();
+      } catch (error) {
+        console.error('Search navigation error:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    }
   };
 
   return (
@@ -81,11 +106,16 @@ export default function SearchOverlay({ onClose }) {
             />
             <button 
               type="submit"
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-orange-400 transition-colors"
+              disabled={isSearching || !searchTerm.trim()}
+              className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-orange-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              {isSearching ? (
+                <div className="animate-spin w-6 h-6 border-2 border-blue-500 dark:border-orange-400 border-t-transparent rounded-full"></div>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              )}
             </button>
           </div>
 
@@ -97,7 +127,12 @@ export default function SearchOverlay({ onClose }) {
                 {suggestions.map((suggestion, index) => (
                   <button
                     key={index}
-                    onClick={() => setSearchTerm(suggestion)}
+                    onClick={() => {
+                      setSearchTerm(suggestion);
+                      // Navigate to games page with the suggestion
+                      navigate(`/games?search=${encodeURIComponent(suggestion)}`);
+                      onClose();
+                    }}
                     className="p-3 text-left bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-orange-500/20 rounded-lg transition-colors group"
                   >
                     <div className="flex items-center gap-3">

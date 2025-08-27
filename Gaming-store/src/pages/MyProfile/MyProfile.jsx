@@ -312,6 +312,7 @@ export default function MyProfile() {
               {[
                 { id: 'profile', label: 'Profile', icon: '👤' },
                 { id: 'orders', label: 'My Orders', icon: '📦' },
+                { id: 'ranked-games', label: 'My Ranked Games', icon: '⭐' },
                 { id: 'addresses', label: 'Addresses', icon: '📍' },
                 { id: 'payment', label: 'Payment Methods', icon: '💳' },
                 { id: 'security', label: 'Security', icon: '🔒' }
@@ -525,6 +526,128 @@ export default function MyProfile() {
                       </button>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Ranked Games Tab */}
+              {activeTab === 'ranked-games' && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      My Ranked Games
+                    </h2>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Games you've rated and reviewed
+                    </div>
+                  </div>
+
+                  {/* Info Note */}
+                  <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-purple-800 dark:text-purple-200">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-semibold">Rating System</span>
+                    </div>
+                    <p className="text-purple-700 dark:text-purple-300 mt-1 text-sm">
+                      Rate games from 1-10 stars and add comments. Your ratings are saved locally and can be viewed here.
+                    </p>
+                  </div>
+
+                  {/* Load User Ratings */}
+                  {(() => {
+                    const savedRatings = JSON.parse(localStorage.getItem('userGameRatings') || '{}');
+                    const userRatings = Object.values(savedRatings);
+                    
+                    if (userRatings.length === 0) {
+                      return (
+                        <div className="text-center py-12">
+                          <div className="text-6xl mb-4">⭐</div>
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                            No Rated Games Yet
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-400 mb-6">
+                            Start rating games by visiting their detail pages and giving them a rating from 1-10 stars.
+                          </p>
+                          <button
+                            onClick={() => navigate('/games')}
+                            className="px-6 py-3 bg-purple-600 dark:bg-purple-500 hover:bg-purple-700 dark:hover:bg-purple-600 text-white font-semibold rounded-lg transition-colors"
+                          >
+                            Browse Games
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="space-y-4">
+                        {userRatings.map((rating, index) => (
+                          <div
+                            key={index}
+                            className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow bg-white dark:bg-gray-700"
+                          >
+                            {/* Game Header */}
+                            <div className="flex items-start gap-4 mb-4">
+                              <img
+                                src={rating.gameImage || '/assets/images/featured-game-1.jpg'}
+                                alt={rating.gameName}
+                                className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                              />
+                              <div className="flex-1">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                                  {rating.gameName}
+                                </h3>
+                                <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                                  <span>Rated on {new Date(rating.date).toLocaleDateString()}</span>
+                                  <span>Game ID: {rating.gameId}</span>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-yellow-500 mb-1">
+                                  {rating.rating}/10
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {rating.rating <= 5 ? '⭐'.repeat(rating.rating) : '🔥'.repeat(rating.rating - 5)}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Rating Comment */}
+                            {rating.comment && (
+                              <div className="bg-gray-50 dark:bg-gray-600 rounded-lg p-4">
+                                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Your Comment:</h4>
+                                <p className="text-gray-700 dark:text-gray-300 italic">"{rating.comment}"</p>
+                              </div>
+                            )}
+
+                            {/* Actions */}
+                            <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                              <button
+                                onClick={() => navigate(`/games/${rating.gameId}`)}
+                                className="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors"
+                              >
+                                View Game
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm('Are you sure you want to remove this rating?')) {
+                                    const updatedRatings = { ...savedRatings };
+                                    delete updatedRatings[rating.gameId];
+                                    localStorage.setItem('userGameRatings', JSON.stringify(updatedRatings));
+                                    // Force re-render
+                                    window.location.reload();
+                                  }
+                                }}
+                                className="px-4 py-2 bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors"
+                              >
+                                Remove Rating
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 

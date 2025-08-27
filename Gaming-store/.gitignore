@@ -45,7 +45,7 @@ coverage/
 
 # Temporary folders
 tmp/
-temp/
+# temp/
 
 # Editor backup files
 *.bak
