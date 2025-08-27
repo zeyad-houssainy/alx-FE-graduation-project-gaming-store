@@ -50,6 +50,7 @@ export const useGamesStore = create(
         genres: [],
         platforms: [],
         sortBy: 'relevance',
+        priceRange: { min: '', max: '' },
       },
       activeStore: 'rawg', // 'rawg', 'cheapshark', 'mock'
       
@@ -76,6 +77,7 @@ export const useGamesStore = create(
       },
 
       setGenres: (genres) => {
+        console.log('Store: setGenres called with:', genres);
         set((state) => ({
           filters: { ...state.filters, genres },
         }));
@@ -83,6 +85,7 @@ export const useGamesStore = create(
       },
 
       setPlatforms: (platforms) => {
+        console.log('Store: setPlatforms called with:', platforms);
         set((state) => ({
           filters: { ...state.filters, platforms },
         }));
@@ -90,8 +93,17 @@ export const useGamesStore = create(
       },
 
       setSortBy: (sortBy) => {
+        console.log('Store: setSortBy called with:', sortBy);
         set((state) => ({
           filters: { ...state.filters, sortBy },
+        }));
+        get().applyFilters();
+      },
+
+      setPriceRange: (priceRange) => {
+        console.log('Store: setPriceRange called with:', priceRange);
+        set((state) => ({
+          filters: { ...state.filters, priceRange },
         }));
         get().applyFilters();
       },
@@ -114,6 +126,12 @@ export const useGamesStore = create(
       // Filter application
       applyFilters: () => {
         const { games, filters } = get();
+        console.log('Store: applyFilters called with:', { 
+          gamesCount: games.length, 
+          filters: filters,
+          sortBy: filters.sortBy 
+        });
+        
         let filtered = [...games];
 
         // Apply search filter
@@ -141,39 +159,84 @@ export const useGamesStore = create(
 
         // Apply platform filter
         if (filters.platforms.length > 0) {
-          filtered = filtered.filter(game =>
-            game.platforms && game.platforms.some(platform =>
-              filters.platforms.some(selected =>
-                platform.toLowerCase().includes(selected.toLowerCase())
-              )
-            )
-          );
+          console.log('Store: Applying platform filter for:', filters.platforms);
+          filtered = filtered.filter(game => {
+            if (!game.platforms || !Array.isArray(game.platforms)) {
+              console.log('Store: Game has no platforms:', game.name);
+              return false;
+            }
+            
+            const hasMatchingPlatform = game.platforms.some(platform => {
+              const platformName = typeof platform === 'string' ? platform : platform?.platform?.name;
+              if (!platformName) return false;
+              
+              const matches = filters.platforms.some(selected =>
+                platformName.toLowerCase().includes(selected.toLowerCase()) ||
+                selected.toLowerCase().includes(platformName.toLowerCase())
+              );
+              
+              if (matches) {
+                console.log('Store: Game', game.name, 'matches platform', selected, 'via', platformName);
+              }
+              
+              return matches;
+            });
+            
+            if (!hasMatchingPlatform) {
+              console.log('Store: Game', game.name, 'does not match any platform filter');
+            }
+            
+            return hasMatchingPlatform;
+          });
+          console.log('Store: After platform filtering, games count:', filtered.length);
         }
+
+        // Apply price range filter
+        if (filters.priceRange && (filters.priceRange.min || filters.priceRange.max)) {
+          filtered = filtered.filter(game => {
+            const gamePrice = game.price || 0;
+            const minPrice = filters.priceRange.min ? parseFloat(filters.priceRange.min) : 0;
+            const maxPrice = filters.priceRange.max ? parseFloat(filters.priceRange.max) : Infinity;
+            
+            return gamePrice >= minPrice && gamePrice <= maxPrice;
+          });
+          console.log('Store: Applied price range filter:', filters.priceRange);
+        }
+
+        console.log('Store: Before sorting, filtered count:', filtered.length);
 
         // Apply sorting
         switch (filters.sortBy) {
           case 'name-asc':
+            console.log('Store: Sorting by name ascending');
             filtered.sort((a, b) => a.name.localeCompare(b.name));
             break;
           case 'name-desc':
+            console.log('Store: Sorting by name descending');
             filtered.sort((a, b) => b.name.localeCompare(a.name));
             break;
           case 'rating':
+            console.log('Store: Sorting by rating');
             filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
             break;
           case 'released':
+            console.log('Store: Sorting by release date');
             filtered.sort((a, b) => new Date(b.released || 0) - new Date(a.released || 0));
             break;
           case 'price-low':
+            console.log('Store: Sorting by price low to high');
             filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
             break;
           case 'price-high':
+            console.log('Store: Sorting by price high to low');
             filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
             break;
           default:
+            console.log('Store: No sorting applied (relevance)');
             break;
         }
 
+        console.log('Store: After sorting, first few games:', filtered.slice(0, 3).map(g => g.name));
         set({ filteredGames: filtered });
       },
 
@@ -396,6 +459,7 @@ export const useGamesStore = create(
             genres: [],
             platforms: [],
             sortBy: 'relevance',
+            priceRange: { min: '', max: '' },
           },
         });
         // Fetch fresh games without filters
@@ -420,6 +484,7 @@ export const useGamesStore = create(
             genres: [],
             platforms: [],
             sortBy: 'relevance',
+            priceRange: { min: '', max: '' },
           },
         });
       },
@@ -435,7 +500,7 @@ export const useGamesStore = create(
           selectedGenres: filters.genres,
           selectedPlatforms: filters.platforms,
           sortBy: filters.sortBy,
-          hasActiveFilters: filters.search || filters.genres.length > 0 || filters.platforms.length > 0
+          hasActiveFilters: filters.search || filters.genres.length > 0 || filters.platforms.length > 0 || (filters.priceRange && (filters.priceRange.min || filters.priceRange.max))
         };
       },
 
@@ -447,6 +512,7 @@ export const useGamesStore = create(
             genres: [],
             platforms: [],
             sortBy: 'relevance',
+            priceRange: { min: '', max: '' },
           },
         });
         // Also clear filtered games to show all games for the new store
@@ -504,33 +570,20 @@ export const useGamesStore = create(
         }
       },
 
-      // Quick filters for each store
-      getQuickFilters: () => {
-        const { activeStore } = get();
-        
-        switch (activeStore) {
-          case 'rawg':
-            return {
-              popular: { name: 'Popular Games', filter: { rating: '4.0,5.0', metacritic: 80 } },
-              newReleases: { name: 'New Releases', filter: { dates: '2024-01-01,2025-12-31' } },
-              aaa: { name: 'AAA Games', filter: { metacritic: 85, rating: '4.5,5.0' } },
-              indie: { name: 'Indie Games', filter: { genres: ['Indie'] } }
-            };
-          case 'cheapshark':
-            return {
-              under10: { name: 'Under $10', filter: { maxPrice: 10 } },
-              under20: { name: 'Under $20', filter: { maxPrice: 20 } },
-              under30: { name: 'Under $30', filter: { maxPrice: 30 } },
-              steam: { name: 'Steam Games', filter: { store: 'Steam' } }
-            };
-          case 'mock':
-          default:
-            return {
-              featured: { name: 'Featured', filter: { featured: true } },
-              newGames: { name: 'New Games', filter: { new: true } }
-            };
-        }
-      },
+              // Quick filters for each store
+        getQuickFilters: () => {
+          // Platform-based quick filters for all stores
+          const platformFilters = {
+            pc: { name: 'PC', filter: { platform: 'PC' } },
+            ps5: { name: 'PlayStation 5', filter: { platform: 'PlayStation 5' } },
+            ps4: { name: 'PlayStation 4', filter: { platform: 'PlayStation 4' } },
+            xboxSeriesX: { name: 'Xbox Series X', filter: { platform: 'Xbox Series X' } },
+            xboxOne: { name: 'Xbox One', filter: { platform: 'Xbox One' } },
+            nintendoSwitch: { name: 'Nintendo Switch', filter: { platform: 'Nintendo Switch' } }
+          };
+          
+          return platformFilters;
+        },
 
       // Apply quick filter
       applyQuickFilter: (filterKey) => {
@@ -540,23 +593,20 @@ export const useGamesStore = create(
         
         if (!filter) return;
         
-        // Apply the quick filter by updating the store's internal filters
-        // This will trigger a new API call with the filter parameters
-        if (activeStore === 'rawg') {
-          // For RAWG, we can apply some filters directly
-          if (filter.filter.rating) {
-            // Update the RAWG API call parameters
-            console.log('Applying RAWG quick filter:', filter.name, filter.filter);
-          }
-        } else if (activeStore === 'cheapshark') {
-          // For CheapShark, apply price filters
-          if (filter.filter.maxPrice) {
-            console.log('Applying CheapShark quick filter:', filter.name, filter.filter);
-          }
-        }
+        console.log('Applying platform quick filter:', filter.name, filter.filter);
         
-        // Refresh games with the new filter
-        get().fetchGames();
+        // Apply platform filter by updating the filters.platforms
+        if (filter.filter.platform) {
+          const platform = filter.filter.platform;
+          
+          // Update the platform filter in the store
+          set((state) => ({
+            filters: { ...state.filters, platforms: [platform] }
+          }));
+          
+          // Apply filters to update the filtered games
+          get().applyFilters();
+        }
       },
 
       // Global search across all stores

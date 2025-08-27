@@ -12,12 +12,16 @@ export default function SearchBar({
     e.preventDefault();
     const trimmedTerm = (searchTerm || '').trim();
     if (trimmedTerm) {
+      console.log('SearchBar: Submitting search for:', trimmedTerm);
       onSearch(trimmedTerm);
+    } else {
+      console.log('SearchBar: Empty search term, ignoring submit');
     }
   };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
+    console.log('SearchBar: Input changed to:', value);
     onSearchChange(value);
   };
 

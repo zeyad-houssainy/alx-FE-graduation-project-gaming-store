@@ -16,6 +16,7 @@ const Deals = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('relevance');
   const [showAllDeals, setShowAllDeals] = useState(false);
+  const [consolidatedDeals, setConsolidatedDeals] = useState([]);
   
   const { addToCart } = useCartStore();
 
@@ -41,6 +42,9 @@ const Deals = () => {
       
       if (dealsData && Array.isArray(dealsData)) {
         setDeals(dealsData);
+        // Consolidate deals to remove duplicates and show only cheapest price
+        const consolidated = consolidateDeals(dealsData);
+        setConsolidatedDeals(consolidated);
       } else {
         throw new Error('Invalid data format received');
       }
@@ -48,9 +52,43 @@ const Deals = () => {
       setError('Failed to fetch deals. Please try again later.');
       console.error('Error fetching deals:', err);
       setDeals([]); // Set empty array on error
+      setConsolidatedDeals([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Function to consolidate deals by game title, keeping only the cheapest price
+  const consolidateDeals = (dealsData) => {
+    const dealsByTitle = {};
+    
+    dealsData.forEach(deal => {
+      if (!deal.title || !deal.title.trim()) return;
+      
+      const title = deal.title.trim().toLowerCase();
+      
+      if (!dealsByTitle[title]) {
+        dealsByTitle[title] = {
+          ...deal,
+          allPrices: [deal], // Store all price alternatives
+          cheapestPrice: deal.salePrice,
+          cheapestDeal: deal
+        };
+      } else {
+        // Add this deal to the alternatives
+        dealsByTitle[title].allPrices.push(deal);
+        
+        // Update if this is a cheaper price
+        if (deal.salePrice < dealsByTitle[title].cheapestPrice) {
+          dealsByTitle[title].cheapestPrice = deal.salePrice;
+          dealsByTitle[title].cheapestDeal = deal;
+        }
+      }
+    });
+    
+    // Convert back to array and sort by cheapest price
+    return Object.values(dealsByTitle)
+      .sort((a, b) => a.cheapestPrice - b.cheapestPrice);
   };
 
   const fetchStoresData = async () => {
@@ -66,7 +104,7 @@ const Deals = () => {
     const game = {
       id: deal.gameId || deal.id,
       name: deal.title,
-      price: deal.salePrice,
+      price: deal.cheapestPrice,
       background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
       rating: 4.0,
       platforms: ['PC'],
@@ -113,14 +151,24 @@ const Deals = () => {
     }, 100);
   };
 
-  const filteredDeals = deals.filter(deal => {
+  const filteredDeals = consolidatedDeals.filter(deal => {
     if (activeSection === 'all') return true;
-    if (activeSection === 'steam') return deal.storeID === '1';
-    if (activeSection === 'epic') return deal.storeID === '25';
-    if (activeSection === 'ps') return deal.storeID === '3';
-    if (activeSection === 'xbox') return deal.storeID === '2';
+    if (activeSection === 'steam') return deal.cheapestDeal.storeID === '1';
+    if (activeSection === 'epic') return deal.cheapestDeal.storeID === '25';
+    if (activeSection === 'ps') return deal.cheapestDeal.storeID === '3';
+    if (activeSection === 'xbox') return deal.cheapestDeal.storeID === '2';
     return true;
-  }).filter(deal => deal.title && deal.title.trim() !== ''); // Filter out deals without titles
+  }).filter(deal => deal.title && deal.title.trim() !== '') // Filter out deals without titles
+    .filter(deal => {
+      // Apply search filter if searchTerm exists
+      if (!searchTerm || !searchTerm.trim()) return true;
+      
+      const searchLower = searchTerm.toLowerCase();
+      const titleLower = (deal.title || '').toLowerCase();
+      const storeNameLower = (deal.storeName || '').toLowerCase();
+      
+      return titleLower.includes(searchLower) || storeNameLower.includes(searchLower);
+    });
 
   if (loading) {
     return (
@@ -258,8 +306,8 @@ const Deals = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600 dark:text-orange-400">{deals.length}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">Total Deals</div>
+                        <div className="text-2xl font-bold text-blue-600 dark:text-orange-400">{consolidatedDeals.length}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Unique Games</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stores.length}</div>
@@ -407,7 +455,9 @@ const Deals = () => {
 
 // Deal Card Component
 const DealCard = ({ deal, onAddToCart, onAddToWishlist, isInWishlist }) => {
-  const savings = deal.savings ? Math.round(deal.savings) : 0;
+  // Calculate savings based on cheapest price vs normal price
+  const savings = deal.normalPrice && deal.cheapestPrice ? 
+    Math.round(((deal.normalPrice - deal.cheapestPrice) / deal.normalPrice) * 100) : 0;
   
   return (
     <div className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-orange-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-orange-500/25">
@@ -426,7 +476,7 @@ const DealCard = ({ deal, onAddToCart, onAddToWishlist, isInWishlist }) => {
       {/* Image Container */}
       <div className="relative overflow-hidden">
         <img
-          src={deal.thumb || '/assets/images/featured-game-1.jpg'}
+          src={deal.cheapestDeal.thumb || deal.thumb || '/assets/images/featured-game-1.jpg'}
           alt={deal.title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
         />
@@ -438,39 +488,53 @@ const DealCard = ({ deal, onAddToCart, onAddToWishlist, isInWishlist }) => {
           </div>
         )}
         
+        {/* Multiple Prices Indicator */}
+        {deal.allPrices && deal.allPrices.length > 1 && (
+          <div className="absolute top-3 right-16 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+            {deal.allPrices.length} prices
+          </div>
+        )}
+        
         {/* Overlay with Buttons */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-          <button
-            onClick={() => onAddToCart(deal)}
-            className="bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-black dark:text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
-          >
-            <FaShoppingCart />
-            Add to Cart
-          </button>
-          <Link
-            to={`/games/${deal.gameId}`}
-            className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 backdrop-blur-sm"
-          >
-            <FaEye />
-            View Details
-          </Link>
+                     <button
+             onClick={() => onAddToCart(deal)}
+             className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/30 flex items-center gap-3 shadow-lg border-0 focus:outline-none focus:ring-4 focus:ring-green-500/20"
+           >
+             <FaShoppingCart className="w-5 h-5" />
+             <span className="text-sm">Add to Cart</span>
+           </button>
+                     <Link
+             to={`/games/${deal.cheapestDeal.gameId || deal.gameId}`}
+             className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-white/20 flex items-center gap-3 backdrop-blur-sm border border-white/30 hover:border-white/50 focus:outline-none focus:ring-4 focus:ring-white/20"
+           >
+             <FaEye className="w-5 h-5" />
+             <span className="text-sm">View Details</span>
+           </Link>
         </div>
       </div>
 
       {/* Content */}
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-          {deal.title}
-        </h3>
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2 flex-1">
+            {deal.title}
+          </h3>
+          {deal.allPrices && deal.allPrices.length > 1 && (
+            <div className="ml-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-full">
+              {deal.allPrices.length} stores
+            </div>
+          )}
+        </div>
         
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-              ${deal.salePrice}
+              ${deal.cheapestPrice}
             </span>
-            {deal.normalPrice > deal.salePrice && (
-              <span className="text-gray-500 dark:text-gray-400 line-through">
-                ${deal.normalPrice}
+            {deal.allPrices && deal.allPrices.length > 1 && (
+              <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">
+                Best Price
               </span>
             )}
           </div>
@@ -483,7 +547,7 @@ const DealCard = ({ deal, onAddToCart, onAddToWishlist, isInWishlist }) => {
         </div>
 
         <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-          <span>Store ID: {deal.storeID}</span>
+          <span>Store ID: {deal.cheapestDeal.storeID}</span>
           {deal.releaseDate && (
             <span>{new Date(deal.releaseDate * 1000).getFullYear()}</span>
           )}

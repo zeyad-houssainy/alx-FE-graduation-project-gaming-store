@@ -47,8 +47,11 @@ export default function CheapSharkGames() {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    console.log('CheapSharkGames: Search submitted for:', searchTerm);
     if (searchTerm.trim()) {
-      loadGames(searchTerm);
+      loadGames(searchTerm.trim());
+    } else {
+      console.log('CheapSharkGames: Empty search term, ignoring');
     }
   };
 

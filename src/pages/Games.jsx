@@ -6,9 +6,7 @@ import FilterMenu from '../components/FilterMenu';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
 import Loader from '../components/Loader';
-import MockStore from '../components/MockStore';
-import RAWGGames from '../components/RAWGGames';
-import CheapSharkGames from '../components/CheapSharkGames';
+import GameCard from '../components/GameCard';
 
 import { testCheapSharkConnectivity } from '../services/cheapsharkApi';
 import { testRAWGConnectivity } from '../services/rawgApi';
@@ -20,6 +18,7 @@ export default function Games() {
   const navigate = useNavigate();
   const { 
     games, 
+    filteredGames,
     loading, 
     error, 
     fetchGames, 
@@ -36,6 +35,7 @@ export default function Games() {
     setGenres,
     setPlatforms,
     setSortBy,
+    setPriceRange,
     setPage,
     setActiveStore,
     getGenres,
@@ -46,6 +46,9 @@ export default function Games() {
     getFilterStatus,
     globalSearch,
   } = useGamesStore();
+
+  // Use filteredGames for display (which includes sorting) or fall back to games
+  const displayGames = filteredGames && filteredGames.length > 0 ? filteredGames : games;
   const { addToCart } = useCartStore();
   const { isAdmin: _isAdmin } = useAuthStore();
   
@@ -85,6 +88,11 @@ export default function Games() {
     return savedSort || 'relevance';
   });
 
+  const [localPriceRange, setLocalPriceRange] = useState(() => {
+    const savedPriceRange = localStorage.getItem('gaming-price-range');
+    return savedPriceRange ? JSON.parse(savedPriceRange) : { min: '', max: '' };
+  });
+
   // Global search state
   const [globalSearchResults, setGlobalSearchResults] = useState(null);
   const [isGlobalSearch, setIsGlobalSearch] = useState(false);
@@ -93,6 +101,10 @@ export default function Games() {
   useEffect(() => {
     localStorage.setItem('gaming-current-page', currentPageState.toString());
   }, [currentPageState]);
+
+  useEffect(() => {
+    localStorage.setItem('gaming-price-range', JSON.stringify(localPriceRange));
+  }, [localPriceRange]);
 
   // Handle global search from URL or header search
   useEffect(() => {
@@ -155,6 +167,48 @@ export default function Games() {
     }
   }, [filters.search, setSearchParams]);
 
+  // Update store when localPriceRange changes
+  useEffect(() => {
+    console.log('Games: localPriceRange changed to:', localPriceRange);
+    setPriceRange(localPriceRange);
+  }, [localPriceRange, setPriceRange]);
+
+  // Update store filters when local state changes
+  useEffect(() => {
+    console.log('Games: searchTerm changed to:', searchTerm);
+    setSearch(searchTerm);
+  }, [searchTerm, setSearch]);
+
+  useEffect(() => {
+    console.log('Games: selectedGenre changed to:', selectedGenre);
+    setGenres(selectedGenre);
+  }, [selectedGenre, setGenres]);
+
+  useEffect(() => {
+    console.log('Games: selectedPlatform changed to:', selectedPlatform);
+    setPlatforms(selectedPlatform);
+  }, [selectedPlatform, setPlatforms]);
+
+  // Sync store filters back to local state when they change
+  useEffect(() => {
+    if (filters.platforms && filters.platforms.length !== selectedPlatform.length) {
+      console.log('Games: Syncing store platforms to local state:', filters.platforms);
+      setSelectedPlatform(filters.platforms);
+    }
+  }, [filters.platforms, selectedPlatform]);
+
+  useEffect(() => {
+    if (filters.genres && filters.genres.length !== selectedGenre.length) {
+      console.log('Games: Syncing store genres to local state:', filters.genres);
+      setSelectedGenre(filters.genres);
+    }
+  }, [filters.genres, selectedGenre]);
+
+  useEffect(() => {
+    console.log('Games: sortBy changed to:', sortBy);
+    setSortBy(sortBy);
+  }, [sortBy, setSortBy]);
+
   // Update body background when debug mode changes
   useEffect(() => {
     if (isDebugOpen) {
@@ -177,22 +231,7 @@ export default function Games() {
     fetchGames();
   }, [fetchGames]);
 
-  // Update store filters when local state changes
-  useEffect(() => {
-    setSearch(searchTerm);
-  }, [searchTerm, setSearch]);
 
-  useEffect(() => {
-    setGenres(selectedGenre);
-  }, [selectedGenre, setGenres]);
-
-  useEffect(() => {
-    setPlatforms(selectedPlatform);
-  }, [selectedPlatform, setPlatforms]);
-
-  useEffect(() => {
-    setSortBy(sortBy);
-  }, [sortBy, setSortBy]);
 
   useEffect(() => {
     setPage(currentPageState);
@@ -224,31 +263,42 @@ export default function Games() {
   }, [selectedGenre, selectedPlatform, sortBy]);
 
   const handleSearch = async (searchQuery) => {
-    if (searchQuery && searchQuery.trim()) {
-      try {
-        // Clear global search state since we're searching within the current store
-        setIsGlobalSearch(false);
-        setGlobalSearchResults(null);
-        
-        // Update the search term in the store
-        setSearchTerm(searchQuery.trim());
-        setSearch(searchQuery.trim());
-        
-        // Reset to first page
-        setCurrentPageState(1);
-        
-        // The search will automatically trigger a new fetchGames() call
-        // which will apply the search filter to the current active store
-        
-      } catch (error) {
-        console.error('Search error:', error);
-        setError('Search failed. Please try again.');
-      }
-    } else {
+    console.log('Games: handleSearch called with:', searchQuery);
+    if (!searchQuery || !searchQuery.trim()) {
+      console.log('Games: Empty search query, clearing search');
       // Clear search
       setSearchTerm('');
       setSearch('');
+      setIsGlobalSearch(false);
+      setGlobalSearchResults(null);
       setCurrentPageState(1);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Clear global search state since we're searching within the current store
+      setIsGlobalSearch(false);
+      setGlobalSearchResults(null);
+      
+      // Update the search term in the store
+      console.log('Games: Setting search term in store:', searchQuery.trim());
+      setSearch(searchQuery.trim());
+      
+      // Update local state
+      setSearchTerm(searchQuery.trim());
+      
+      // Reset to first page
+      setCurrentPageState(1);
+      
+      console.log('Games: Search initiated successfully');
+    } catch (error) {
+      console.error('Games: Search error:', error);
+      setError('Search failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -260,6 +310,30 @@ export default function Games() {
     setSelectedPlatform(platforms);
   };
 
+  const handlePriceRangeChange = (newPriceRange) => {
+    setPriceRange(newPriceRange);
+    setLocalPriceRange(newPriceRange);
+  };
+
+  const handlePlatformQuickFilter = (filterKey) => {
+    const quickFilters = getQuickFilters();
+    const filter = quickFilters[filterKey];
+    
+    if (filter && filter.filter.platform) {
+      const platform = filter.filter.platform;
+      console.log('Games: Applying platform quick filter:', platform);
+      
+      // Update local state
+      setSelectedPlatform([platform]);
+      
+      // Apply the filter in the store
+      applyQuickFilter(filterKey);
+      
+      // Reset to first page
+      setCurrentPageState(1);
+    }
+  };
+
   const handleSortChange = (sort) => {
     setLocalSortBy(sort);
   };
@@ -267,6 +341,7 @@ export default function Games() {
   const handleClearFilters = () => {
     setSelectedGenre([]);
     setSelectedPlatform([]);
+    setLocalPriceRange({ min: '', max: '' });
     setLocalSortBy('relevance');
     setSearchTerm('');
     setCurrentPageState(1);
@@ -281,6 +356,7 @@ export default function Games() {
     // Clear localStorage
     localStorage.removeItem('gaming-selected-genres');
     localStorage.removeItem('gaming-selected-platforms');
+    localStorage.removeItem('gaming-price-range');
     localStorage.removeItem('gaming-sort-by');
     localStorage.removeItem('gaming-search-term');
     localStorage.removeItem('gaming-current-page');
@@ -887,7 +963,7 @@ export default function Games() {
                       <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center justify-between">
                           <span>Games Loaded:</span>
-                          <span className="font-medium">{games.length}</span>
+                          <span className="font-medium">{displayGames.length}</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Total Available:</span>
@@ -917,7 +993,7 @@ export default function Games() {
                         🧹 Clear All Filters
                       </button>
                       <button
-                        onClick={() => console.log('Debug info:', { games: games.length, pagination, currentPageState, totalPages })}
+                        onClick={() => console.log('Debug info:', { games: displayGames.length, pagination, currentPageState, totalPages })}
                         className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
                       >
                         📊 Log Debug Info
@@ -1009,7 +1085,7 @@ export default function Games() {
                             const debugData = {
                               timestamp: new Date().toISOString(),
                               store: activeStore,
-                              games: games.length,
+                              games: displayGames.length,
                               pagination,
                               filters: { genre: selectedGenre, platform: selectedPlatform, sortBy },
                               search: searchTerm,
@@ -1051,7 +1127,7 @@ export default function Games() {
             }`}>
               {isGlobalSearch && globalSearchResults 
                 ? `${globalSearchResults.count} games found across all stores`
-                : `${games.length} of ${pagination.count} games`
+                : `${displayGames.length} of ${pagination.count} games`
               }
             </p>
             <div className="text-right">
@@ -1062,7 +1138,7 @@ export default function Games() {
               }`}>
                 {isGlobalSearch && globalSearchResults 
                   ? `Found ${globalSearchResults.count} games across all stores`
-                  : `Showing ${games.length} of ${pagination.count} games`
+                  : `Showing ${displayGames.length} of ${pagination.count} games`
                 }
               </p>
               <div className={`text-xs transition-all duration-500 ${
@@ -1120,30 +1196,63 @@ export default function Games() {
             </div>
           )}
 
-          {/* Quick Filters */}
-          <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Quick Filters
-            </h3>
+          {/* Platform Quick Filters */}
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Quick Filters
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Filter by platform
+                </p>
+              </div>
+              
+              {/* Clear Platform Filter Button */}
+              {selectedPlatform.length > 0 && (
+                <button
+                  onClick={() => {
+                    setSelectedPlatform([]);
+                    setCurrentPageState(1);
+                  }}
+                  className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            
             <div className="flex flex-wrap gap-2">
               {Object.entries(getQuickFilters()).map(([key, filter]) => (
                 <button
                   key={key}
-                  onClick={() => applyQuickFilter(key)}
-                  className="px-3 py-2 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600"
+                  onClick={() => handlePlatformQuickFilter(key)}
+                  className={`px-3 py-2 text-xs font-medium rounded-full transition-all duration-200 flex items-center gap-2 ${
+                    selectedPlatform.includes(filter.filter.platform)
+                      ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-200 dark:ring-blue-800'
+                      : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-200 dark:border-gray-600'
+                  }`}
                 >
+                  {(() => {
+                    const platform = filter.filter.platform.toLowerCase();
+                    if (platform.includes('pc')) return '💻';
+                    if (platform.includes('playstation') || platform.includes('ps')) return '🎮';
+                    if (platform.includes('xbox')) return '🎯';
+                    if (platform.includes('nintendo') || platform.includes('switch')) return '🎲';
+                    return '🖥️';
+                  })()}
                   {filter.name}
                 </button>
               ))}
             </div>
             
             {/* Filter Status Display */}
-            <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-              <span className="mr-4">Store: {getFilterStatus().activeStore}</span>
-              <span className="mr-4">Games: {getFilterStatus().totalGames}</span>
-              <span className="mr-4">Filtered: {getFilterStatus().filteredGames}</span>
+            <div className="mt-3 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+              <span>Store: {getFilterStatus().activeStore}</span>
+              <span>Games: {getFilterStatus().totalGames}</span>
+              <span>Filtered: {getFilterStatus().filteredGames}</span>
               {getFilterStatus().hasActiveFilters && (
-                <span className="text-blue-600 dark:text-blue-400">Active Filters</span>
+                <span className="text-blue-600 dark:text-blue-400 font-medium">Active Filters</span>
               )}
             </div>
           </div>
@@ -1159,8 +1268,10 @@ export default function Games() {
                   platforms={getPlatforms()}
                   selectedGenre={selectedGenre}
                   selectedPlatform={selectedPlatform}
+                  priceRange={localPriceRange}
                   onGenreChange={handleGenreChange}
                   onPlatformChange={handlePlatformChange}
+                  onPriceRangeChange={handlePriceRangeChange}
                   onClearFilters={handleClearFilters}
                   activeStore={activeStore}
                 />
@@ -1205,7 +1316,7 @@ export default function Games() {
                 </select>
                 {/* Store-specific sorting info */}
                 <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                  {activeStore === 'rawg' && '🎮 Rich metadata'}
+  
                   {activeStore === 'cheapshark' && '💰 Price-focused'}
 
                   {activeStore === 'mock' && '🎯 Curated'}
@@ -1228,7 +1339,7 @@ export default function Games() {
             </div>
 
             {/* Active Filters Display (filters only) */}
-            {(selectedGenre.length > 0 || selectedPlatform.length > 0) && (
+            {(selectedGenre.length > 0 || selectedPlatform.length > 0 || localPriceRange.min || localPriceRange.max) && (
               <div className="flex flex-wrap gap-2">
                 {selectedGenre.length > 0 && (
                   <>
@@ -1270,42 +1381,91 @@ export default function Games() {
                     ))}
                   </>
                 )}
+                
+                                  {(localPriceRange.min || localPriceRange.max) && (
+                    <span className={`text-xs px-3 py-2 rounded-full font-medium flex items-center border transition-all duration-500 ${
+                      isDebugOpen 
+                        ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800' 
+                        : 'bg-yellow-800'
+                    }`}>
+                      <span className="mr-1">💰</span>
+                      ${localPriceRange.min || '0'} - ${localPriceRange.max || '∞'}
+                      <button
+                        onClick={() => handlePriceRangeChange({ min: '', max: '' })}
+                        className="ml-2 text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-800 rounded-full w-4 h-4 flex items-center justify-center transition-colors duration-200"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
               </div>
             )}
           </div>
 
 
 
-          {/* Store Content Based on Selection */}
+          {/* Unified Game Display Using Store's Sorted Games */}
           <div className="mb-8">
-            {activeStore === 'mock' && (
-              <MockStore 
-                searchTerm={searchTerm}
-                selectedGenre={selectedGenre}
-                selectedPlatform={selectedPlatform}
-                sortBy={sortBy}
-              />
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-orange-400 mx-auto mb-4"></div>
+                <p className="text-gray-600 dark:text-gray-400">Loading games...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">⚠️</div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Error Loading Games</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
+                <button
+                  onClick={() => fetchGames()}
+                  className="px-4 py-2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white rounded-lg transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : displayGames && displayGames.length > 0 ? (
+              <>
+                {/* Games Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {displayGames.map((game) => (
+                    <GameCard 
+                  key={game.id} 
+                  game={game} 
+                  activeFilters={{ 
+                    platforms: selectedPlatform, 
+                    genres: selectedGenre,
+                    priceRange: localPriceRange 
+                  }} 
+                />
+                  ))}
+                </div>
+                
+                {/* No More Games Message */}
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <p>End of results</p>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🎮</div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Games Found</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Try adjusting your search terms, filters, or platform selection.
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedGenre([]);
+                    setSelectedPlatform([]);
+                    setLocalPriceRange({ min: '', max: '' });
+                    setLocalSortBy('relevance');
+                  }}
+                  className="px-4 py-2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-lg transition-colors"
+                >
+                  Clear All Filters
+                </button>
+              </div>
             )}
-            
-            {activeStore === 'cheapshark' && (
-              <CheapSharkGames 
-                searchTerm={searchTerm}
-                selectedGenre={selectedGenre}
-                selectedPlatform={selectedPlatform}
-                sortBy={sortBy}
-              />
-            )}
-            
-            {activeStore === 'rawg' && (
-              <RAWGGames 
-                searchTerm={searchTerm}
-                selectedGenre={selectedGenre}
-                selectedPlatform={selectedPlatform}
-                sortBy={sortBy}
-              />
-            )}
-
-
           </div>
         </div>
       </div>

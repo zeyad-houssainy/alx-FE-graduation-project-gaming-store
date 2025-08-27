@@ -86,18 +86,23 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
+      console.log('HeroSearchBar: Submitting search for:', searchTerm.trim());
       setShowSuggestions(false);
       onSearch(searchTerm.trim());
+    } else {
+      console.log('HeroSearchBar: Empty search term, ignoring submit');
     }
   };
 
   const handleSuggestionClick = (suggestion) => {
+    console.log('HeroSearchBar: Suggestion clicked:', suggestion);
     setSearchTerm(suggestion.name);
     setShowSuggestions(false);
     onSearch(suggestion.name);
   };
 
   const handlePopularSearchClick = (suggestion) => {
+    console.log('HeroSearchBar: Popular search clicked:', suggestion);
     setSearchTerm(suggestion);
     setShowSuggestions(false);
     onSearch(suggestion);

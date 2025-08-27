@@ -24,6 +24,23 @@ export default function GameDetail() {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [ratingComment, setRatingComment] = useState('');
 
+  // Convert all existing 10-star ratings to 5-star scale on component mount
+  useEffect(() => {
+    const savedRatings = JSON.parse(localStorage.getItem('userGameRatings') || '{}');
+    let hasChanges = false;
+    
+    Object.keys(savedRatings).forEach(gameId => {
+      if (savedRatings[gameId].rating > 5) {
+        savedRatings[gameId].rating = Math.round((savedRatings[gameId].rating / 10) * 5);
+        hasChanges = true;
+      }
+    });
+    
+    if (hasChanges) {
+      localStorage.setItem('userGameRatings', JSON.stringify(savedRatings));
+    }
+  }, []);
+
   // Fetch game data
   useEffect(() => {
     const fetchGame = async () => {
@@ -87,7 +104,18 @@ export default function GameDetail() {
       const savedRatings = JSON.parse(localStorage.getItem('userGameRatings') || '{}');
       const existingRating = savedRatings[game.id];
       if (existingRating) {
-        setUserRating(existingRating.rating);
+        // Convert old 10-star ratings to 5-star scale
+        let convertedRating = existingRating.rating;
+        if (existingRating.rating > 5) {
+          convertedRating = Math.round((existingRating.rating / 10) * 5);
+          // Update the stored rating to the new scale
+          savedRatings[game.id] = {
+            ...existingRating,
+            rating: convertedRating
+          };
+          localStorage.setItem('userGameRatings', JSON.stringify(savedRatings));
+        }
+        setUserRating(convertedRating);
         setRatingComment(existingRating.comment || '');
       }
     }
@@ -123,7 +151,7 @@ export default function GameDetail() {
       setShowRatingModal(false);
       
       // Show success message
-      alert(`Rating saved! You gave ${game.name} ${userRating}/10 stars.`);
+      alert(`Rating saved! You gave ${game.name} ${userRating}/5 stars.`);
     }
   };
 
@@ -304,11 +332,11 @@ export default function GameDetail() {
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-white font-semibold">Your Rating</h3>
                     {userRating > 0 && (
-                      <span className="text-yellow-400 font-bold">{userRating}/10</span>
+                      <span className="text-yellow-400 font-bold">{userRating}/5</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                    {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
                         onClick={() => handleRating(star)}
@@ -318,7 +346,7 @@ export default function GameDetail() {
                             : 'bg-white/20 text-white hover:bg-white/30'
                         }`}
                       >
-                        {star <= 5 ? '⭐' : '🔥'}
+                        ⭐
                       </button>
                     ))}
                   </div>
@@ -580,10 +608,10 @@ export default function GameDetail() {
             {/* Rating Display */}
             <div className="text-center mb-6">
               <div className="text-4xl mb-2">
-                {userRating <= 5 ? '⭐'.repeat(userRating) : '🔥'.repeat(userRating - 5)}
+                {'⭐'.repeat(userRating)}
               </div>
               <p className="text-gray-600 dark:text-gray-400">
-                You gave this game {userRating}/10 stars
+                You gave this game {userRating}/5 stars
               </p>
             </div>
 

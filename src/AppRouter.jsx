@@ -13,6 +13,7 @@ import SignUp from './pages/SignUp/SignUp';
 import MyProfile from './pages/MyProfile/MyProfile';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import SlidingCartSummary from './components/SlidingCartSummary';
+import SearchTest from './pages/SearchTest';
 
 export default function AppRouter() {
   return (
@@ -33,6 +34,7 @@ export default function AppRouter() {
         <Route path="/features" element={<UnderConstruction />} />
         <Route path="/blog" element={<UnderConstruction />} />
         <Route path="/contact" element={<UnderConstruction />} />
+        <Route path="/search-test" element={<SearchTest />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <SlidingCartSummary />

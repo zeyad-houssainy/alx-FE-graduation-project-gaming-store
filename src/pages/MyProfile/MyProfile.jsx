@@ -95,6 +95,24 @@ export default function MyProfile() {
     }
   }, [user]);
 
+  // Convert any existing 10-star ratings to 5-star scale on component mount
+  useEffect(() => {
+    const savedRatings = JSON.parse(localStorage.getItem('userGameRatings') || '{}');
+    
+    // Convert any existing 10-star ratings to 5-star scale
+    let hasChanges = false;
+    Object.keys(savedRatings).forEach(gameId => {
+      if (savedRatings[gameId].rating > 5) {
+        savedRatings[gameId].rating = Math.round((savedRatings[gameId].rating / 10) * 5);
+        hasChanges = true;
+      }
+    });
+    
+    if (hasChanges) {
+      localStorage.setItem('userGameRatings', JSON.stringify(savedRatings));
+    }
+  }, []);
+
   // Debug avatar state
   useEffect(() => {
     console.log('Avatar state in MyProfile:', {
@@ -550,7 +568,7 @@ export default function MyProfile() {
                       <span className="font-semibold">Rating System</span>
                     </div>
                     <p className="text-purple-700 dark:text-purple-300 mt-1 text-sm">
-                      Rate games from 1-10 stars and add comments. Your ratings are saved locally and can be viewed here.
+                      Rate games from 1-5 stars and add comments. Your ratings are saved locally and can be viewed here.
                     </p>
                   </div>
 
@@ -567,7 +585,7 @@ export default function MyProfile() {
                             No Rated Games Yet
                           </h3>
                           <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            Start rating games by visiting their detail pages and giving them a rating from 1-10 stars.
+                            Start rating games by visiting their detail pages and giving them a rating from 1-5 stars.
                           </p>
                           <button
                             onClick={() => navigate('/games')}
@@ -604,10 +622,10 @@ export default function MyProfile() {
                               </div>
                               <div className="text-right">
                                 <div className="text-2xl font-bold text-yellow-500 mb-1">
-                                  {rating.rating}/10
+                                  {rating.rating}/5
                                 </div>
                                 <div className="text-sm text-gray-500">
-                                  {rating.rating <= 5 ? '⭐'.repeat(rating.rating) : '🔥'.repeat(rating.rating - 5)}
+                                  {'⭐'.repeat(rating.rating)}
                                 </div>
                               </div>
                             </div>

@@ -58,16 +58,21 @@ export default function SearchOverlay({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
+      console.log('SearchOverlay: Submitting search for:', searchTerm.trim());
       setIsSearching(true);
       try {
         // Navigate to games page with search query
-        navigate(`/games?search=${encodeURIComponent(searchTerm.trim())}`);
+        const searchUrl = `/games?search=${encodeURIComponent(searchTerm.trim())}`;
+        console.log('SearchOverlay: Navigating to:', searchUrl);
+        navigate(searchUrl);
         onClose();
       } catch (error) {
-        console.error('Search navigation error:', error);
+        console.error('SearchOverlay: Search navigation error:', error);
       } finally {
         setIsSearching(false);
       }
+    } else {
+      console.log('SearchOverlay: Empty search term, ignoring submit');
     }
   };
 

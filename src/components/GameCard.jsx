@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCartStore } from '../stores';
 import { Link } from 'react-router-dom';
 
-export default function GameCard({ game }) {
+export default function GameCard({ game, activeFilters }) {
   // Image handling state
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
@@ -126,9 +126,67 @@ export default function GameCard({ game }) {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 sm:mb-3 min-h-[2rem]">
             <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-0">
               {(game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) ? (
-                <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs px-1 sm:px-2 py-1 rounded-md font-medium truncate max-w-[80px] sm:max-w-none">
-                  {typeof game.platforms[0] === 'string' ? game.platforms[0] : game.platforms[0]?.platform?.name || 'Unknown'}
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className={`text-xs px-1 sm:px-2 py-1 rounded-md font-medium truncate max-w-[80px] sm:max-w-none ${
+                    (() => {
+                      // If we have active platform filters, prioritize showing the filtered platform
+                      if (activeFilters?.platforms && activeFilters.platforms.length > 0) {
+                        const filteredPlatform = activeFilters.platforms[0];
+                        // Find if this game has the filtered platform
+                        const hasFilteredPlatform = game.platforms.some(platform => {
+                          const platformName = typeof platform === 'string' ? platform : platform?.platform?.name;
+                          return platformName && platformName.toLowerCase().includes(filteredPlatform.toLowerCase());
+                        });
+                        
+                        if (hasFilteredPlatform) {
+                          return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-700';
+                        }
+                      }
+                      
+                      // Default styling
+                      return 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300';
+                    })()
+                  }`}>
+                    {(() => {
+                      // If we have active platform filters, prioritize showing the filtered platform
+                      if (activeFilters?.platforms && activeFilters.platforms.length > 0) {
+                        const filteredPlatform = activeFilters.platforms[0];
+                        // Find if this game has the filtered platform
+                        const hasFilteredPlatform = game.platforms.some(platform => {
+                          const platformName = typeof platform === 'string' ? platform : platform?.platform?.name;
+                          return platformName && platformName.toLowerCase().includes(filteredPlatform.toLowerCase());
+                        });
+                        
+                        if (hasFilteredPlatform) {
+                          return filteredPlatform;
+                        }
+                      }
+                      
+                      // Fallback to first platform
+                      return typeof game.platforms[0] === 'string' ? game.platforms[0] : game.platforms[0]?.platform?.name || 'Unknown';
+                    })()}
+                  </span>
+                  
+                  {/* Show filter indicator when platform matches active filter */}
+                  {(() => {
+                    if (activeFilters?.platforms && activeFilters.platforms.length > 0) {
+                      const filteredPlatform = activeFilters.platforms[0];
+                      const hasFilteredPlatform = game.platforms.some(platform => {
+                        const platformName = typeof platform === 'string' ? platform : platform?.platform?.name;
+                        return platformName && platformName.toLowerCase().includes(filteredPlatform.toLowerCase());
+                      });
+                      
+                      if (hasFilteredPlatform) {
+                        return (
+                          <span className="text-blue-600 dark:text-blue-400 text-xs" title={`Available on ${filteredPlatform}`}>
+                            ✓
+                          </span>
+                        );
+                      }
+                    }
+                    return null;
+                  })()}
+                </div>
               ) : null}
             </div>
             <div className="text-left sm:text-right">
