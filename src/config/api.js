@@ -20,7 +20,7 @@ export const API_CONFIG = {
   // RAWG API Configuration (Fallback)
   RAWG: {
     BASE_URL: 'https://api.rawg.io/api',
-    API_KEY: 'b996c3910d6443059eb56fd7e61b5711', // User provided API key
+    API_KEY: '8e59bea6409848d5992b40629a0399fc', // User provided API key
     TIMEOUT: 10000, // 10 seconds
   },
   

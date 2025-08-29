@@ -51,7 +51,7 @@ export default function GameDetail() {
         // Try to fetch from RAWG API first
         const response = await axios.get(`https://api.rawg.io/api/games/${id}`, {
           params: {
-            key: 'b996c3910d6443059eb56fd7e61b5711'
+            key: '8e59bea6409848d5992b40629a0399fc'
           }
         });
         

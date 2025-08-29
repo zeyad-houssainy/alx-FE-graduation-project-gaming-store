@@ -18,7 +18,7 @@ import axios from 'axios';
  */
 
 // RAWG API Access Token - DO NOT CHANGE OR REMOVE
-const accessToken = 'b996c3910d6443059eb56fd7e61b5711';
+const accessToken = '8e59bea6409848d5992b40629a0399fc';
 
 // Log the access token for verification (remove in production if needed)
 console.log('🔑 RAWG API Access Token loaded:', accessToken ? '✅ Valid' : '❌ Missing');
