@@ -62,9 +62,6 @@ export default function CartItem({ item }) {
           {/* Price */}
           <div className="text-xl font-bold text-blue-600 dark:text-orange-400 mb-3">
             ${(item.price * item.quantity).toFixed(2)}
-            <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
-              (${item.price} each)
-            </span>
           </div>
         </div>
 

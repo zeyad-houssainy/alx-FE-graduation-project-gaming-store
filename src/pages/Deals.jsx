@@ -7,6 +7,8 @@ import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import SearchBar from '../components/SearchBar';
 import PortraitGameCard from '../components/PortraitGameCard';
+import HorizontalGameList from '../components/HorizontalGameList';
+import GameCard from '../components/GameCard';
 
 const Deals = () => {
   const [deals, setDeals] = useState([]);
@@ -254,7 +256,7 @@ const Deals = () => {
                 </p>
                 
                 {/* Store Selection Buttons - Decorative Only */}
-                <div className="flex flex-wrap justify-center gap-6 mb-12">
+                <div className="flex flex-wrap justify-center gap-4 mb-12">
                   {storeSections.map((section, index) => (
                     <div
                       key={section.id}
@@ -318,203 +320,124 @@ const Deals = () => {
             {/* Store-Specific Sections */}
             <div className="space-y-16 mb-20">
               {/* Steam Section */}
-              <div className="relative">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
-                      {renderStoreIcon('steam')}
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-800 bg-clip-text text-transparent">Steam Deals</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Exclusive Steam discounts</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('steam-scroll');
-                      if (element) element.scrollLeft -= 300;
-                    }}>
-                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('steam-scroll');
-                      if (element) element.scrollLeft += 300;
-                    }}>
-                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-                <div id="steam-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
-                  {filteredDeals
-                    .filter(deal => deal.cheapestDeal?.storeID === '1')
-                    .slice(0, 10)
-                    .map((deal) => (
-                      <div key={deal.id} className="flex-shrink-0 w-80">
-                        <PortraitGameCard 
-                          game={{
-                            id: deal.gameId || deal.id,
-                            name: deal.title,
-                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                            price: deal.cheapestPrice,
-                            originalPrice: deal.normalPrice,
-                            rating: 4.0,
-                            platforms: ['PC'],
-                            genre: 'Action'
-                          }}
-                        />
-                      </div>
-                    ))}
-                </div>
-              </div>
+              <HorizontalGameList
+                title="Steam Deals"
+                subtitle="Exclusive Steam discounts"
+                icon={<span className="text-black dark:text-white">{renderStoreIcon('steam')}</span>}
+                iconBgColor=""
+                games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '1').slice(0, 10)}
+                renderGameItem={(deal) => (
+                  <PortraitGameCard 
+                    game={{
+                      id: deal.gameId || deal.id,
+                      name: deal.title,
+                      background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                      price: deal.cheapestPrice,
+                      originalPrice: deal.normalPrice,
+                      rating: 4.0,
+                      platforms: ['PC'],
+                      genre: 'Action'
+                    }}
+                  />
+                )}
+                scrollId="steam-scroll"
+              />
 
               {/* Epic Games Section */}
-              <div className="relative">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
-                      {renderStoreIcon('epic')}
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">Epic Games</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Epic store exclusives</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('epic-scroll');
-                      if (element) element.scrollLeft -= 300;
-                    }}>
-                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('epic-scroll');
-                      if (element) element.scrollLeft += 300;
-                    }}>
-                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-                <div id="epic-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
-                  {filteredDeals
-                    .filter(deal => deal.cheapestDeal?.storeID === '25')
-                    .slice(0, 10)
-                    .map((deal) => (
-                      <div key={deal.id} className="flex-shrink-0 w-80">
-                        <PortraitGameCard 
-                          game={{
-                            id: deal.gameId || deal.id,
-                            name: deal.title,
-                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                            price: deal.cheapestPrice,
-                            originalPrice: deal.normalPrice,
-                            rating: 4.0,
-                            platforms: ['PC'],
-                            genre: 'Action'
-                          }}
-                        />
-                      </div>
-                    ))}
-                </div>
-              </div>
+              <HorizontalGameList
+                title="Epic Games"
+                subtitle="Epic store exclusives"
+                icon={<span className="text-black dark:text-white">{renderStoreIcon('epic')}</span>}
+                iconBgColor=""
+                games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '25').slice(0, 10)}
+                renderGameItem={(deal) => (
+                  <PortraitGameCard 
+                    game={{
+                      id: deal.gameId || deal.id,
+                      name: deal.title,
+                      background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                      price: deal.cheapestPrice,
+                      originalPrice: deal.normalPrice,
+                      rating: 4.0,
+                      platforms: ['PC'],
+                      genre: 'Action'
+                    }}
+                  />
+                )}
+                scrollId="epic-scroll"
+              />
 
               {/* PS Store Section */}
-              <div className="relative">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                      {renderStoreIcon('playstation')}
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 bg-clip-text text-transparent">PS Store</h3>
-                      <p className="text-gray-600 dark:text-gray-400">PlayStation exclusives and deals</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('ps-scroll');
-                      if (element) element.scrollLeft -= 300;
-                    }}>
-                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('ps-scroll');
-                      if (element) element.scrollLeft += 300;
-                    }}>
-                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-                <div id="ps-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
-                  {filteredDeals
-                    .filter(deal => deal.cheapestDeal?.storeID === '3')
-                    .slice(0, 10)
-                    .map((deal) => (
-                      <div key={deal.id} className="flex-shrink-0 w-80">
-                        <PortraitGameCard 
-                          game={{
-                            id: deal.gameId || deal.id,
-                            name: deal.title,
-                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                            price: deal.cheapestPrice,
-                            originalPrice: deal.normalPrice,
-                            rating: 4.0,
-                            platforms: ['PC'],
-                            genre: 'Action'
-                          }}
-                        />
-                      </div>
-                    ))}
-                </div>
-              </div>
+              <HorizontalGameList
+                title="PS Store"
+                subtitle="PlayStation exclusives and deals"
+                icon={<span className="text-black dark:text-white">{renderStoreIcon('playstation')}</span>}
+                iconBgColor=""
+                games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '3').slice(0, 10)}
+                renderGameItem={(deal) => (
+                  <PortraitGameCard 
+                    game={{
+                      id: deal.gameId || deal.id,
+                      name: deal.title,
+                      background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                      price: deal.cheapestPrice,
+                      originalPrice: deal.normalPrice,
+                      rating: 4.0,
+                      platforms: ['PC'],
+                      genre: 'Action'
+                    }}
+                  />
+                )}
+                scrollId="ps-scroll"
+              />
 
               {/* Xbox Section */}
-              <div className="relative">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-                      {renderStoreIcon('xbox')}
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 bg-clip-text text-transparent">Xbox</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Xbox Game Pass and deals</p>
-                    </div>
+              <HorizontalGameList
+                title="Xbox"
+                subtitle="Xbox Game Pass and deals"
+                icon={<span className="text-black dark:text-white">{renderStoreIcon('xbox')}</span>}
+                iconBgColor=""
+                games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '2').slice(0, 10)}
+                renderGameItem={(deal) => (
+                  <PortraitGameCard 
+                    game={{
+                      id: deal.gameId || deal.id,
+                      name: deal.title,
+                      background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                      price: deal.cheapestPrice,
+                      originalPrice: deal.normalPrice,
+                      rating: 4.0,
+                      platforms: ['PC'],
+                      genre: 'Action'
+                    }}
+                  />
+                )}
+                scrollId="xbox-scroll"
+              />
+            </div>
+            
+            {/* All Deals Section */}
+            <div className="mt-16">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">All Deals</h3>
+                <p className="text-gray-600 dark:text-gray-400">Browse through all available deals</p>
+              </div>
+              <div className="flex flex-wrap gap-6 justify-center max-w-[1800px] mx-auto">
+                {filteredDeals.slice(0, 20).map((deal) => (
+                  <div key={deal.id} className="w-[400px] flex-shrink-0">
+                    <GameCard 
+                      game={{
+                        id: deal.gameId || deal.id,
+                        name: deal.title,
+                        background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                        price: deal.cheapestPrice,
+                        rating: 4.0,
+                        platforms: ['PC'],
+                        genres: [{ name: 'Action' }]
+                      }}
+                    />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('xbox-scroll');
-                      if (element) element.scrollLeft -= 300;
-                    }}>
-                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
-                      const element = document.getElementById('xbox-scroll');
-                      if (element) element.scrollLeft += 300;
-                    }}>
-                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-                <div id="xbox-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
-                  {filteredDeals
-                    .filter(deal => deal.cheapestDeal?.storeID === '2')
-                    .slice(0, 10)
-                    .map((deal) => (
-                      <div key={deal.id} className="flex-shrink-0 w-80">
-                        <PortraitGameCard 
-                          game={{
-                            id: deal.gameId || deal.id,
-                            name: deal.title,
-                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                            price: deal.cheapestPrice,
-                            originalPrice: deal.normalPrice,
-                            rating: 4.0,
-                            platforms: ['PC'],
-                            genre: 'Action'
-                          }}
-                        />
-                      </div>
-                    ))}
-                </div>
+                ))}
               </div>
             </div>
           </div>

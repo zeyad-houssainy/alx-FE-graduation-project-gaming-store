@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import { useCartStore } from '../stores';
 import { Link } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
 
-export default function GameCard({ game, activeFilters }) {
+export default function GameCard({ game }) {
   // Image handling state
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  const { addToCart } = useCartStore();
+
   // Safety check - if game is undefined, don't render
   if (!game) {
     return null;
   }
-
-  const { addToCart, updateQuantity, items, isInCart, getItemQuantity } = useCartStore();
-  
-  const cartItem = items.find(item => item.id === game.id);
-  const quantity = cartItem ? cartItem.quantity : 0;
-  const isGameInCart = isInCart(game.id);
 
   // Image handling functions
   const getImageUrl = () => {
@@ -115,23 +112,25 @@ export default function GameCard({ game, activeFilters }) {
                 return (
                   <div key={index} className="w-4 h-4 flex items-center justify-center text-gray-900 dark:text-white">
                     {platformName.includes('steam') ? (
-                      <img src="/assets/icons/steam.svg" alt="Steam" className="w-3 h-3" />
+                      <img src="/assets/icons/steam.svg" alt="Steam" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('epic') ? (
-                      <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-3 h-3" />
+                      <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('playstation') || platformName.includes('ps') ? (
-                      <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-3 h-3" />
+                      <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
+                    ) : platformName.includes('psp') ? (
+                      <img src="/assets/icons/sony.svg" alt="PSP" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('xbox') ? (
-                      <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-3 h-3" />
+                      <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('nintendo') || platformName.includes('switch') ? (
-                      <img src="/assets/icons/nintendo-switch.svg" alt="Nintendo Switch" className="w-3 h-3" />
+                      <img src="/assets/icons/nintendo-switch.svg" alt="Nintendo Switch" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('windows') || platformName.includes('pc') ? (
-                      <img src="/assets/icons/windows.svg" alt="Windows" className="w-3 h-3" />
+                      <img src="/assets/icons/windows.svg" alt="Windows" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('mac') || platformName.includes('macos') ? (
-                      <img src="/assets/icons/mac-os.svg" alt="macOS" className="w-3 h-3" />
+                      <img src="/assets/icons/mac-os.svg" alt="macOS" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('ubuntu') || platformName.includes('linux') ? (
-                      <img src="/assets/icons/ubuntu.svg" alt="Ubuntu" className="w-3 h-3" />
+                      <img src="/assets/icons/ubuntu.svg" alt="Ubuntu" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : platformName.includes('android') ? (
-                      <img src="/assets/icons/android.svg" alt="Android" className="w-3 h-3" />
+                      <img src="/assets/icons/android.svg" alt="Android" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
                     ) : (
                       <span className="text-xs text-gray-900 dark:text-white font-medium">P</span>
                     )}
@@ -146,22 +145,20 @@ export default function GameCard({ game, activeFilters }) {
           )}
         </div>
         
-        {/* Clickable Title - Second */}
-        <Link to={`/games/${game.id}`} className="block mb-2">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2 leading-tight hover:text-blue-600 dark:hover:text-blue-300 transition-colors cursor-pointer">
-            {game.name || 'Untitled Game'}
-          </h3>
-        </Link>
+        {/* Title and Price Row - Second */}
+        <div className="flex items-center justify-between mb-2">
+          <Link to={`/games/${game.id}`} className="block flex-1 mr-2">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2 leading-tight hover:text-blue-600 dark:hover:text-blue-300 transition-colors cursor-pointer">
+              {game.name || 'Untitled Game'}
+            </h3>
+          </Link>
+          <span className="text-lg font-bold text-green-400 dark:text-green-300 flex-shrink-0">
+            ${game.price || '29.99'}
+          </span>
+        </div>
         
         {/* Action Row - Third (All in one row) */}
         <div className="flex items-center justify-between">
-          {/* Rank/Price */}
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-green-400 dark:text-green-300">
-              ${game.price || '29.99'}
-            </span>
-          </div>
-          
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             {/* Wishlist Button */}
@@ -178,9 +175,9 @@ export default function GameCard({ game, activeFilters }) {
             {/* Add to Cart Button - Fixed dimensions */}
             <button
               onClick={handleAddToCart}
-              className="w-[60px] h-[30px] bg-blue-600 hover:bg-blue-700 text-white rounded transition-all duration-300 flex items-center justify-center"
+              className="w-[60px] h-[30px] bg-green-600 hover:bg-green-700 text-white rounded transition-all duration-300 flex items-center justify-center"
             >
-              <img src="/assets/icons/add-to-cart-16.svg" alt="Add to Cart" className="w-3 h-3" />
+              <FaShoppingCart className="w-3 h-3" />
             </button>
           </div>
         </div>

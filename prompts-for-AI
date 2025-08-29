@@ -1,0 +1,57 @@
+**Prompt 1**
+reduce the gap for the flexbox in the deals page
+
+**Prompt 2**
+on big screens i want 4 columns to be shown on the shop page
+
+**Prompt 3**
+fix any errors on @Games.jsx
+
+**Prompt 4**
+you can increase the page width i noticed that you have page margins you can reduce that alittle to make the gamecards to fit 4 in the row
+
+**Prompt 5**
+http://localhost:5004/deals 1- remove background for the store icons and make the icons flat. don't forget to use black color on light theme and white color on dark theme
+
+**Prompt 6**
+create a new component for any horizontal game list 
+where it will have the game items and a horizontal scroll buttons 
+
+and use it and replace all the horizontal gamelists with this component 
+
+ofcourse the content of this component will depend on the context i want to show
+
+use row flexbox for the items 
+
+**Prompt 7**
+@GameCard.jsx add the "add to cart" icon for the add to cart button
+and replace the background color for it to be suitable
+
+**Prompt 8**
+@Games.jsx 
+make the flexbox to show 4 gamecards in the single row for the big screens
+
+**Prompt 9**
+change the platform icon color in the gamecard component to white only  in the dark theme
+
+**Prompt 10**
+in deals page
+add a section for "all deals"
+you can use gamecard component on this part
+this section will show all the deals 
+
+**Prompt 11**
+@Games.jsx fox the 10 errors
+
+**Prompt 12**
+change the platform icon color in the gamecard in the dark theme to white
+
+**Prompt 13**
+game cart sammary is corrupted and not showing data correctly, and the price is shown twice 
+adjust the styling and the code if needed to make it work correctly
+
+**Prompt 14**
+for the gameCard, make the price is in the same row with the game titlee
+
+**Prompt 15**
+go through all the project, make sure that all components including everything has the correct theme. look through all text, images, SVG, and all the project to make sure that light theme as a whole is not mixed with dark theme items

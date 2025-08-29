@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useGamesStore, useCartStore, useAuthStore } from '../stores';
-import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import FilterMenu from '../components/FilterMenu';
 import SearchBar from '../components/SearchBar';
@@ -8,26 +8,21 @@ import Pagination from '../components/Pagination';
 import Loader from '../components/Loader';
 import GameCard from '../components/GameCard';
 
-import { testCheapSharkConnectivity } from '../services/cheapsharkApi';
-import { testRAWGConnectivity } from '../services/rawgApi';
+
 import { FaFilter, FaTimes, FaEye, FaEyeSlash, FaBug, FaCog, FaPlay, FaPause, FaStop } from 'react-icons/fa';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
 export default function Games() {
-  const navigate = useNavigate();
   const { 
     games, 
     filteredGames,
     loading, 
     error, 
     fetchGames, 
-    clearGames, 
     setLoading, 
     setError,
-    currentPage,
     totalPages,
-    setCurrentPage,
     pagination,
     filters,
     activeStore,
@@ -42,14 +37,13 @@ export default function Games() {
     getPlatforms,
     getQuickFilters,
     applyQuickFilter,
-    resetFiltersForStore,
     getFilterStatus,
     globalSearch,
   } = useGamesStore();
 
   // Use filteredGames for display (which includes sorting) or fall back to games
   const displayGames = filteredGames && filteredGames.length > 0 ? filteredGames : games;
-  const { addToCart } = useCartStore();
+
   const { isAdmin: _isAdmin } = useAuthStore();
   
   const [searchParams, setSearchParams] = useSearchParams();
@@ -365,10 +359,7 @@ export default function Games() {
     setSearchTerm('');
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPageState(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+
 
   // API Testing Functions
   const testCheapSharkAPI = async () => {
@@ -545,7 +536,7 @@ export default function Games() {
           ? 'bg-purple-100 dark:bg-purple-950' 
           : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900'
       }`}>
-        <div className={`container mx-auto px-4 sm:px-6 py-8 sm:py-12 transition-all duration-500 ${
+        <div className={`container mx-auto px-2 sm:px-4 py-8 sm:py-12 transition-all duration-500 ${
           isDebugOpen ? 'bg-purple-50 dark:bg-gray-800' : ''
         }`}>
                   
@@ -1443,7 +1434,7 @@ export default function Games() {
             ) : displayGames && displayGames.length > 0 ? (
               <>
                 {/* Games Grid */}
-                <div className="flex flex-wrap gap-4 justify-center max-w-[1720px] mx-auto">
+                <div className="flex flex-wrap gap-4 justify-center max-w-[1800px] mx-auto">
                   {displayGames.map((game) => (
                     <div key={game.id} className="w-[400px]">
                       <GameCard 
