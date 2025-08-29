@@ -14,6 +14,7 @@ import MyProfile from './pages/MyProfile/MyProfile';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import SlidingCartSummary from './components/SlidingCartSummary';
 import SearchTest from './pages/SearchTest';
+import RAWGDemo from './components/RAWGDemo';
 
 export default function AppRouter() {
   return (
@@ -35,6 +36,7 @@ export default function AppRouter() {
         <Route path="/blog" element={<UnderConstruction />} />
         <Route path="/contact" element={<UnderConstruction />} />
         <Route path="/search-test" element={<SearchTest />} />
+        <Route path="/rawg-demo" element={<RAWGDemo />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <SlidingCartSummary />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { fetchGames } from '../services/gamesApi';
+import { useGamesStore } from '../stores';
 
 export default function HeroSearchBar({ onSearch, className = "" }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -8,6 +8,8 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
   const [loading, setLoading] = useState(false);
   const searchRef = useRef(null);
   const timeoutRef = useRef(null);
+
+  const { globalSearch } = useGamesStore();
 
   const popularSearches = [
     'Action Games',
@@ -65,11 +67,20 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
 
     timeoutRef.current = setTimeout(async () => {
       try {
-        const result = await fetchGames(1, 8, searchTerm.trim());
-        setSuggestions(result.games);
+        console.log('HeroSearchBar: Fetching suggestions for:', searchTerm.trim());
+        
+        // Search across all store APIs using global search
+        const result = await globalSearch(searchTerm.trim());
+        console.log('HeroSearchBar: Search result:', result);
+        
+        // Limit to 3 suggestions maximum
+        const limitedSuggestions = result.games.slice(0, 3);
+        console.log('HeroSearchBar: Limited suggestions:', limitedSuggestions);
+        
+        setSuggestions(limitedSuggestions);
         setShowSuggestions(true);
       } catch (error) {
-        console.error('Error fetching suggestions:', error);
+        console.error('HeroSearchBar: Error fetching suggestions:', error);
         setSuggestions([]);
       } finally {
         setLoading(false);
@@ -81,7 +92,7 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [searchTerm]);
+  }, [searchTerm, globalSearch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -138,7 +149,7 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
             className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white p-2 sm:p-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </button>
         </div>
@@ -146,88 +157,80 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
       
       {/* Search Suggestions */}
       {showSuggestions && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-20 animate-fade-in">
-          <div className="p-4">
-            {/* Loading State */}
-            {loading && (
-              <div className="text-center py-4">
-                <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 dark:border-orange-500"></div>
-                <p className="text-gray-500 dark:text-gray-400 mt-2">Searching...</p>
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-xl z-50 max-h-96 overflow-y-auto">
+          {/* Loading State */}
+          {loading && (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              <div className="animate-spin w-6 h-6 border-2 border-blue-500 dark:border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+              Searching...
+            </div>
+          )}
+
+          {/* Search Suggestions */}
+          {!loading && suggestions.length > 0 && (
+            <div className="p-2">
+              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 uppercase tracking-wide">
+                Search Results
               </div>
-            )}
-            
-            {/* Search Results */}
-            {!loading && suggestions.length > 0 && (
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 text-left">Search Results</h3>
-                <div className="space-y-2">
-                  {suggestions.map((game) => (
-                    <button
-                      key={game.id}
-                      onClick={() => handleSuggestionClick(game)}
-                      className="w-full p-3 text-left bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-orange-500/20 rounded-lg transition-all duration-300 group border border-transparent hover:border-blue-200 dark:hover:border-orange-500/30 hover:shadow-md"
-                    >
-                      <div className="flex items-center gap-3">
-                        <img 
-                          src={game.background_image} 
-                          alt={game.name}
-                          className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                          onError={(e) => {
-                            e.target.src = '/assets/images/featured-game-1.jpg';
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-orange-400 transition-colors truncate">
-                            {game.name}
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {game.genre} • {game.platforms?.join(', ')}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
-                          <span>⭐</span>
-                          <span>{game.rating}</span>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={`${suggestion.id}-${index}`}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="w-full px-3 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-lg flex items-center gap-3"
+                >
+                  {/* Game Image */}
+                  <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                    <img
+                      src={suggestion.background_image || '/assets/images/featured-game-1.jpg'}
+                      alt={suggestion.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = '/assets/images/featured-game-1.jpg';
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Game Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-gray-900 dark:text-white font-medium truncate">{suggestion.name}</div>
+                    <div className="text-gray-500 dark:text-gray-400 text-sm truncate">
+                      {suggestion.genres?.slice(0, 2).join(', ') || 'Action'}
+                    </div>
+                  </div>
+
+                  {/* Store Badge */}
+                  <div className="text-xs px-2 py-1 rounded bg-blue-600 text-white">
+                    {suggestion.storeName || 'Store'}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Popular Searches */}
+          {!loading && searchTerm.length === 0 && (
+            <div className="p-2">
+              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 uppercase tracking-wide">
+                Popular Searches
               </div>
-            )}
-            
-            {/* Popular Searches */}
-            {!loading && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 text-left">Popular Searches</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {popularSearches.map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handlePopularSearchClick(suggestion)}
-                      className="p-2 sm:p-3 text-left bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-orange-500/20 rounded-lg transition-all duration-300 group border border-transparent hover:border-blue-200 dark:hover:border-orange-500/30 hover:shadow-md"
-                    >
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-orange-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <span className="text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-orange-400 transition-colors font-medium text-sm sm:text-base">
-                          {suggestion}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* No Results Message */}
-            {!loading && searchTerm.trim().length >= 2 && suggestions.length === 0 && (
-              <div className="text-center py-4">
-                <p className="text-gray-500 dark:text-gray-400">No games found for "{searchTerm}"</p>
-                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different search term</p>
-              </div>
-            )}
-          </div>
+              {popularSearches.map((search, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePopularSearchClick(search)}
+                  className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-lg text-gray-700 dark:text-gray-300"
+                >
+                  {search}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* No Results */}
+          {!loading && searchTerm.length >= 2 && suggestions.length === 0 && (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              No games found for "{searchTerm}"
+            </div>
+          )}
         </div>
       )}
     </div>

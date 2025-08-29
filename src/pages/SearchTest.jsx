@@ -97,6 +97,20 @@ export default function SearchTest() {
             <li>Verify that search terms are captured and displayed</li>
             <li>Test the search overlay by clicking the button</li>
           </ol>
+          
+          <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+            <h4 className="text-md font-semibold text-green-900 dark:text-green-100 mb-2">
+              🧪 Test Search Suggestions
+            </h4>
+            <p className="text-green-800 dark:text-green-200 text-sm">
+              Try typing "god" in any search bar to test the 3-game suggestion limit. You should see:
+            </p>
+            <ul className="list-disc list-inside mt-2 text-green-700 dark:text-green-300 text-sm">
+              <li>God of War Ragnarök</li>
+              <li>God of War (2018)</li>
+              <li>God of War III Remastered</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

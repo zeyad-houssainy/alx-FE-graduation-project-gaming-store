@@ -10,6 +10,7 @@ export default function NavBar() {
     { name: "FEATURES", path: "/features" },
     { name: "SHOP", path: "/games" },
     { name: "DEALS", path: "/deals" },
+    { name: "RAWG DEMO", path: "/rawg-demo" },
     { name: "BLOG", path: "/blog" },
     { name: "CONTACT", path: "/contact" }
   ];

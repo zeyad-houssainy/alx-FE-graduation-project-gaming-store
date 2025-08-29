@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFetchGames } from '../../hooks/useFetchGames';
-import GameCard from '../../components/GameCard';
+import PortraitGameCard from '../../components/PortraitGameCard';
 import Loader from '../../components/Loader';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -9,7 +9,7 @@ export default function FeaturedGames() {
     const { games, loading } = useFetchGames(1, 20); // Fetch more games for multiple sections
     const [activeSection, setActiveSection] = useState(0);
     const [isAutoScrolling, setIsAutoScrolling] = useState(true);
-    const [scrollSpeed, setScrollSpeed] = useState(3000); // 3 seconds (normal speed)
+    const [scrollSpeed, setScrollSpeed] = useState(5000); // 5 seconds (normal speed)
     const scrollRefs = useRef([]);
     const autoScrollTimers = useRef([]);
     const [hoveredSection, setHoveredSection] = useState(null);
@@ -18,23 +18,17 @@ export default function FeaturedGames() {
     const gameSections = [
         {
             id: 'featured',
-            title: 'FEATURED GAMES',
-            subtitle: 'Handpicked titles for the ultimate gaming experience',
-            color: 'from-blue-600 to-purple-600',
+            title: 'Discover Something New',
             games: games.slice(0, 8)
         },
         {
             id: 'new-releases',
-            title: 'NEW RELEASES',
-            subtitle: 'Fresh games just launched this month',
-            color: 'from-green-600 to-teal-600',
+            title: 'New Releases',
             games: games.slice(8, 16)
         },
         {
             id: 'trending',
-            title: 'TRENDING NOW',
-            subtitle: 'Most popular games everyone is playing',
-            color: 'from-orange-600 to-red-600',
+            title: 'Trending Now',
             games: games.slice(16, 24)
         }
     ];
@@ -58,7 +52,7 @@ export default function FeaturedGames() {
         }
     }, [isAutoScrolling, scrollSpeed, games.length, hoveredSection]);
 
-    // Scroll to next set of games
+    // Scroll to next set of games (skip 3 tickets)
     const scrollToNext = (sectionIndex) => {
         const scrollContainer = scrollRefs.current[sectionIndex];
         if (scrollContainer) {
@@ -67,23 +61,28 @@ export default function FeaturedGames() {
             const currentScroll = scrollContainer.scrollLeft;
             const maxScroll = scrollWidth - clientWidth;
             
+            // Calculate scroll distance for 3 tickets (3 * 256px + 16px gap)
+            const scrollDistance = 3 * 256 + 16;
+            
             if (currentScroll >= maxScroll) {
                 scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
             } else {
                 scrollContainer.scrollTo({ 
-                    left: currentScroll + 300, 
+                    left: currentScroll + scrollDistance, 
                     behavior: 'smooth' 
                 });
             }
         }
     };
 
-    // Scroll to previous set of games
+    // Scroll to previous set of games (skip 3 tickets)
     const scrollToPrevious = (sectionIndex) => {
         const scrollContainer = scrollRefs.current[sectionIndex];
         if (scrollContainer) {
             const currentScroll = scrollContainer.scrollLeft;
-            const newScroll = Math.max(0, currentScroll - 300);
+            // Calculate scroll distance for 3 tickets (3 * 256px + 16px gap)
+            const scrollDistance = 3 * 256 + 16;
+            const newScroll = Math.max(0, currentScroll - scrollDistance);
             scrollContainer.scrollTo({ 
                 left: newScroll, 
                 behavior: 'smooth' 
@@ -114,6 +113,15 @@ export default function FeaturedGames() {
         }
     };
 
+    // New function to handle manual scroll
+    const handleManualScroll = (sectionIndex, direction) => {
+        if (direction === 'left') {
+            scrollToPrevious(sectionIndex);
+        } else {
+            scrollToNext(sectionIndex);
+        }
+    };
+
     if (loading) {
         return (
             <section className="py-20 bg-gray-50 dark:bg-gray-800 relative">
@@ -134,46 +142,32 @@ export default function FeaturedGames() {
     }
 
     return (
-        <section className="py-20 bg-gray-50 dark:bg-gray-800 relative">
-            <div className="container mx-auto px-6">
-                {/* Section Header */}
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-black font-bold mb-6 text-gray-900 dark:text-white">
-                        FEATURED <span className="text-blue-600 dark:text-orange-400">GAMES</span>
-                    </h2>
-                    <div className="w-24 h-1 bg-amber-500 mx-auto mb-6"></div>
-                    <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
-                        Discover our collection of the latest and most exciting games available across all platforms
-                    </p>
-                </div>
-
-                {/* Game Sections */}
+        <section className="py-16 sm:py-20 md:py-24">
+            <div className="container mx-auto px-4">
                 {gameSections.map((section, sectionIndex) => (
                     <div key={section.id} className="mb-16 last:mb-0">
-                        {/* Section Title */}
+                        {/* Section Header - Clean Layout */}
                         <div className="flex items-center justify-between mb-8">
-                            <div>
-                                <h3 className={`text-2xl md:text-3xl font-black font-bold mb-2 bg-gradient-to-r ${section.color} bg-clip-text text-transparent`}>
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
                                     {section.title}
-                                </h3>
-                                <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                    {section.subtitle}
-                                </p>
+                                </h2>
+                                <FaChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                             </div>
                             
                             {/* Navigation Arrows */}
                             <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => scrollToPrevious(sectionIndex)}
-                                    className="p-2 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-orange-400 hover:border-blue-300 dark:hover:border-orange-400 transition-all duration-300 hover:scale-110"
+                                <button 
+                                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                                    onClick={() => handleManualScroll(sectionIndex, 'left')}
                                 >
-                                    <FaChevronLeft />
+                                    <FaChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                                 </button>
-                                <button
-                                    onClick={() => scrollToNext(sectionIndex)}
-                                    className="p-2 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-orange-400 hover:border-blue-300 dark:hover:border-orange-400 transition-all duration-300 hover:scale-110"
+                                <button 
+                                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                                    onClick={() => handleManualScroll(sectionIndex, 'right')}
                                 >
-                                    <FaChevronRight />
+                                    <FaChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                                 </button>
                             </div>
                         </div>
@@ -182,28 +176,16 @@ export default function FeaturedGames() {
                         <div className="relative">
                             <div
                                 ref={el => scrollRefs.current[sectionIndex] = el}
-                                className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+                                className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
                                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                                 onMouseEnter={() => handleMouseEnter(sectionIndex)}
                                 onMouseLeave={() => handleMouseLeave(sectionIndex)}
                             >
                                 {section.games.map((game) => (
                                     <div key={game.id} className="flex-shrink-0 w-80">
-                                        <GameCard game={game} />
+                                        <PortraitGameCard game={game} />
                                     </div>
                                 ))}
-                            </div>
-                            
-                            {/* Scroll Indicator */}
-                            <div className="mt-4 text-center">
-                                <div className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                                    <span>Scroll to explore more games</span>
-                                    <div className="flex gap-1">
-                                        <div className="w-2 h-2 bg-blue-600 dark:bg-orange-400 rounded-full animate-pulse"></div>
-                                        <div className="w-2 h-2 bg-blue-600 dark:bg-orange-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                                        <div className="w-2 h-2 bg-blue-600 dark:bg-orange-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

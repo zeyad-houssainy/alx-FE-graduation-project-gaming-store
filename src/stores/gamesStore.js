@@ -160,6 +160,8 @@ export const useGamesStore = create(
         // Apply platform filter
         if (filters.platforms.length > 0) {
           console.log('Store: Applying platform filter for:', filters.platforms);
+          console.log('Store: Sample game platforms:', filtered.slice(0, 3).map(g => ({ name: g.name, platforms: g.platforms })));
+          
           filtered = filtered.filter(game => {
             if (!game.platforms || !Array.isArray(game.platforms)) {
               console.log('Store: Game has no platforms:', game.name);
@@ -167,23 +169,38 @@ export const useGamesStore = create(
             }
             
             const hasMatchingPlatform = game.platforms.some(platform => {
-              const platformName = typeof platform === 'string' ? platform : platform?.platform?.name;
-              if (!platformName) return false;
-              
-              const matches = filters.platforms.some(selected =>
-                platformName.toLowerCase().includes(selected.toLowerCase()) ||
-                selected.toLowerCase().includes(platformName.toLowerCase())
-              );
-              
-              if (matches) {
-                console.log('Store: Game', game.name, 'matches platform', selected, 'via', platformName);
+              // Handle different platform data structures
+              let platformName;
+              if (typeof platform === 'string') {
+                platformName = platform;
+              } else if (platform && typeof platform === 'object') {
+                platformName = platform.name || platform.platform?.name || platform.platform_name;
+              } else {
+                console.log('Store: Invalid platform data for game', game.name, ':', platform);
+                return false;
               }
+              
+              if (!platformName) {
+                console.log('Store: No platform name found for game', game.name, ':', platform);
+                return false;
+              }
+              
+              const matches = filters.platforms.some(selected => {
+                // Use exact matching for better accuracy
+                const isMatch = platformName.toLowerCase() === selected.toLowerCase();
+                
+                if (isMatch) {
+                  console.log('Store: Game', game.name, 'matches platform', selected, 'via', platformName);
+                }
+                
+                return isMatch;
+              });
               
               return matches;
             });
             
             if (!hasMatchingPlatform) {
-              console.log('Store: Game', game.name, 'does not match any platform filter');
+              console.log('Store: Game', game.name, 'does not match any platform filter. Game platforms:', game.platforms);
             }
             
             return hasMatchingPlatform;
@@ -572,14 +589,19 @@ export const useGamesStore = create(
 
               // Quick filters for each store
         getQuickFilters: () => {
-          // Platform-based quick filters for all stores
+          // Platform-based quick filters for all stores - using exact RAWG platform names
           const platformFilters = {
             pc: { name: 'PC', filter: { platform: 'PC' } },
             ps5: { name: 'PlayStation 5', filter: { platform: 'PlayStation 5' } },
             ps4: { name: 'PlayStation 4', filter: { platform: 'PlayStation 4' } },
             xboxSeriesX: { name: 'Xbox Series X', filter: { platform: 'Xbox Series X' } },
             xboxOne: { name: 'Xbox One', filter: { platform: 'Xbox One' } },
-            nintendoSwitch: { name: 'Nintendo Switch', filter: { platform: 'Nintendo Switch' } }
+            nintendoSwitch: { name: 'Nintendo Switch', filter: { platform: 'Nintendo Switch' } },
+            // Add more common platforms
+            ps3: { name: 'PlayStation 3', filter: { platform: 'PlayStation 3' } },
+            xbox360: { name: 'Xbox 360', filter: { platform: 'Xbox 360' } },
+            nintendo3ds: { name: 'Nintendo 3DS', filter: { platform: 'Nintendo 3DS' } },
+            nintendoWii: { name: 'Nintendo Wii', filter: { platform: 'Nintendo Wii' } }
           };
           
           return platformFilters;
@@ -591,27 +613,40 @@ export const useGamesStore = create(
         const quickFilters = get().getQuickFilters();
         const filter = quickFilters[filterKey];
         
-        if (!filter) return;
+        if (!filter) {
+          console.error('Quick filter not found:', filterKey);
+          return;
+        }
         
-        console.log('Applying platform quick filter:', filter.name, filter.filter);
+        console.log('🎯 Applying platform quick filter:', filter.name, filter.filter);
         
         // Apply platform filter by updating the filters.platforms
         if (filter.filter.platform) {
           const platform = filter.filter.platform;
+          console.log('🎮 Setting platform filter to:', platform);
           
           // Update the platform filter in the store
           set((state) => ({
             filters: { ...state.filters, platforms: [platform] }
           }));
           
+          console.log('✅ Platform filter updated, applying filters...');
+          
           // Apply filters to update the filtered games
           get().applyFilters();
+        } else {
+          console.error('❌ Filter has no platform property:', filter);
         }
       },
 
       // Global search across all stores
       globalSearch: async (searchTerm) => {
-        if (!searchTerm.trim()) return { games: [], count: 0 };
+        if (!searchTerm.trim()) {
+          console.log('Store: Empty search term, returning empty results');
+          return { games: [], count: 0 };
+        }
+        
+        console.log('Store: Starting global search for:', searchTerm);
         
         try {
           set({ loading: true, error: null });
@@ -628,35 +663,45 @@ export const useGamesStore = create(
           
           // Search RAWG API
           try {
+            console.log('Store: Searching RAWG...');
             const rawgResult = await get().searchRAWGGames(searchTerm);
             results.stores.rawg = rawgResult;
             results.games.push(...rawgResult.games);
+            console.log('Store: RAWG results:', rawgResult);
           } catch (error) {
-            console.error('RAWG search error:', error);
+            console.error('Store: RAWG search error:', error);
           }
           
           // Search CheapShark API
           try {
+            console.log('Store: Searching CheapShark...');
             const cheapsharkResult = await get().searchCheapSharkGames(searchTerm);
             results.stores.cheapshark = cheapsharkResult;
             results.games.push(...cheapsharkResult.games);
+            console.log('Store: CheapShark results:', cheapsharkResult);
           } catch (error) {
-            console.error('CheapShark search error:', error);
+            console.error('Store: CheapShark search error:', error);
           }
           
           // Search Mock store
           try {
+            console.log('Store: Searching Mock store...');
             const mockResult = await get().searchMockGames(searchTerm);
             results.stores.mock = mockResult;
             results.games.push(...mockResult.games);
+            console.log('Store: Mock store results:', mockResult);
           } catch (error) {
-            console.error('Mock search error:', error);
+            console.error('Store: Mock search error:', error);
           }
+          
+          console.log('Store: All results before deduplication:', results.games);
           
           // Remove duplicates and sort by relevance
           const uniqueGames = results.games.filter((game, index, self) => 
             index === self.findIndex(g => g.name.toLowerCase() === game.name.toLowerCase())
           );
+          
+          console.log('Store: Unique games after deduplication:', uniqueGames);
           
           // Sort by relevance (exact matches first, then partial matches)
           uniqueGames.sort((a, b) => {
@@ -673,10 +718,12 @@ export const useGamesStore = create(
           results.games = uniqueGames;
           results.count = uniqueGames.length;
           
+          console.log('Store: Final global search results:', results);
+          
           return results;
           
         } catch (error) {
-          console.error('Global search error:', error);
+          console.error('Store: Global search error:', error);
           set({ error: error.message });
           return { games: [], count: 0 };
         } finally {
@@ -687,6 +734,8 @@ export const useGamesStore = create(
       // Search RAWG games
       searchRAWGGames: async (searchTerm) => {
         try {
+          console.log('Store: Searching RAWG for:', searchTerm);
+          
           const params = {
             page: 1,
             page_size: 20,
@@ -695,6 +744,7 @@ export const useGamesStore = create(
           };
           
           const response = await rawgApi.get('/games', { params });
+          console.log('Store: RAWG response:', response.data);
           
           if (response.data && response.data.results) {
             const transformedGames = response.data.results.map(game => ({
@@ -714,27 +764,34 @@ export const useGamesStore = create(
               storeName: 'RAWG'
             }));
             
+            console.log('Store: RAWG transformed games:', transformedGames);
+            
             return {
               games: transformedGames,
               count: transformedGames.length,
               store: 'rawg'
             };
           }
+          
+          return { games: [], count: 0, store: 'rawg' };
         } catch (error) {
-          console.error('RAWG search error:', error);
-          throw error;
+          console.error('Store: RAWG search error:', error);
+          return { games: [], count: 0, store: 'rawg' };
         }
       },
 
       // Search CheapShark games
       searchCheapSharkGames: async (searchTerm) => {
         try {
+          console.log('Store: Searching CheapShark for:', searchTerm);
+          
           const params = {
             title: searchTerm,
             limit: 20
           };
           
           const response = await cheapsharkApi.get('/games', { params });
+          console.log('Store: CheapShark response:', response.data);
           
           if (response.data) {
             const transformedGames = response.data.map(game => ({
@@ -754,20 +811,26 @@ export const useGamesStore = create(
               storeName: 'CheapShark'
             }));
             
+            console.log('Store: CheapShark transformed games:', transformedGames);
+            
             return {
               games: transformedGames,
               count: transformedGames.length,
               store: 'cheapshark'
             };
           }
+          
+          return { games: [], count: 0, store: 'cheapshark' };
         } catch (error) {
-          console.error('CheapShark search error:', error);
-          throw error;
+          console.error('Store: CheapShark search error:', error);
+          return { games: [], count: 0, store: 'cheapshark' };
         }
       },
 
       // Search Mock games
       searchMockGames: async (searchTerm) => {
+        console.log('Store: Searching Mock store for:', searchTerm);
+        
         const mockGames = [
           {
             id: 1,
@@ -797,6 +860,48 @@ export const useGamesStore = create(
             store: 'mock',
             storeName: 'Mock Store'
           },
+          {
+            id: 3,
+            name: "God of War Ragnarök",
+            background_image: "/assets/images/featured-game-1.jpg",
+            rating: 4.9,
+            price: 79.99,
+            platforms: ["PS5", "PS4"],
+            genres: ["Action", "Adventure"],
+            description: "Embark on an epic and heartfelt journey as Kratos and Atreus.",
+            originalPrice: 79.99,
+            cheapestPrice: 79.99,
+            store: 'mock',
+            storeName: 'Mock Store'
+          },
+          {
+            id: 4,
+            name: "God of War (2018)",
+            background_image: "/assets/images/featured-game-2.jpg",
+            rating: 4.7,
+            price: 49.99,
+            platforms: ["PC", "PS4"],
+            genres: ["Action", "Adventure"],
+            description: "A father and son journey through the realm of Norse mythology.",
+            originalPrice: 49.99,
+            cheapestPrice: 49.99,
+            store: 'mock',
+            storeName: 'Mock Store'
+          },
+          {
+            id: 5,
+            name: "God of War III Remastered",
+            background_image: "/assets/images/featured-game-1.jpg",
+            rating: 4.6,
+            price: 39.99,
+            platforms: ["PS4"],
+            genres: ["Action", "Adventure"],
+            description: "The epic conclusion to Kratos' revenge against the Olympian gods.",
+            originalPrice: 39.99,
+            cheapestPrice: 39.99,
+            store: 'mock',
+            storeName: 'Mock Store'
+          },
         ];
         
         // Filter mock games based on search term
@@ -805,6 +910,8 @@ export const useGamesStore = create(
           game.genres.some(genre => genre.toLowerCase().includes(searchTerm.toLowerCase())) ||
           game.description.toLowerCase().includes(searchTerm.toLowerCase())
         );
+        
+        console.log('Store: Mock filtered games:', filteredGames);
         
         return {
           games: filteredGames,

@@ -8,7 +8,8 @@ import axios from 'axios';
 import RatingStars from '../components/RatingStars';
 import Button from '../components/Button';
 import StoreInfo from '../components/StoreInfo';
-import { FaHeart, FaShare, FaDownload, FaCalendar, FaGamepad, FaStar, FaShoppingCart, FaArrowLeft, FaTrophy, FaPlay, FaInfoCircle, FaTags, FaGlobe, FaUsers, FaClock, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { fetchGameScreenshots, fetchGameMovies } from '../services/rawgApi';
+import { FaHeart, FaShare, FaDownload, FaCalendar, FaGamepad, FaStar, FaShoppingCart, FaArrowLeft, FaTrophy, FaPlay, FaInfoCircle, FaTags, FaGlobe, FaUsers, FaClock, FaThumbsUp, FaThumbsDown, FaVideo, FaImages, FaExpand } from 'react-icons/fa';
 
 export default function GameDetail() {
   const { id } = useParams();
@@ -23,6 +24,21 @@ export default function GameDetail() {
   const [userRating, setUserRating] = useState(0);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [ratingComment, setRatingComment] = useState('');
+  const [screenshots, setScreenshots] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const [mediaLoading, setMediaLoading] = useState(false);
+  const [selectedMediaType, setSelectedMediaType] = useState('screenshots'); // 'screenshots' or 'movies'
+  const [showLightbox, setShowLightbox] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState(null);
+
+  // Define media arrays early to avoid hoisting issues
+  const allScreenshots = game ? [
+    game.background_image,
+    ...(game.screenshots || []),
+    ...(screenshots.map(s => s.image) || [])
+  ].filter(Boolean) : [];
+
+  const allMovies = movies ? movies.map(m => m.preview || m.data?.max || m.data?.['480'] || m.data?.['720'] || m.data?.['1080']).filter(Boolean) : [];
 
   // Convert all existing 10-star ratings to 5-star scale on component mount
   useEffect(() => {
@@ -76,6 +92,23 @@ export default function GameDetail() {
             playtime: gameData.playtime,
             achievements: gameData.achievements_count || 0,
           });
+
+          // Fetch additional media (screenshots and movies)
+          setMediaLoading(true);
+          try {
+            const [screenshotsData, moviesData] = await Promise.all([
+              fetchGameScreenshots(gameData.id),
+              fetchGameMovies(gameData.id)
+            ]);
+            
+            setScreenshots(screenshotsData);
+            setMovies(moviesData);
+          } catch (mediaError) {
+            console.error('Error fetching media:', mediaError);
+            // Continue without media if there's an error
+          } finally {
+            setMediaLoading(false);
+          }
         }
       } catch (err) {
         console.error('Error fetching game:', err);
@@ -120,6 +153,28 @@ export default function GameDetail() {
       }
     }
   }, [game]);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!showLightbox) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setShowLightbox(false);
+      } else if (e.key === 'ArrowLeft' && allScreenshots.length > 1) {
+        const currentIndex = allScreenshots.indexOf(lightboxImage);
+        const prevIndex = currentIndex > 0 ? currentIndex - 1 : allScreenshots.length - 1;
+        setLightboxImage(allScreenshots[prevIndex]);
+      } else if (e.key === 'ArrowRight' && allScreenshots.length > 1) {
+        const currentIndex = allScreenshots.indexOf(lightboxImage);
+        const nextIndex = currentIndex < allScreenshots.length - 1 ? currentIndex + 1 : 0;
+        setLightboxImage(allScreenshots[nextIndex]);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showLightbox, lightboxImage, allScreenshots]);
 
   const handleAddToCart = () => {
     if (game) {
@@ -213,9 +268,8 @@ export default function GameDetail() {
     );
   }
 
-  const images = game.screenshots && game.screenshots.length > 0 
-    ? [game.background_image, ...game.screenshots]
-    : [game.background_image];
+  // Use the media arrays defined above
+  const images = allScreenshots;
 
   return (
     <>
@@ -307,7 +361,29 @@ export default function GameDetail() {
                     <div className="text-2xl mb-1">⭐</div>
                     <p className="text-white text-sm font-medium">{game.rating?.toFixed(1) || 'N/A'}</p>
                   </div>
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-center border border-white/20">
+                    <div className="text-2xl mb-1">🖼️</div>
+                    <p className="text-white text-sm font-medium">{allScreenshots.length} Images</p>
+                  </div>
                 </div>
+
+                {/* Media Stats */}
+                {(allMovies.length > 0 || allScreenshots.length > 1) && (
+                  <div className="flex items-center gap-4 text-white/80 text-sm">
+                    {allScreenshots.length > 1 && (
+                      <span className="flex items-center gap-2">
+                        <FaImages className="w-4 h-4" />
+                        {allScreenshots.length} Screenshots
+                      </span>
+                    )}
+                    {allMovies.length > 0 && (
+                      <span className="flex items-center gap-2">
+                        <FaVideo className="w-4 h-4" />
+                        {allMovies.length} Videos
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -361,24 +437,35 @@ export default function GameDetail() {
                 <div className="relative group">
                   {/* Main Image */}
                   <div className="relative h-80 md:h-96 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm">
-                    <img
-                      src={images[selectedImage]}
-                      alt={game.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <div className="bg-white/20 backdrop-blur-md rounded-full p-6 border border-white/30 hover:bg-white/30 transition-all duration-300 transform hover:scale-110">
-                        <FaPlay className="w-8 h-8 text-white" />
+                    {mediaLoading ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-800">
+                        <div className="text-center">
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
+                          <p className="text-white/80 text-sm">Loading media...</p>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <>
+                        <img
+                          src={images[selectedImage]}
+                          alt={game.name}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        
+                        {/* Play Button Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                          <div className="bg-white/20 backdrop-blur-md rounded-full p-6 border border-white/30 hover:bg-white/30 transition-all duration-300 transform hover:scale-110">
+                            <FaPlay className="w-8 h-8 text-white" />
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Thumbnail Gallery */}
-                  {images.length > 1 && (
+                  {!mediaLoading && images.length > 1 && (
                     <div className="mt-6 grid grid-cols-5 gap-3">
                       {images.map((image, index) => (
                         <button
@@ -400,6 +487,22 @@ export default function GameDetail() {
                           )}
                         </button>
                       ))}
+                    </div>
+                  )}
+
+                  {/* Media Info */}
+                  {!mediaLoading && (
+                    <div className="mt-4 text-center text-white/80 text-sm">
+                      <span className="flex items-center justify-center gap-2">
+                        <FaImages className="w-4 h-4" />
+                        {allScreenshots.length} Screenshots
+                      </span>
+                      {allMovies.length > 0 && (
+                        <span className="flex items-center justify-center gap-2 ml-4">
+                          <FaVideo className="w-4 h-4" />
+                          {allMovies.length} Videos
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -508,6 +611,99 @@ export default function GameDetail() {
                   </div>
                 </div>
 
+                {/* Media Gallery */}
+                <div className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/50 transform transition-all duration-700 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
+                      <FaImages className="w-6 h-6 text-white" />
+                    </div>
+                    <h2 className="text-3xl font-black text-gray-900 dark:text-white">Media Gallery</h2>
+                  </div>
+
+                  {/* Media Type Tabs */}
+                  <div className="flex gap-2 mb-6">
+                    <button
+                      onClick={() => setSelectedMediaType('screenshots')}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                        selectedMediaType === 'screenshots'
+                          ? 'bg-purple-600 text-white shadow-lg'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      <FaImages className="w-4 h-4 inline mr-2" />
+                      Screenshots ({allScreenshots.length})
+                    </button>
+                    {allMovies.length > 0 && (
+                      <button
+                        onClick={() => setSelectedMediaType('movies')}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                          selectedMediaType === 'movies'
+                            ? 'bg-purple-600 text-white shadow-lg'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        <FaVideo className="w-4 h-4 inline mr-2" />
+                        Videos ({allMovies.length})
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Media Content */}
+                  {mediaLoading ? (
+                    <div className="text-center py-12">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                      <p className="text-gray-600 dark:text-gray-400">Loading media...</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {selectedMediaType === 'screenshots' ? (
+                        /* Screenshots Grid */
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {allScreenshots.map((image, index) => (
+                            <div key={index} className="group relative aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-400 transition-all duration-300 transform hover:scale-105">
+                              <img
+                                src={image}
+                                alt={`${game.name} screenshot ${index + 1}`}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                              />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                                <button
+                                  onClick={() => {
+                                    setLightboxImage(image);
+                                    setShowLightbox(true);
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 bg-white/20 backdrop-blur-sm rounded-full p-3 text-white transform scale-75 group-hover:scale-100 transition-all duration-300"
+                                >
+                                  <FaExpand className="w-5 h-5" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        /* Videos Grid */
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {allMovies.map((video, index) => (
+                            <div key={index} className="group relative aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-400 transition-all duration-300 transform hover:scale-105">
+                              <video
+                                src={video}
+                                className="w-full h-full object-cover"
+                                controls
+                                preload="metadata"
+                              />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                                <div className="opacity-0 group-hover:opacity-100 bg-white/20 backdrop-blur-sm rounded-full p-3 text-white transform scale-75 group-hover:scale-100 transition-all duration-300">
+                                  <FaVideo className="w-5 h-5" />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 {/* Store Information and Deals */}
                 <div className={`transform transition-all duration-700 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
                   <StoreInfo gameId={game.id} gameName={game.name} />
@@ -571,6 +767,61 @@ export default function GameDetail() {
                     </div>
                   </div>
                 </div>
+
+                {/* Media Preview */}
+                {(allScreenshots.length > 1 || allMovies.length > 0) && (
+                  <div className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 dark:border-gray-700/50 transform transition-all duration-700 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                      <FaImages className="w-5 h-5 text-purple-500" />
+                      Media Preview
+                    </h3>
+                    
+                    {/* Screenshots Preview */}
+                    {allScreenshots.length > 1 && (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-2">
+                          <FaImages className="w-3 h-3" />
+                          Screenshots ({allScreenshots.length})
+                        </h4>
+                        <div className="grid grid-cols-3 gap-2">
+                          {allScreenshots.slice(0, 6).map((image, index) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setLightboxImage(image);
+                                setShowLightbox(true);
+                              }}
+                              className="aspect-video rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 hover:border-purple-400 transition-all duration-200 transform hover:scale-105"
+                            >
+                              <img
+                                src={image}
+                                alt={`Preview ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Videos Preview */}
+                    {allMovies.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-2">
+                          <FaVideo className="w-3 h-3" />
+                          Videos ({allMovies.length})
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {allMovies.slice(0, 4).map((video, index) => (
+                            <div key={index} className="aspect-video rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                              <FaVideo className="w-6 h-6 text-gray-400" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Tags */}
                 {game.tags && game.tags.length > 0 && (
@@ -644,6 +895,70 @@ export default function GameDetail() {
                 Save Rating
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox Modal for Images */}
+      {showLightbox && lightboxImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowLightbox(false)}
+        >
+          <div className="relative max-w-7xl max-h-full" onClick={(e) => e.stopPropagation()}>
+            {/* Close Button */}
+            <button
+              onClick={() => setShowLightbox(false)}
+              className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-200 transform hover:scale-110"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Navigation Buttons */}
+            {allScreenshots.length > 1 && (
+              <>
+                <button
+                  onClick={() => {
+                    const currentIndex = allScreenshots.indexOf(lightboxImage);
+                    const prevIndex = currentIndex > 0 ? currentIndex - 1 : allScreenshots.length - 1;
+                    setLightboxImage(allScreenshots[prevIndex]);
+                  }}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-200 transform hover:scale-110"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => {
+                    const currentIndex = allScreenshots.indexOf(lightboxImage);
+                    const nextIndex = currentIndex < allScreenshots.length - 1 ? currentIndex + 1 : 0;
+                    setLightboxImage(allScreenshots[nextIndex]);
+                  }}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-200 transform hover:scale-110"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
+
+            {/* Image */}
+            <img
+              src={lightboxImage}
+              alt={`${game.name} full size`}
+              className="max-w-full max-h-full object-contain rounded-lg"
+            />
+
+            {/* Image Counter */}
+            {allScreenshots.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm">
+                {allScreenshots.indexOf(lightboxImage) + 1} / {allScreenshots.length}
+              </div>
+            )}
           </div>
         </div>
       )}

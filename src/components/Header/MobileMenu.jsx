@@ -14,6 +14,7 @@ export default function MobileMenu({ isOpen, onClose }) {
     { name: "FEATURES", path: "/features", icon: "⭐" },
     { name: "SHOP", path: "/games", icon: "🛒" },
     { name: "DEALS", path: "/deals", icon: "💰" },
+    { name: "RAWG DEMO", path: "/rawg-demo", icon: "🎮" },
     { name: "BLOG", path: "/blog", icon: "📝" },
     { name: "CONTACT", path: "/contact", icon: "📞" }
   ];

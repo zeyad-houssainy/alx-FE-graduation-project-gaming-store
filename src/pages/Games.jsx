@@ -543,7 +543,7 @@ export default function Games() {
       <div className={`min-h-screen pt-20 sm:pt-24 transition-all duration-500 ${
         isDebugOpen 
           ? 'bg-purple-100 dark:bg-purple-950' 
-          : 'bg-white dark:bg-gray-900'
+          : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900'
       }`}>
         <div className={`container mx-auto px-4 sm:px-6 py-8 sm:py-12 transition-all duration-500 ${
           isDebugOpen ? 'bg-purple-50 dark:bg-gray-800' : ''
@@ -571,21 +571,33 @@ export default function Games() {
             <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-bold mb-4 sm:mb-6 transition-all duration-500 ${
               isDebugOpen 
                 ? 'text-purple-900 dark:text-purple-100' 
-                : 'text-gray-900 dark:text-gray-100'
+                : 'text-gray-900 dark:text-white'
             }`}>
-              GAME <span className={`transition-all duration-500 ${
+              RAWG <span className={`transition-all duration-500 ${
                 isDebugOpen 
                   ? 'text-purple-600 dark:text-purple-400' 
-                  : 'text-blue-600 dark:text-orange-400'
+                  : 'text-blue-600 dark:text-white'
               }`}>STORE</span>
             </h1>
             <p className={`text-base sm:text-lg max-w-2xl mx-auto leading-relaxed px-4 transition-all duration-500 ${
               isDebugOpen 
                 ? 'text-purple-700 dark:text-purple-300' 
-                : 'text-gray-600 dark:text-gray-300'
+                : 'text-gray-600 dark:text-gray-400'
             }`}>
-              Discover thousands of games across all platforms. Find your next adventure today!
+              Your ultimate destination for discovering and collecting games across all platforms
             </p>
+          </div>
+
+          {/* RAWG-style Search Bar */}
+          <div className="mb-8 max-w-2xl mx-auto">
+            <SearchBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              onSearch={handleSearch}
+              activeStore={activeStore}
+              placeholder="Search 891,955 games"
+              className="w-full"
+            />
           </div>
 
           {/* Comprehensive Debugging Section */}
@@ -1154,50 +1166,42 @@ export default function Games() {
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className="mb-8">
-            <SearchBar
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              onSearch={handleSearch}
-              activeStore={activeStore}
-            />
-          </div>
+
 
           {/* Global Search Results */}
           {isGlobalSearch && globalSearchResults && (
-            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
+            <div className="mb-6 p-4 bg-white/80 dark:bg-gray-800/20 border border-gray-200 dark:border-gray-700 rounded-lg backdrop-blur-sm">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                 🔍 Global Search Results
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                   <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {globalSearchResults.stores.rawg.count}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">RAWG Games</div>
                 </div>
-                <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                   <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {globalSearchResults.stores.cheapshark.count}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">CheapShark Deals</div>
                 </div>
-                <div className="text-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                   <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                     {globalSearchResults.stores.mock.count}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Mock Store</div>
                 </div>
               </div>
-              <div className="text-sm text-blue-700 dark:text-blue-300">
+              <div className="text-sm text-gray-600 dark:text-gray-300">
                 Found {globalSearchResults.count} total games across all stores
               </div>
             </div>
           )}
 
           {/* Platform Quick Filters */}
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+          <div className="mb-6 p-4 bg-white/80 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 backdrop-blur-sm">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1230,7 +1234,7 @@ export default function Games() {
                   className={`px-3 py-2 text-xs font-medium rounded-full transition-all duration-200 flex items-center gap-2 ${
                     selectedPlatform.includes(filter.filter.platform)
                       ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-200 dark:ring-blue-800'
-                      : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-200 dark:border-gray-600'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-white border border-gray-200 dark:border-gray-600'
                   }`}
                 >
                   {(() => {
@@ -1252,7 +1256,7 @@ export default function Games() {
               <span>Games: {getFilterStatus().totalGames}</span>
               <span>Filtered: {getFilterStatus().filteredGames}</span>
               {getFilterStatus().hasActiveFilters && (
-                <span className="text-blue-600 dark:text-blue-400 font-medium">Active Filters</span>
+                <span className="text-blue-600 dark:text-white font-medium">Active Filters</span>
               )}
             </div>
           </div>
@@ -1404,11 +1408,53 @@ export default function Games() {
 
 
 
-          {/* Unified Game Display Using Store's Sorted Games */}
+          {/* RAWG-style Header */}
+          <div className="mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+              <div>
+                {/* Header content removed */}
+              </div>
+              
+              {/* Display Options */}
+              <div className="flex items-center gap-4 mt-4 lg:mt-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Order by:</span>
+                  <select className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500">
+                    <option value="relevance">Relevance</option>
+                    <option value="rating">Rating</option>
+                    <option value="released">Release Date</option>
+                    <option value="name-asc">Name A-Z</option>
+                    <option value="name-desc">Name Z-A</option>
+                    <option value="metacritic">Metacritic</option>
+                  </select>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Display options:</span>
+                  <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                    <button className="p-2 rounded bg-white dark:bg-gray-800 shadow-sm">
+                      <svg className="w-4 h-4 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                      </svg>
+                    </button>
+                    <button className="p-2 rounded text-gray-400 dark:text-gray-500">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+          {/* Games Display */}
           <div className="mb-8">
             {loading ? (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-orange-400 mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-white mx-auto mb-4"></div>
                 <p className="text-gray-600 dark:text-gray-400">Loading games...</p>
               </div>
             ) : error ? (
@@ -1418,7 +1464,7 @@ export default function Games() {
                 <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
                 <button
                   onClick={() => fetchGames()}
-                  className="px-4 py-2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-blue-600 dark:bg-white/20 hover:bg-blue-700 dark:hover:bg-white/30 text-white dark:text-white rounded-lg transition-colors"
                 >
                   Try Again
                 </button>
@@ -1426,22 +1472,22 @@ export default function Games() {
             ) : displayGames && displayGames.length > 0 ? (
               <>
                 {/* Games Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {displayGames.map((game) => (
                     <GameCard 
-                  key={game.id} 
-                  game={game} 
-                  activeFilters={{ 
-                    platforms: selectedPlatform, 
-                    genres: selectedGenre,
-                    priceRange: localPriceRange 
-                  }} 
-                />
+                      key={game.id} 
+                      game={game} 
+                      activeFilters={{ 
+                        platforms: selectedPlatform, 
+                        genres: selectedGenre,
+                        priceRange: localPriceRange 
+                      }} 
+                    />
                   ))}
                 </div>
                 
                 {/* No More Games Message */}
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="text-center py-8 text-gray-600 dark:text-gray-400">
                   <p>End of results</p>
                 </div>
               </>
@@ -1460,7 +1506,7 @@ export default function Games() {
                     setLocalPriceRange({ min: '', max: '' });
                     setLocalSortBy('relevance');
                   }}
-                  className="px-4 py-2 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-blue-600 dark:bg-white/20 hover:bg-blue-700 dark:hover:bg-white/30 text-white dark:text-white rounded-lg transition-colors"
                 >
                   Clear All Filters
                 </button>
