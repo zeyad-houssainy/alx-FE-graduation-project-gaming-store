@@ -1,11 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
 
 export default function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 sm:pt-24 flex items-center justify-center">
+    <>
+      <Header />
+      <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 sm:pt-24 flex items-center justify-center">
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 text-center">
         {/* 404 Icon */}
         <div className="text-6xl sm:text-8xl lg:text-9xl font-black text-blue-600 dark:text-orange-400 mb-6 sm:mb-8 font-bold">
@@ -67,6 +71,8 @@ export default function NotFound() {
           </button>
         </div>
       </div>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }

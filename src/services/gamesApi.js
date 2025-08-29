@@ -443,10 +443,10 @@ export const fetchGenres = async () => {
   }
 
   try {
-    const response = await api.get('/genres', {
-      params: { key: API_KEY }
-    });
-    return response.data.results;
+    // Since we're using local data by default, this won't execute
+    // but keeping the structure for future API integration
+    console.log('API call attempted but using local data instead');
+    throw new Error('API disabled - using local data');
   } catch (error) {
     console.warn('API call failed, using local fallback genres:', error.message);
     return [
@@ -485,10 +485,10 @@ export const fetchPlatforms = async () => {
   }
 
   try {
-    const response = await api.get('/platforms', {
-      params: { key: API_KEY }
-    });
-    return response.data.results;
+    // Since we're using local data by default, this won't execute
+    // but keeping the structure for future API integration
+    console.log('API call attempted but using local data instead');
+    throw new Error('API disabled - using local data');
   } catch (error) {
     console.warn('API call failed, using local fallback platforms:', error.message);
     return [

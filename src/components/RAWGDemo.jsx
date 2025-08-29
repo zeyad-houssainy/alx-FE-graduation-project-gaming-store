@@ -1,5 +1,7 @@
 import React from 'react';
 import GameCard from './GameCard';
+import Header from './Header/Header';
+import Footer from './Footer/Footer';
 
 export default function RAWGDemo() {
   // Sample games data to showcase the new design
@@ -75,7 +77,9 @@ export default function RAWGDemo() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
       <div className="container mx-auto px-6 py-12">
         {/* RAWG-style Header */}
         <div className="mb-8">
@@ -192,7 +196,9 @@ export default function RAWGDemo() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }
 

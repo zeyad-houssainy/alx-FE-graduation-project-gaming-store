@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import HeroSearchBar from '../components/HeroSearchBar';
 import SearchOverlay from '../components/Header/SearchOverlay';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
 
 export default function SearchTest() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,7 +20,9 @@ export default function SearchTest() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 p-8">
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
           Search Components Test Page
@@ -113,7 +117,9 @@ export default function SearchTest() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }
 

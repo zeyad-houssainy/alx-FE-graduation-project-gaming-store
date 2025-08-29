@@ -1,9 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
 
 const UnderConstruction = () => {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 sm:pt-24">
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="text-center">
           <div className="text-6xl sm:text-8xl mb-4">🚧</div>
@@ -19,7 +23,9 @@ const UnderConstruction = () => {
           </Link>
         </div>
       </div>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useThemeStore } from './stores';
 import AppRouter from './AppRouter';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const { initTheme } = useThemeStore();

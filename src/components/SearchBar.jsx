@@ -194,37 +194,37 @@ export default function SearchBar({
           {!loading && suggestions.length > 0 && (
             <>
               {suggestions.map((suggestion, index) => (
-            <button
-              key={`${suggestion.id}-${index}`}
-              onClick={() => handleSuggestionClick(suggestion)}
-              className="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700 last:border-b-0 flex items-center gap-3"
-            >
-              {/* Game Image */}
-              <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0">
-                <img
-                  src={suggestion.background_image || '/assets/images/featured-game-1.jpg'}
-                  alt={suggestion.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = '/assets/images/featured-game-1.jpg';
-                  }}
-                />
-              </div>
-              
-              {/* Game Info */}
-              <div className="flex-1 min-w-0">
-                <div className="text-gray-900 dark:text-white font-medium truncate">{suggestion.name}</div>
-                <div className="text-gray-600 dark:text-gray-400 text-sm truncate">
-                  {suggestion.genres?.slice(0, 2).join(', ') || 'Action'}
-                </div>
-              </div>
+                <button
+                  key={`${suggestion.id}-${index}`}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700 last:border-b-0 flex items-center gap-3"
+                >
+                  {/* Game Image */}
+                  <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0">
+                    <img
+                      src={suggestion.background_image || '/assets/images/featured-game-1.jpg'}
+                      alt={suggestion.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = '/assets/images/featured-game-1.jpg';
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Game Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-gray-900 dark:text-white font-medium truncate">{suggestion.name}</div>
+                    <div className="text-gray-600 dark:text-gray-400 text-sm truncate">
+                      {suggestion.genres?.slice(0, 2).join(', ') || 'Action'}
+                    </div>
+                  </div>
 
-              {/* Store Badge */}
-              <div className="text-xs px-2 py-1 rounded bg-blue-600 text-white">
-                {suggestion.storeName || 'Store'}
-              </div>
-            </button>
-          ))}
+                  {/* Store Badge */}
+                  <div className="text-xs px-2 py-1 rounded bg-blue-600 text-white">
+                    {suggestion.storeName || 'Store'}
+                  </div>
+                </button>
+              ))}
             </>
           )}
           
