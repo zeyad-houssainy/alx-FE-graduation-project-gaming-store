@@ -1415,36 +1415,7 @@ export default function Games() {
                 {/* Header content removed */}
               </div>
               
-              {/* Display Options */}
-              <div className="flex items-center gap-4 mt-4 lg:mt-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Order by:</span>
-                  <select className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-500">
-                    <option value="relevance">Relevance</option>
-                    <option value="rating">Rating</option>
-                    <option value="released">Release Date</option>
-                    <option value="name-asc">Name A-Z</option>
-                    <option value="name-desc">Name Z-A</option>
-                    <option value="metacritic">Metacritic</option>
-                  </select>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Display options:</span>
-                  <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                    <button className="p-2 rounded bg-white dark:bg-gray-800 shadow-sm">
-                      <svg className="w-4 h-4 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-                      </svg>
-                    </button>
-                    <button className="p-2 rounded text-gray-400 dark:text-gray-500">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
+
             </div>
 
 
@@ -1472,17 +1443,18 @@ export default function Games() {
             ) : displayGames && displayGames.length > 0 ? (
               <>
                 {/* Games Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="flex flex-wrap gap-4 justify-center max-w-[1720px] mx-auto">
                   {displayGames.map((game) => (
-                    <GameCard 
-                      key={game.id} 
-                      game={game} 
-                      activeFilters={{ 
-                        platforms: selectedPlatform, 
-                        genres: selectedGenre,
-                        priceRange: localPriceRange 
-                      }} 
-                    />
+                    <div key={game.id} className="w-[400px]">
+                      <GameCard 
+                        game={game} 
+                        activeFilters={{ 
+                          platforms: selectedPlatform, 
+                          genres: selectedGenre,
+                          priceRange: localPriceRange 
+                        }} 
+                      />
+                    </div>
                   ))}
                 </div>
                 

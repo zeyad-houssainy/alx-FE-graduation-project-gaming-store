@@ -53,10 +53,10 @@ export default function GameCard({ game, activeFilters }) {
   const rating = Math.floor(Math.random() * 5) + 1;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 w-[400px] h-[350px] flex flex-col hover:shadow-xl dark:hover:shadow-gray-900/50 shadow-lg">
+    <div className="bg-black/30 dark:bg-white/30 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 w-[400px] h-[350px] flex flex-col hover:shadow-xl dark:hover:shadow-gray-900/50 shadow-lg">
       {/* Clickable Image Container - Links to Game Detail */}
       <Link to={`/games/${game.id}`} className="block flex-shrink-0">
-        <div className="relative overflow-hidden w-[400px] h-[230px] bg-gray-100 dark:bg-gray-700 group">
+        <div className="relative overflow-hidden w-full h-[230px] bg-gray-100 dark:bg-gray-700 group">
           {/* Loading State */}
           {imageLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-600">
@@ -68,7 +68,7 @@ export default function GameCard({ game, activeFilters }) {
           <img
             src={getImageUrl()}
             alt={game.name || 'Game'}
-            className={`w-[400px] h-[230px] transition-all duration-300 group-hover:scale-105 ${
+            className={`w-full h-[230px] transition-all duration-300 group-hover:scale-105 ${
               imageLoading ? 'opacity-0' : 'opacity-100'
             } ${
               imageError ? 'object-contain p-4' : 'object-cover'
@@ -113,7 +113,7 @@ export default function GameCard({ game, activeFilters }) {
               {game.platforms.slice(0, 3).map((platform, index) => {
                 const platformName = typeof platform === 'string' ? platform.toLowerCase() : platform?.platform?.name?.toLowerCase() || '';
                 return (
-                  <div key={index} className="w-4 h-4 bg-gray-600 rounded flex items-center justify-center">
+                  <div key={index} className="w-4 h-4 flex items-center justify-center text-gray-900 dark:text-white">
                     {platformName.includes('steam') ? (
                       <img src="/assets/icons/steam.svg" alt="Steam" className="w-3 h-3" />
                     ) : platformName.includes('epic') ? (
@@ -130,16 +130,18 @@ export default function GameCard({ game, activeFilters }) {
                       <img src="/assets/icons/mac-os.svg" alt="macOS" className="w-3 h-3" />
                     ) : platformName.includes('ubuntu') || platformName.includes('linux') ? (
                       <img src="/assets/icons/ubuntu.svg" alt="Ubuntu" className="w-3 h-3" />
+                    ) : platformName.includes('android') ? (
+                      <img src="/assets/icons/android.svg" alt="Android" className="w-3 h-3" />
                     ) : (
-                      <span className="text-xs text-white font-medium">P</span>
+                      <span className="text-xs text-gray-900 dark:text-white font-medium">P</span>
                     )}
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="w-4 h-4 bg-gray-600 rounded flex items-center justify-center">
-              <span className="text-xs text-white font-medium">P</span>
+            <div className="w-4 h-4 flex items-center justify-center text-gray-900 dark:text-white">
+              <span className="text-xs text-gray-900 dark:text-white font-medium">P</span>
             </div>
           )}
         </div>

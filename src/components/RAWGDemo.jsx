@@ -156,13 +156,14 @@ export default function RAWGDemo() {
         </div>
 
         {/* Games Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
           {demoGames.map((game) => (
-            <GameCard 
-              key={game.id} 
-              game={game} 
-              activeFilters={{}} 
-            />
+            <div key={game.id} className="flex justify-center">
+              <GameCard 
+                game={game} 
+                activeFilters={{}} 
+              />
+            </div>
           ))}
         </div>
 

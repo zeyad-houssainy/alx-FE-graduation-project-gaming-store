@@ -54,7 +54,6 @@ const Deals = () => {
 
   // Store sections configuration
   const storeSections = [
-    { id: 'all', name: '🔥 All Deals', icon: '🔥', color: 'from-red-500 via-orange-500 to-yellow-500' },
     { id: 'steam', name: 'Steam Deals', icon: 'steam', color: 'from-blue-600 via-cyan-500 to-blue-800' },
     { id: 'epic', name: 'Epic Games', icon: 'epic', color: 'from-purple-600 via-pink-500 to-red-500' },
     { id: 'ps', name: 'PS Store', icon: 'playstation', color: 'from-blue-500 via-indigo-500 to-purple-600' },
@@ -152,6 +151,25 @@ const Deals = () => {
     setActiveSection(sectionId);
   };
 
+  // Debug: Log store IDs and deals
+  useEffect(() => {
+    if (consolidatedDeals.length > 0) {
+      console.log('🔍 Available deals:', consolidatedDeals.length);
+      console.log('🏪 Store IDs in deals:', [...new Set(consolidatedDeals.map(deal => deal.cheapestDeal?.storeID))]);
+      
+      // Log deals by store ID
+      const dealsByStore = {};
+      consolidatedDeals.forEach(deal => {
+        const storeID = deal.cheapestDeal?.storeID;
+        if (storeID) {
+          if (!dealsByStore[storeID]) dealsByStore[storeID] = [];
+          dealsByStore[storeID].push(deal);
+        }
+      });
+      console.log('📊 Deals by store ID:', dealsByStore);
+    }
+  }, [consolidatedDeals]);
+
   const filteredDeals = consolidatedDeals.filter(deal => {
     if (activeSection === 'all') return true;
     if (activeSection === 'steam') return deal.cheapestDeal?.storeID === '1';
@@ -235,17 +253,12 @@ const Deals = () => {
                   <span className="text-orange-300 dark:text-orange-200 font-bold"> Save big</span> on AAA titles, indie gems, and classic favorites!
                 </p>
                 
-                {/* Store Selection Buttons */}
+                {/* Store Selection Buttons - Decorative Only */}
                 <div className="flex flex-wrap justify-center gap-6 mb-12">
                   {storeSections.map((section, index) => (
-                    <button
+                    <div
                       key={section.id}
-                      onClick={() => handleSectionChange(section.id)}
-                      className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-500 transform hover:scale-110 hover:rotate-1 overflow-hidden ${
-                        activeSection === section.id
-                          ? `bg-gradient-to-r ${section.color} text-white shadow-2xl scale-105`
-                          : 'bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/30 dark:hover:bg-gray-700/50 border-2 border-white/30 dark:border-gray-600/30 hover:border-white/50 dark:hover:border-gray-500/50 text-black dark:text-white'
-                      }`}
+                      className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-500 transform hover:scale-110 hover:rotate-1 overflow-hidden bg-gradient-to-r ${section.color} text-white shadow-2xl`}
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <div className="relative z-10 flex items-center">
@@ -254,33 +267,30 @@ const Deals = () => {
                         </span>
                         <span className="group-hover:tracking-wider transition-all duration-300 font-bold">{section.name}</span>
                       </div>
-                      
-                      {activeSection === section.id && (
-                        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full animate-pulse"></div>
-                      )}
-                    </button>
+                    </div>
                   ))}
                 </div>
                 
-                {/* Stats Section */}
-                <div className="max-w-4xl mx-auto mb-12">
-                  <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-gray-600/30">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="text-2xl">📊</div>
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Deals Overview</h3>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600 dark:text-orange-400">{consolidatedDeals.length}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">Unique Games</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stores.length}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">Stores</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                                 {/* Stats Section */}
+                 <div className="max-w-4xl mx-auto mb-12">
+                   <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-gray-600/30">
+                     <div className="flex items-center gap-3 mb-3">
+                       <div className="text-2xl">📊</div>
+                       <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Deals Overview</h3>
+                     </div>
+                     <div className="grid grid-cols-2 gap-4 mb-4">
+                       <div className="text-center">
+                         <div className="text-2xl font-bold text-blue-600 dark:text-orange-400">{consolidatedDeals.length}</div>
+                         <div className="text-sm text-gray-600 dark:text-gray-400">Unique Games</div>
+                       </div>
+                       <div className="text-center">
+                         <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stores.length}</div>
+                         <div className="text-sm text-gray-600 dark:text-gray-400">Stores</div>
+                       </div>
+                     </div>
+                     
+                   </div>
+                 </div>
               </div>
             </div>
           </div>
@@ -407,50 +417,103 @@ const Deals = () => {
                 </div>
               </div>
 
-              {/* All Deals Grid */}
+              {/* PS Store Section */}
               <div className="relative">
-                <div className="mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">All Deals</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Browse through all available deals</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredDeals.slice(0, 20).map((deal) => (
-                    <div key={deal.id} className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                      <div className="relative">
-                        <img
-                          src={deal.thumb || '/assets/images/featured-game-1.jpg'}
-                          alt={deal.title}
-                          className="w-full h-48 object-cover"
-                        />
-                        <button
-                          onClick={() => handleAddToWishlist(deal.id)}
-                          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-300 ${
-                            wishlist.includes(deal.id)
-                              ? 'bg-red-500 text-white'
-                              : 'bg-black/50 text-white hover:bg-red-500'
-                          }`}
-                        >
-                          <FaHeart className={`w-4 h-4 ${wishlist.includes(deal.id) ? 'fill-current' : ''}`} />
-                        </button>
-                      </div>
-                      <div className="p-4">
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">{deal.title}</h4>
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-2xl font-bold text-green-600 dark:text-green-400">${deal.cheapestPrice}</span>
-                          {deal.normalPrice && deal.normalPrice > deal.cheapestPrice && (
-                            <span className="text-sm text-gray-500 line-through">${deal.normalPrice}</span>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => handleAddToCart(deal)}
-                          className="w-full bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                        >
-                          <FaShoppingCart className="w-4 h-4" />
-                          Add to Cart
-                        </button>
-                      </div>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                      {renderStoreIcon('playstation')}
                     </div>
-                  ))}
+                    <div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 bg-clip-text text-transparent">PS Store</h3>
+                      <p className="text-gray-600 dark:text-gray-400">PlayStation exclusives and deals</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
+                      const element = document.getElementById('ps-scroll');
+                      if (element) element.scrollLeft -= 300;
+                    }}>
+                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
+                      const element = document.getElementById('ps-scroll');
+                      if (element) element.scrollLeft += 300;
+                    }}>
+                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+                <div id="ps-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
+                  {filteredDeals
+                    .filter(deal => deal.cheapestDeal?.storeID === '3')
+                    .slice(0, 10)
+                    .map((deal) => (
+                      <div key={deal.id} className="flex-shrink-0 w-80">
+                        <PortraitGameCard 
+                          game={{
+                            id: deal.gameId || deal.id,
+                            name: deal.title,
+                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                            price: deal.cheapestPrice,
+                            originalPrice: deal.normalPrice,
+                            rating: 4.0,
+                            platforms: ['PC'],
+                            genre: 'Action'
+                          }}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* Xbox Section */}
+              <div className="relative">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                      {renderStoreIcon('xbox')}
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 bg-clip-text text-transparent">Xbox</h3>
+                      <p className="text-gray-600 dark:text-gray-400">Xbox Game Pass and deals</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
+                      const element = document.getElementById('xbox-scroll');
+                      if (element) element.scrollLeft -= 300;
+                    }}>
+                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => {
+                      const element = document.getElementById('xbox-scroll');
+                      if (element) element.scrollLeft += 300;
+                    }}>
+                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+                <div id="xbox-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
+                  {filteredDeals
+                    .filter(deal => deal.cheapestDeal?.storeID === '2')
+                    .slice(0, 10)
+                    .map((deal) => (
+                      <div key={deal.id} className="flex-shrink-0 w-80">
+                        <PortraitGameCard 
+                          game={{
+                            id: deal.gameId || deal.id,
+                            name: deal.title,
+                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                            price: deal.cheapestPrice,
+                            originalPrice: deal.normalPrice,
+                            rating: 4.0,
+                            platforms: ['PC'],
+                            genre: 'Action'
+                          }}
+                        />
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
