@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFetchGames } from '../../hooks/useFetchGames';
 import PortraitGameCard from '../../components/PortraitGameCard';
+import HorizontalGameList from '../../components/HorizontalGameList';
 import Loader from '../../components/Loader';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -146,48 +147,16 @@ export default function FeaturedGames() {
             <div className="container mx-auto px-4">
                 {gameSections.map((section, sectionIndex) => (
                     <div key={section.id} className="mb-16 last:mb-0">
-                        {/* Section Header - Clean Layout */}
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-3">
-                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
-                                    {section.title}
-                                </h2>
-                                <FaChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                            </div>
-                            
-                            {/* Navigation Arrows */}
-                            <div className="flex items-center gap-2">
-                                <button 
-                                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                                    onClick={() => handleManualScroll(sectionIndex, 'left')}
-                                >
-                                    <FaChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                                </button>
-                                <button 
-                                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                                    onClick={() => handleManualScroll(sectionIndex, 'right')}
-                                >
-                                    <FaChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Horizontal Scroll Container */}
-                        <div className="relative">
-                            <div
-                                ref={el => scrollRefs.current[sectionIndex] = el}
-                                className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-                                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                                onMouseEnter={() => handleMouseEnter(sectionIndex)}
-                                onMouseLeave={() => handleMouseLeave(sectionIndex)}
-                            >
-                                {section.games.map((game) => (
-                                    <div key={game.id} className="flex-shrink-0 w-80">
-                                        <PortraitGameCard game={game} />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <HorizontalGameList
+                            title={section.title}
+                            subtitle="Discover amazing games"
+                            icon={<FaChevronRight className="w-6 h-6 text-blue-600 dark:text-orange-400" />}
+                            iconBgColor="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-800"
+                            games={section.games}
+                            renderGameItem={(game) => <PortraitGameCard game={game} />}
+                            scrollId={`section-${sectionIndex}`}
+                            showScrollButtons={true}
+                        />
                     </div>
                 ))}
 

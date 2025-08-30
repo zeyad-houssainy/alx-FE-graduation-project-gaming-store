@@ -1,18 +1,53 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCartStore, useAuthStore } from '../stores';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart } from 'react-icons/fa';
 
 const PortraitGameCard = ({ game }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
-  const [cartButtonState, setCartButtonState] = useState('idle'); // 'idle', 'loading', 'success'
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
   
   const { addToCart } = useCartStore();
   const { addToFavorites, removeFromFavorites, isFavorite } = useAuthStore();
 
   // Check if this game is in favorites
   const isInFavorites = isFavorite(game?.id);
+
+  // Safety check - if game is undefined, don't render
+  if (!game) {
+    return null;
+  }
+
+  // Image handling functions
+  const getImageUrl = () => {
+    if (imageError) {
+      return '/assets/images/featured-game-1.jpg'; // Fallback image
+    }
+    return game.background_image || game.image || '/assets/images/featured-game-1.jpg';
+  };
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageLoading(false);
+    setImageError(true);
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(game);
+    setIsAddedToCart(true);
+    
+    // Reset the animation after 2 seconds
+    setTimeout(() => {
+      setIsAddedToCart(false);
+    }, 2000);
+  };
 
   // Handle favorite toggle
   const handleFavoriteToggle = (e) => {
@@ -26,87 +61,94 @@ const PortraitGameCard = ({ game }) => {
     }
   };
 
-  const handleImageLoad = () => {
-    setImageLoading(false);
+  // Get unique platform icons (avoid duplicates like PS4/PS5)
+  const getUniquePlatformIcons = () => {
+    if (!game.platforms || !Array.isArray(game.platforms) || game.platforms.length === 0) {
+      return [{ icon: 'generic', name: 'Platform' }];
+    }
+
+    const platformIconMap = new Map();
+    
+    game.platforms.forEach((platform) => {
+      const platformName = typeof platform === 'string' ? platform.toLowerCase() : platform?.platform?.name?.toLowerCase() || '';
+      
+      // Group similar platforms to avoid duplicates
+      if (platformName.includes('steam')) {
+        platformIconMap.set('steam', { icon: 'steam', name: 'Steam' });
+      } else if (platformName.includes('epic')) {
+        platformIconMap.set('epic', { icon: 'epic', name: 'Epic Games' });
+      } else if (platformName.includes('playstation') || platformName.includes('ps')) {
+        platformIconMap.set('playstation', { icon: 'playstation', name: 'PlayStation' });
+      } else if (platformName.includes('psp')) {
+        platformIconMap.set('psp', { icon: 'psp', name: 'PSP' });
+      } else if (platformName.includes('xbox')) {
+        platformIconMap.set('xbox', { icon: 'xbox', name: 'Xbox' });
+      } else if (platformName.includes('nintendo') || platformName.includes('switch')) {
+        platformIconMap.set('nintendo', { icon: 'nintendo', name: 'Nintendo' });
+      } else if (platformName.includes('windows') || platformName.includes('pc')) {
+        platformIconMap.set('pc', { icon: 'pc', name: 'PC' });
+      } else if (platformName.includes('mac') || platformName.includes('macos')) {
+        platformIconMap.set('mac', { icon: 'mac', name: 'macOS' });
+      } else if (platformName.includes('ubuntu') || platformName.includes('linux')) {
+        platformIconMap.set('linux', { icon: 'linux', name: 'Linux' });
+      } else if (platformName.includes('android')) {
+        platformIconMap.set('android', { icon: 'android', name: 'Android' });
+      }
+    });
+
+    // Convert Map to Array and limit to first 4 icons for clean display
+    return Array.from(platformIconMap.values()).slice(0, 4);
   };
 
-  const handleImageError = () => {
-    setImageLoading(false);
-    setImageError(true);
-  };
+  // Get platform icon component
+  const getPlatformIconComponent = (iconType, index) => {
+    const iconProps = {
+      className: "w-4 h-4 text-black dark:text-white"
+    };
 
-  // Use game price if available, otherwise generate random pricing for demo
-  const originalPrice = game.price || Math.floor(Math.random() * 50) + 10; // $10-$59
-  const discount = game.discount || Math.floor(Math.random() * 80) + 20; // 20-99%
-  const discountedPrice = game.discountedPrice || Math.round((originalPrice * (100 - discount)) / 100 * 100) / 100;
+    switch (iconType) {
+      case 'steam':
+        return <img key={index} src="/assets/icons/steam.svg" alt="Steam" {...iconProps} />;
+      case 'epic':
+        return <img key={index} src="/assets/icons/epic-games.svg" alt="Epic Games" {...iconProps} />;
+      case 'playstation':
+        return <img key={index} src="/assets/icons/playstation.svg" alt="PlayStation" {...iconProps} />;
+      case 'psp':
+        return <img key={index} src="/assets/icons/sony.svg" alt="PSP" {...iconProps} />;
+      case 'xbox':
+        return <img key={index} src="/assets/icons/xbox.svg" alt="Xbox" {...iconProps} />;
+      case 'nintendo':
+        return <img key={index} src="/assets/icons/nintendo-switch.svg" alt="Nintendo" {...iconProps} />;
+      case 'pc':
+        return <img key={index} src="/assets/icons/windows.svg" alt="PC" {...iconProps} />;
+      case 'mac':
+        return <img key={index} src="/assets/icons/mac-os.svg" alt="macOS" {...iconProps} />;
+      case 'linux':
+        return <img key={index} src="/assets/icons/ubuntu.svg" alt="Linux" {...iconProps} />;
+      case 'android':
+        return <img key={index} src="/assets/icons/android.svg" alt="Android" {...iconProps} />;
+      default:
+        return <span key={index} className="text-xs text-black dark:text-white font-medium">P</span>;
+    }
+  };
 
   return (
-    <div className="group relative bg-gray-800/20 dark:bg-gray-800/30 rounded-lg overflow-hidden transition-all duration-300 w-[230px] flex flex-col border border-gray-700 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400 shadow-lg hover:shadow-xl backdrop-blur-sm">
-      {/* Game Cover Art Section (Top ~60% of the card) */}
-      <div className="relative overflow-hidden w-[230px] h-[300px] flex-shrink-0 bg-gray-800">
-        {/* Action Icons - Top Right */}
-        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-          {/* Favorite Button */}
-          <button 
-            onClick={handleFavoriteToggle}
-            className="w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm transition-all duration-200 flex items-center justify-center text-white shadow-lg"
-            title={isInFavorites ? 'Remove from favorites' : 'Add to favorites'}
-          >
-            <FaHeart className={`w-4 h-4 ${isInFavorites ? 'fill-red-500 scale-110' : 'fill-white/70 hover:fill-red-400'}`} />
-          </button>
+    <div className="group bg-gradient-to-b from-white/80 via-white/80 to-white/80 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-xl overflow-hidden border border-gray-300 dark:border-gray-700 transition-all duration-300 ease-in-out w-[250px] h-[400px] flex flex-col shadow-lg hover:shadow-xl relative">
+      {/* Clickable Image Container - Links to Game Detail */}
+      <Link to={`/games/${game.id}`} className="block flex-shrink-0">
+        <div className="relative overflow-hidden w-full h-[300px] bg-white/80 dark:bg-gray-900 group">
+          {/* Loading State */}
+          {imageLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+            </div>
+          )}
           
-          {/* Add to Cart Button */}
-          <button 
-            className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
-              cartButtonState === 'success' 
-                ? 'bg-green-600 scale-110' 
-                : 'bg-blue-600 hover:bg-blue-700'
-            }`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (cartButtonState === 'idle') {
-                setCartButtonState('loading');
-                // Add to cart
-                addToCart(game);
-                // Simulate API call delay
-                setTimeout(() => {
-                  setCartButtonState('success');
-                  // Reset to idle after 2 seconds
-                  setTimeout(() => setCartButtonState('idle'), 2000);
-                }, 500);
-              }
-            }}
-            title={cartButtonState === 'success' ? 'Added to Cart!' : 'Add to Cart'}
-            disabled={cartButtonState === 'loading'}
-          >
-            {cartButtonState === 'success' ? (
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 376 384">
-                <path d="M119 282L346 55l29 30l-256 256L0 222l30-30z"/>
-              </svg>
-            ) : cartButtonState === 'loading' ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M5.1 4.8a.499.499 0 0 1 .471-.795a.5.5 0 0 1 .329.195L8 7V.5a.5.5 0 0 1 .5.5V7l2.1-2.8a.501.501 0 0 1 .895.229a.5.5 0 0 1-.095.371l-3 4c-.006.008-.017.012-.024.02a.5.5 0 0 1-.116.1a.3.3 0 0 1-.05.034a.47.47 0 0 1-.42 0a.3.3 0 0 1-.05-.034a.5.5 0 0 1-.116-.1c-.007-.008-.018-.012-.024-.02zm.65 9.95a1.245 1.245 0 0 1-.772 1.154a1.252 1.252 0 0 1-1.704-.91a1.25 1.25 0 1 1 2.475-.245zm8 0a1.245 1.245 0 0 1-.772 1.154a1.252 1.252 0 0 1-1.704-.91a1.249 1.249 0 1 1 2.475-.245zM14 5.5a.5.5 0 0 0-.5.5l-.5 4H4.09l-1.1-6.58a.5.5 0 0 0-.49-.418h-1a.5.5 0 0 0 .5.5a.5.5 0 0 0 .5.5h.4l1.43 8.58a.496.496 0 0 0 .493.418h9a.5.5 0 0 0 0-1h-8.58l-.167-1h8.74a1 1 0 0 0 .992-.876l.508-4.12a.5.5 0 0 0-.5-.5z"/>
-              </svg>
-            )}
-          </button>
-        </div>
-
-        {/* Loading State */}
-        {imageLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-          </div>
-        )}
-        
-        {/* Main Image - Clickable */}
-        <Link to={`/games/${game.id}`} className="block w-full h-full" onClick={() => console.log('PortraitGameCard image clicked:', game.id, game.name)}>
+          {/* Main Image */}
           <img
-            src={game.background_image || game.image || '/assets/images/featured-game-1.jpg'}
+            src={getImageUrl()}
             alt={game.name || 'Game'}
-            className={`w-full h-full transition-all duration-500 cursor-pointer ${
+            className={`w-full h-[300px] transition-all duration-300 group-hover:scale-105 ${
               imageLoading ? 'opacity-0' : 'opacity-100'
             } ${
               imageError ? 'object-contain p-4' : 'object-cover'
@@ -115,66 +157,84 @@ const PortraitGameCard = ({ game }) => {
             onError={handleImageError}
             loading="lazy"
             decoding="async"
+            style={{
+              objectPosition: 'center center',
+              imageRendering: 'auto'
+            }}
           />
-        </Link>
-
-        {/* EA Play Overlay (for specific games) */}
-        {game.name && game.name.toLowerCase().includes('battlefield') && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2">
-            <span className="text-white text-xs font-medium">EA Play</span>
-            <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
-              <svg className="w-2 h-2 text-gray-900 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
+          
+          {/* Rating Display */}
+          <div className="absolute top-3 right-3">
+            <div className="bg-white/90 dark:bg-black/70 text-black dark:text-white px-2 py-1 rounded-lg text-xs font-bold">
+              {game.rating ? `${game.rating.toFixed(1)}/5` : '4.2/5'}
             </div>
           </div>
-        )}
 
-        {/* Remastered Badge (for specific games) */}
-        {game.name && game.name.toLowerCase().includes('remastered') && (
-          <div className="absolute bottom-4 right-4 bg-gray-700 text-white px-2 py-1 rounded text-xs font-medium">
-            REMASTERED
-          </div>
-        )}
-      </div>
-
-      {/* Text Details Section (Bottom ~40% of the card) */}
-      <div className="bg-gray-900 dark:bg-gray-800 p-4 flex flex-col justify-between flex-1">
-        {/* Base Game Label */}
-        <div className="text-gray-400 text-xs mb-2">
-          Base Game
+          {/* Favorite Button - Top Left */}
+          <button
+            onClick={handleFavoriteToggle}
+            className="absolute top-3 left-3 w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm transition-all duration-200 flex items-center justify-center text-white shadow-lg z-10"
+            title={isInFavorites ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <FaHeart className={`w-4 h-4 ${isInFavorites ? 'fill-red-500 scale-110' : 'fill-white/70 hover:fill-red-400'}`} />
+          </button>
         </div>
-        
-        {/* Game Title and Price - Clickable */}
-        <Link to={`/games/${game.id}`} className="block" onClick={() => console.log('PortraitGameCard title clicked:', game.id, game.name)}>
-          <div className="flex items-start justify-between gap-2 mb-3">
-            <h3 className="text-white font-bold text-sm line-clamp-2 min-h-[2.5rem] hover:text-blue-300 transition-colors cursor-pointer flex-1">
-              {game.name || 'Untitled Game'}
-            </h3>
-            {game.price && (
-              <div className="text-sm font-bold text-green-400 dark:text-green-300 flex-shrink-0">
-                ${game.price}
+      </Link>
+
+      {/* Content Section - Fixed height for lower part */}
+      <div className="p-4 bg-gradient-to-b from-white/80 to-white/80 dark:from-gray-800 dark:to-gray-900 h-[100px] flex flex-col justify-between">
+        {/* Platform Icons and Price - Top Row */}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          {/* Platform Icons */}
+          <div className="flex items-center gap-2">
+            {getUniquePlatformIcons().map((platformData, index) => (
+              <div key={index} className="w-5 h-5 flex items-center justify-center">
+                {getPlatformIconComponent(platformData.icon, index)}
+              </div>
+            ))}
+          </div>
+          
+          {/* Price Display - Right Side */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="text-lg font-bold text-green-600 dark:text-green-400">
+              ${game.price ? game.price.toFixed(2) : '19.99'}
+            </div>
+            {game.originalPrice && game.originalPrice > game.price && (
+              <div className="text-sm text-black dark:text-gray-400 line-through">
+                ${game.originalPrice.toFixed(2)}
               </div>
             )}
           </div>
-        </Link>
+        </div>
         
-        {/* Pricing Information */}
-        <div className="flex items-center gap-2">
-          {/* Discount Percentage Badge */}
-          <div className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold">
-            -{discount}%
-          </div>
+        {/* Game Title and Add to Cart Button */}
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <Link to={`/games/${game.id}`} className="block flex-1">
+            <h3 className="text-base font-bold text-black dark:text-white line-clamp-2 leading-tight hover:text-blue-600 dark:hover:text-blue-300 transition-colors cursor-pointer">
+              {game.name || 'Untitled Game'}
+            </h3>
+          </Link>
           
-          {/* Original Price */}
-          <span className="text-gray-400 text-sm line-through">
-            ${originalPrice}.99*
-          </span>
-          
-          {/* Discounted Price */}
-          <span className="text-white font-bold text-sm">
-            ${discountedPrice}
-          </span>
+          {/* Add to Cart Button */}
+          <button
+            onClick={handleAddToCart}
+            className={`w-8 h-8 rounded-full transition-all duration-300 ease-in-out flex items-center justify-center hover:scale-110 shadow-md hover:shadow-lg flex-shrink-0 ${
+              isAddedToCart 
+                ? 'bg-green-600 hover:bg-green-700 text-white' 
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+            title={isAddedToCart ? 'Added to Cart!' : 'Add to Cart'}
+          >
+            <div className={`transition-all duration-300 ease-in-out transform ${
+              isAddedToCart ? 'rotate-360 scale-110' : 'rotate-0 scale-100'
+            }`}>
+              {isAddedToCart ? (
+                <img src="/assets/icons/check.svg" alt="Added to Cart" className="w-4 h-4 filter brightness-0 invert" />
+              ) : (
+                <FaShoppingCart className="w-4 h-4" />
+              )}
+            </div>
+          </button>
         </div>
       </div>
     </div>

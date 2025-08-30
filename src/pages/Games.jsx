@@ -511,8 +511,8 @@ export default function Games() {
 
           {/* Filters and Actions Header */}
           <div className="flex flex-col gap-4 mb-6">
-            {/* Filter Button, Platform Icons, Sort By, and Clear Filters */}
-            <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+            {/* Filter Button and Clear Filters - Top Row */}
+            <div className="flex items-center justify-between gap-3">
               {/* Filter Button */}
               <div className="flex-shrink-0">
                 <FilterMenu
@@ -529,133 +529,6 @@ export default function Games() {
                 />
               </div>
 
-              {/* Platform Icons */}
-              <div className="flex items-center gap-3 flex-wrap justify-center lg:justify-start">
-                {/* PC/Windows */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('pc')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('PC')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="PC"
-                >
-                  <img 
-                    src="/assets/icons/windows.svg" 
-                    alt="PC" 
-                    className="w-full h-full text-gray-800 dark:text-white"
-                  />
-                </button>
-
-
-
-                {/* PlayStation */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('playstation')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('PlayStation 5') || selectedPlatform.includes('PlayStation 4') || selectedPlatform.includes('PlayStation 3')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="PlayStation"
-                >
-                  <img 
-                    src="/assets/icons/playstation.svg" 
-                    alt="PlayStation" 
-                    className="w-full h-full text-gray-800 dark:text-white"
-                  />
-                </button>
-
-                {/* Xbox */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('xbox')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('Xbox Series X') || selectedPlatform.includes('Xbox One') || selectedPlatform.includes('Xbox 360')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="Xbox"
-                >
-                  <img 
-                    src="/assets/icons/xbox.svg" 
-                    alt="Xbox" 
-                    className="w-full h-full text-gray-800 dark:text-white"
-                  />
-                </button>
-
-                {/* Nintendo Switch */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('nintendo-switch')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('Nintendo Switch')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="Nintendo Switch"
-                >
-                  <img 
-                    src="/assets/icons/nintendo-switch.svg" 
-                    alt="Nintendo Switch" 
-                    className="w-full h-full text-gray-800 dark:text-white"
-                  />
-                </button>
-
-                {/* macOS */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('mac')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('macOS')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="macOS"
-                >
-                  <img 
-                    src="/assets/icons/mac-os.svg" 
-                    alt="macOS" 
-                    className="w-full h-full text-gray-800 dark:text-white"
-                  />
-                </button>
-
-
-              </div>
-
-              {/* Sort By (separate control) */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 dark:text-gray-300">Sort by</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => handleSortChange(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2"
-                >
-                  <option value="released">Newest First</option>
-                  <option value="relevance">Relevance</option>
-                  <option value="name-asc">Name A-Z</option>
-                  <option value="name-desc">Name Z-A</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Highest Rated</option>
-                  {activeStore === 'rawg' && (
-                    <>
-                      <option value="metacritic">Highest Metacritic</option>
-                      <option value="added">Most Popular</option>
-                    </>
-                  )}
-                  {activeStore === 'cheapshark' && (
-                    <>
-                      <option value="price-low">Best Deals</option>
-                      <option value="rating">Highest Rated</option>
-                    </>
-                  )}
-                </select>
-                {/* Store-specific sorting info */}
-                <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                  {activeStore === 'cheapshark' && '💰 Price-focused'}
-                  {activeStore === 'mock' && '🎯 Curated'}
-                </div>
-              </div>
-
               {/* Clear Filters Button */}
               <div className="flex-shrink-0">
                 <button
@@ -664,6 +537,129 @@ export default function Games() {
                 >
                   Clear Filters
                 </button>
+              </div>
+            </div>
+
+            {/* Platform Icons - Second Row */}
+            <div className="flex items-center gap-3 flex-wrap justify-center sm:justify-start">
+              {/* PC/Windows */}
+              <button
+                onClick={() => handlePlatformQuickFilter('pc')}
+                className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                  selectedPlatform.includes('PC')
+                    ? 'opacity-100 transform scale-110'
+                    : 'opacity-50 hover:opacity-75'
+                }`}
+                title="PC"
+              >
+                <img 
+                  src="/assets/icons/windows.svg" 
+                  alt="PC" 
+                  className="w-full h-full text-gray-800 dark:text-white"
+                />
+              </button>
+
+              {/* PlayStation */}
+              <button
+                onClick={() => handlePlatformQuickFilter('playstation')}
+                className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                  selectedPlatform.includes('PlayStation 5') || selectedPlatform.includes('PlayStation 4') || selectedPlatform.includes('PlayStation 3')
+                    ? 'opacity-100 transform scale-110'
+                    : 'opacity-50 hover:opacity-75'
+                }`}
+                title="PlayStation"
+              >
+                <img 
+                  src="/assets/icons/playstation.svg" 
+                  alt="PlayStation" 
+                  className="w-full h-full text-gray-800 dark:text-white"
+                />
+              </button>
+
+              {/* Xbox */}
+              <button
+                onClick={() => handlePlatformQuickFilter('xbox')}
+                className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                  selectedPlatform.includes('Xbox Series X') || selectedPlatform.includes('Xbox One') || selectedPlatform.includes('Xbox 360')
+                    ? 'opacity-100 transform scale-110'
+                    : 'opacity-50 hover:opacity-75'
+                }`}
+                title="Xbox"
+              >
+                <img 
+                  src="/assets/icons/xbox.svg" 
+                  alt="Xbox" 
+                  className="w-full h-full text-gray-800 dark:text-white"
+                />
+              </button>
+
+              {/* Nintendo Switch */}
+              <button
+                onClick={() => handlePlatformQuickFilter('nintendo-switch')}
+                className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                  selectedPlatform.includes('Nintendo Switch')
+                    ? 'opacity-100 transform scale-110'
+                    : 'opacity-50 hover:opacity-75'
+                }`}
+                title="Nintendo Switch"
+              >
+                <img 
+                  src="/assets/icons/nintendo-switch.svg" 
+                  alt="Nintendo Switch" 
+                  className="w-full h-full text-gray-800 dark:text-white"
+                />
+              </button>
+
+              {/* macOS */}
+              <button
+                onClick={() => handlePlatformQuickFilter('mac')}
+                className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                  selectedPlatform.includes('macOS')
+                    ? 'opacity-100 transform scale-110'
+                    : 'opacity-50 hover:opacity-75'
+                }`}
+                title="macOS"
+              >
+                <img 
+                  src="/assets/icons/mac-os.svg" 
+                  alt="macOS" 
+                  className="w-full h-full text-gray-800 dark:text-white"
+                />
+              </button>
+            </div>
+
+            {/* Sort By - Third Row */}
+            <div className="flex items-center gap-2 justify-center sm:justify-start">
+              <span className="text-sm text-gray-600 dark:text-gray-300">Sort by</span>
+              <select
+                value={sortBy}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2"
+              >
+                <option value="released">Newest First</option>
+                <option value="relevance">Relevance</option>
+                <option value="name-asc">Name A-Z</option>
+                <option value="name-desc">Name Z-A</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+                {activeStore === 'rawg' && (
+                  <>
+                    <option value="metacritic">Highest Metacritic</option>
+                    <option value="added">Most Popular</option>
+                  </>
+                )}
+                {activeStore === 'cheapshark' && (
+                  <>
+                    <option value="price-low">Best Deals</option>
+                    <option value="rating">Highest Rated</option>
+                  </>
+                )}
+              </select>
+              {/* Store-specific sorting info */}
+              <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                {activeStore === 'cheapshark' && '💰 Price-focused'}
+                {activeStore === 'mock' && '🎯 Curated'}
               </div>
             </div>
 

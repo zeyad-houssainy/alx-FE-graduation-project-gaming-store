@@ -270,9 +270,6 @@ export default function GameCard({ game }) {
             <span className="text-red-500 text-sm">🎯</span>
           </div>
         </div>
-        
-        {/* Empty space for better spacing */}
-        <div className="mb-2"></div>
 
         {/* Extended Content - Only visible on hover */}
         <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 space-y-4 overflow-hidden">
