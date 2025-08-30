@@ -555,7 +555,7 @@ export default function Games() {
                 <img 
                   src="/assets/icons/windows.svg" 
                   alt="PC" 
-                  className="w-full h-full text-gray-800 dark:text-white"
+                  className="w-full h-full filter dark:brightness-0 dark:invert"
                 />
               </button>
 
@@ -572,7 +572,7 @@ export default function Games() {
                 <img 
                   src="/assets/icons/playstation.svg" 
                   alt="PlayStation" 
-                  className="w-full h-full text-gray-800 dark:text-white"
+                  className="w-full h-full filter dark:brightness-0 dark:invert"
                 />
               </button>
 
@@ -589,7 +589,7 @@ export default function Games() {
                 <img 
                   src="/assets/icons/xbox.svg" 
                   alt="Xbox" 
-                  className="w-full h-full text-gray-800 dark:text-white"
+                  className="w-full h-full filter dark:brightness-0 dark:invert"
                 />
               </button>
 
@@ -606,7 +606,7 @@ export default function Games() {
                 <img 
                   src="/assets/icons/nintendo-switch.svg" 
                   alt="Nintendo Switch" 
-                  className="w-full h-full text-gray-800 dark:text-white"
+                  className="w-full h-full filter dark:brightness-0 dark:invert"
                 />
               </button>
 
@@ -623,7 +623,7 @@ export default function Games() {
                 <img 
                   src="/assets/icons/mac-os.svg" 
                   alt="macOS" 
-                  className="w-full h-full text-gray-800 dark:text-white"
+                  className="w-full h-full filter dark:brightness-0 dark:invert"
                 />
               </button>
             </div>

@@ -124,7 +124,7 @@ export default function GameCard({ game }) {
   // Get platform icon component
   const getPlatformIconComponent = (iconType, index) => {
     const iconProps = {
-      className: "w-3 h-3 text-black dark:text-white"
+      className: "w-3 h-3 filter dark:brightness-0 dark:invert"
     };
 
     switch (iconType) {
