@@ -240,6 +240,15 @@ npm run test:watch
 ### Game Details
 ![Game Details](public/assets/screenshots/game-details.jpg)
 
+### Game Detail Page
+![Game Detail Page](public/assets/screenshots/game-detail-page.jpg)
+
+### Shopping Cart Sidebar
+![Shopping Cart Sidebar](public/assets/screenshots/shopping-cart-sidebar.jpg)
+
+### Live Search Results
+![Live Search Results](public/assets/screenshots/SearchBar.jpg)
+
 ## 📞 Contact
 
 - **Project Link**: [https://github.com/zeyad-houssainy/alx-FE-graduation-project-gaming-store](https://github.com/zeyad-houssainy/alx-FE-graduation-project-gaming-store)
