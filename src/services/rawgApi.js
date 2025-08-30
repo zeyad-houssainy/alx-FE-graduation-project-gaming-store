@@ -28,7 +28,7 @@ const RAWG_CONFIG = {
   BASE_URL: 'https://api.rawg.io/api',
   API_KEY: accessToken,
   TIMEOUT: 30000, // 30 seconds for better reliability
-  MAX_PAGE_SIZE: 60, // RAWG allows up to 60 items per page
+  MAX_PAGE_SIZE: 100, // Increased to 100 items per page
 };
 
 // Create axios instance for RAWG with proper configuration
@@ -335,7 +335,7 @@ export const fetchGames = async (options = {}) => {
     const {
       search = '',
       page = 1,
-      pageSize = 60,
+      pageSize = 100,
       ordering = '-rating,-metacritic,-added',
       platforms = [],
       genres = [],
@@ -706,7 +706,7 @@ export const searchGames = async (searchTerm, options = {}) => {
     // Build search parameters with platform filtering
     const params = {
       search: searchTerm,
-      page_size: options.pageSize || 60,
+      page_size: options.pageSize || 100,
       ordering: options.ordering || '-rating',
       platforms: '1,2,3,7', // Only PC, PlayStation, Xbox, Nintendo
       exclude_platforms: '4,5,6,8,21,34,37', // Exclude Web, Android, iOS, Linux, Gameboy, Mobile

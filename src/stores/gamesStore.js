@@ -43,7 +43,7 @@ export const useGamesStore = create(
         currentPage: 1,
         totalPages: 1,
         totalResults: 0,
-        pageSize: 60, // Increased from 50 to 60 games per page
+        pageSize: 100, // Increased to 100 games per page
       },
       filters: {
         search: '',
@@ -287,7 +287,7 @@ export const useGamesStore = create(
                 currentPage: result.currentPage || 1,
                 totalPages: result.totalPages || 1,
                 totalResults: result.count || result.games.length,
-                pageSize: result.pageSize || 60,
+                pageSize: result.pageSize || 100,
               },
             });
             get().applyFilters();
@@ -300,50 +300,73 @@ export const useGamesStore = create(
         }
       },
 
-      // RAWG API
+      // RAWG API - Fetch multiple pages to get 100 games
       fetchRAWGGames: async () => {
         const { filters, pagination } = get();
         
         try {
-          const params = {
-            page: pagination.currentPage,
-            page_size: pagination.pageSize,
+          const baseParams = {
+            page_size: 40, // RAWG API limit is 40 per page
             ordering: filters.sortBy === 'rating' ? '-rating' : 
                      filters.sortBy === 'released' ? '-released' : 
                      filters.sortBy === 'name-asc' ? 'name' : 
                      filters.sortBy === 'name-desc' ? '-name' : '-rating',
           };
           
-          if (filters.search) params.search = filters.search;
-          if (filters.genres.length > 0) params.genres = filters.genres.join(',');
-          if (filters.platforms.length > 0) params.platforms = filters.platforms.join(',');
+          if (filters.search) baseParams.search = filters.search;
+          if (filters.genres.length > 0) baseParams.genres = filters.genres.join(',');
+          if (filters.platforms.length > 0) baseParams.platforms = filters.platforms.join(',');
           
-          const response = await rawgApi.get('/games', { params });
+          // Calculate how many pages we need to get 100 games
+          const gamesNeeded = Math.min(pagination.pageSize, 100);
+          const pagesNeeded = Math.ceil(gamesNeeded / 40);
           
-          if (response.data && response.data.results) {
-            const transformedGames = response.data.results.map(game => ({
-              id: game.id,
-              name: game.name,
-              background_image: game.background_image || '/assets/images/featured-game-1.jpg',
-              rating: game.rating || 0,
-              metacritic: game.metacritic || null,
-              released: game.released,
-              platforms: game.platforms?.map(p => p.platform.name) || [],
-              genres: game.genres?.map(g => g.name) || [],
-              description: game.description || `Explore ${game.name}`,
-              price: Math.floor(Math.random() * 60) + 20,
-              originalPrice: Math.floor(Math.random() * 60) + 20,
-              cheapestPrice: Math.floor(Math.random() * 60) + 20,
-            }));
+          let allGames = [];
+          let totalCount = 0;
+          
+          // Fetch multiple pages to get up to 100 games
+          for (let page = 1; page <= pagesNeeded; page++) {
+            const params = { ...baseParams, page };
             
-            return {
-              games: transformedGames,
-              count: response.data.count,
-              currentPage: pagination.currentPage,
-              pageSize: pagination.pageSize,
-              totalPages: Math.ceil(response.data.count / pagination.pageSize),
-            };
+            const response = await rawgApi.get('/games', { params });
+            
+            if (response.data && response.data.results) {
+              totalCount = response.data.count;
+              
+              const transformedGames = response.data.results.map(game => ({
+                id: game.id,
+                name: game.name,
+                background_image: game.background_image || '/assets/images/featured-game-1.jpg',
+                rating: game.rating || 0,
+                metacritic: game.metacritic || null,
+                released: game.released,
+                platforms: game.platforms?.map(p => p.platform.name) || [],
+                genres: game.genres?.map(g => g.name) || [],
+                description: game.description || `Explore ${game.name}`,
+                price: Math.floor(Math.random() * 60) + 20,
+                originalPrice: Math.floor(Math.random() * 60) + 20,
+                cheapestPrice: Math.floor(Math.random() * 60) + 20,
+              }));
+              
+              allGames = [...allGames, ...transformedGames];
+              
+              // Stop if we have enough games or if this page returned fewer than 40 (last page)
+              if (allGames.length >= gamesNeeded || response.data.results.length < 40) {
+                break;
+              }
+            }
           }
+          
+          // Trim to exact number needed
+          allGames = allGames.slice(0, gamesNeeded);
+          
+          return {
+            games: allGames,
+            count: totalCount,
+            currentPage: pagination.currentPage,
+            pageSize: allGames.length,
+            totalPages: Math.ceil(totalCount / gamesNeeded),
+          };
         } catch (error) {
           console.error('RAWG API error:', error);
           throw error;
@@ -463,7 +486,7 @@ export const useGamesStore = create(
           games: filteredGames,
           count: filteredGames.length,
           currentPage: 1,
-          pageSize: 60,
+          pageSize: 100,
           totalPages: 1,
         };
       },
@@ -494,7 +517,7 @@ export const useGamesStore = create(
             currentPage: 1,
             totalPages: 1,
             totalResults: 0,
-            pageSize: 60,
+            pageSize: 100,
           },
           filters: {
             search: '',

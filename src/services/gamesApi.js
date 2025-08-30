@@ -259,7 +259,7 @@ const fallbackGames = [
 // Note: We now use CheapShark API directly through the cheapsharkApi service
 
 // API functions
-export const fetchGames = async (page = 1, pageSize = 60, search = '', genre = [], platform = [], sortBy = 'relevance') => {
+export const fetchGames = async (page = 1, pageSize = 100, search = '', genre = [], platform = [], sortBy = 'relevance') => {
   // If API is disabled, use local data directly
   if (!USE_API) {
     console.log('Using local game data (API disabled to avoid CORS issues)');

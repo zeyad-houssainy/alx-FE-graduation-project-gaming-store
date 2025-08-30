@@ -82,7 +82,7 @@ export default function GameCard({ game }) {
   };
 
   return (
-    <div className="group bg-white/50 dark:bg-white/50 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-500 ease-in-out w-[400px] h-[350px] hover:h-[500px] flex flex-col hover:shadow-2xl dark:hover:shadow-gray-900/50 shadow-lg relative">
+    <div className="group bg-white/50 dark:bg-white/50 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 ease-in-out w-[400px] h-[350px] hover:h-[500px] flex flex-col hover:shadow-2xl dark:hover:shadow-gray-900/50 shadow-lg relative">
       {/* Clickable Image Container - Links to Game Detail */}
       <Link to={`/games/${game.id}`} className="block flex-shrink-0">
         <div className="relative overflow-hidden w-full h-[230px] bg-gray-100 dark:bg-gray-700 group">
@@ -148,7 +148,7 @@ export default function GameCard({ game }) {
       </Link>
 
       {/* Content Section - Fixed height for lower part */}
-      <div className="p-4 bg-gray-50 dark:bg-gray-800 h-[120px] flex flex-col justify-between transition-all duration-500 group-hover:h-[270px]">
+      <div className="p-4 bg-gray-50 dark:bg-gray-800 h-[120px] flex flex-col justify-between transition-all duration-200 group-hover:h-[270px]">
         {/* Platform Icons Row - First */}
         <div className="flex items-center gap-2 mb-2">
           {(game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) ? (
@@ -239,7 +239,7 @@ export default function GameCard({ game }) {
         </div>
 
         {/* Extended Content - Only visible on hover */}
-        <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200 space-y-3 overflow-hidden">
+        <div className="opacity-0 group-hover:opacity-100 transition-all duration-150 delay-100 space-y-3 overflow-hidden">
           {/* Release Date */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
@@ -274,7 +274,7 @@ export default function GameCard({ game }) {
         </div>
 
         {/* Bottom Action Buttons - Full width, only visible on hover */}
-        <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 delay-300 space-y-2 mt-auto">
+        <div className="opacity-0 group-hover:opacity-100 transition-all duration-150 delay-150 space-y-2 mt-auto">
           {/* Show more like this button */}
           <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 group/btn">
             Show more like this

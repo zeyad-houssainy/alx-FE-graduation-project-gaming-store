@@ -33,7 +33,6 @@ export default function Games() {
     getPlatforms,
     getQuickFilters,
     applyQuickFilter,
-    getFilterStatus,
     globalSearch,
   } = useGamesStore();
 
@@ -510,71 +509,10 @@ export default function Games() {
             </div>
           )}
 
-          {/* Platform Quick Filters */}
-          <div className="mb-6 p-4 bg-white/80 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Quick Filters
-                </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Filter by platform
-                </p>
-              </div>
-              
-              {/* Clear Platform Filter Button */}
-              {selectedPlatform.length > 0 && (
-                <button
-                  onClick={() => {
-                    setSelectedPlatform([]);
-                    setCurrentPageState(1);
-                  }}
-                  className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(getQuickFilters()).map(([key, filter]) => (
-                <button
-                  key={key}
-                  onClick={() => handlePlatformQuickFilter(key)}
-                  className={`px-3 py-2 text-xs font-medium rounded-full transition-all duration-200 flex items-center gap-2 ${
-                    selectedPlatform.includes(filter.filter.platform)
-                      ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-200 dark:ring-blue-800'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-white border border-gray-200 dark:border-gray-600'
-                  }`}
-                >
-                  {(() => {
-                    const platform = filter.filter.platform.toLowerCase();
-                    if (platform.includes('pc')) return '💻';
-                    if (platform.includes('playstation') || platform.includes('ps')) return '🎮';
-                    if (platform.includes('xbox')) return '🎯';
-                    if (platform.includes('nintendo') || platform.includes('switch')) return '🎲';
-                    return '🖥️';
-                  })()}
-                  {filter.name}
-                </button>
-              ))}
-            </div>
-            
-            {/* Filter Status Display */}
-            <div className="mt-3 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-              <span>Store: {getFilterStatus().activeStore}</span>
-              <span>Games: {getFilterStatus().totalGames}</span>
-              <span>Filtered: {getFilterStatus().filteredGames}</span>
-              {getFilterStatus().hasActiveFilters && (
-                <span className="text-blue-600 dark:text-white font-medium">Active Filters</span>
-              )}
-            </div>
-          </div>
-
           {/* Filters and Actions Header */}
           <div className="flex flex-col gap-4 mb-6">
-            {/* Filter Button and Active Filters */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            {/* Filter Button, Platform Icons, Sort By, and Clear Filters */}
+            <div className="flex flex-col lg:flex-row lg:items-center gap-4">
               {/* Filter Button */}
               <div className="flex-shrink-0">
                 <FilterMenu
@@ -589,6 +527,145 @@ export default function Games() {
                   onClearFilters={handleClearFilters}
                   activeStore={activeStore}
                 />
+              </div>
+
+              {/* Platform Icons */}
+              <div className="flex items-center gap-3 flex-wrap justify-center lg:justify-start">
+                {/* PC/Windows */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('pc')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('PC')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="PC"
+                >
+                  <img 
+                    src="/assets/icons/windows.svg" 
+                    alt="PC" 
+                    className="w-full h-full"
+                  />
+                </button>
+
+                {/* Steam */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('steam')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('Steam')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="Steam"
+                >
+                  <img 
+                    src="/assets/icons/steam.svg" 
+                    alt="Steam" 
+                    className="w-full h-full"
+                  />
+                </button>
+
+                {/* Epic Games */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('epic')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('Epic Games')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="Epic Games"
+                >
+                  <img 
+                    src="/assets/icons/epic-games.svg" 
+                    alt="Epic Games" 
+                    className="w-full h-full"
+                  />
+                </button>
+
+                {/* PlayStation */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('playstation')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('PlayStation 5') || selectedPlatform.includes('PlayStation 4') || selectedPlatform.includes('PlayStation 3')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="PlayStation"
+                >
+                  <img 
+                    src="/assets/icons/playstation.svg" 
+                    alt="PlayStation" 
+                    className="w-full h-full"
+                  />
+                </button>
+
+                {/* Xbox */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('xbox')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('Xbox Series X') || selectedPlatform.includes('Xbox One') || selectedPlatform.includes('Xbox 360')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="Xbox"
+                >
+                  <img 
+                    src="/assets/icons/xbox.svg" 
+                    alt="Xbox" 
+                    className="w-full h-full"
+                  />
+                </button>
+
+                {/* Nintendo Switch */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('nintendo-switch')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('Nintendo Switch')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="Nintendo Switch"
+                >
+                  <img 
+                    src="/assets/icons/nintendo-switch.svg" 
+                    alt="Nintendo Switch" 
+                    className="w-full h-full"
+                  />
+                </button>
+
+                {/* macOS */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('mac')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('macOS')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="macOS"
+                >
+                  <img 
+                    src="/assets/icons/mac-os.svg" 
+                    alt="macOS" 
+                    className="w-full h-full"
+                  />
+                </button>
+
+                {/* Linux/Ubuntu */}
+                <button
+                  onClick={() => handlePlatformQuickFilter('linux')}
+                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
+                    selectedPlatform.includes('Linux')
+                      ? 'opacity-100 transform scale-110'
+                      : 'opacity-50 hover:opacity-75'
+                  }`}
+                  title="Linux"
+                >
+                  <img 
+                    src="/assets/icons/ubuntu.svg" 
+                    alt="Linux" 
+                    className="w-full h-full"
+                  />
+                </button>
               </div>
 
               {/* Sort By (separate control) */}
