@@ -142,24 +142,7 @@ export default function StoreInfo({ gameId, gameName }) {
         </div>
       )}
 
-      {/* CheapShark Information */}
-      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-          <span>🔗</span>
-          <span>Powered by</span>
-          <a
-            href="https://www.cheapshark.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 dark:text-orange-400 hover:underline font-medium"
-          >
-            CheapShark
-          </a>
-        </div>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          Real-time game prices and deals from multiple online stores
-        </p>
-      </div>
+
     </div>
   );
 }

@@ -720,7 +720,7 @@ export default function Games() {
                 {selectedGenre.length > 0 && (
                   <>
                     {selectedGenre.map((genre) => (
-                      <span key={genre} className="text-xs px-3 py-2 rounded-full font-medium flex items-center border bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800">
+                      <span key={genre} className="text-xs px-3 py-2 rounded-full font-medium flex items-center border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200">
                         <span className="mr-1">🎮</span>
                         {genre}
                         <button

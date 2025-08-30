@@ -14,12 +14,9 @@ export default function SlidingCartSummary() {
   // Listen for custom event to open cart summary
   useEffect(() => {
     const handleOpenCartSummary = () => {
-      // Set animating state first
       setIsAnimating(true);
-      // Add a small delay to ensure the DOM is ready for the animation
       setTimeout(() => {
         setIsOpen(true);
-        // Trigger reflow for smooth animation
         if (cartPanelRef.current) {
           cartPanelRef.current.offsetHeight;
         }
@@ -29,7 +26,6 @@ export default function SlidingCartSummary() {
     window.addEventListener('openCartSummary', handleOpenCartSummary);
     return () => {
       window.removeEventListener('openCartSummary', handleOpenCartSummary);
-      // Clear timeout on cleanup
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -38,7 +34,6 @@ export default function SlidingCartSummary() {
 
   const handleClose = () => {
     setIsOpen(false);
-    // Reset animation state after animation completes
     timeoutRef.current = setTimeout(() => {
       setIsAnimating(false);
     }, 400);
@@ -46,7 +41,6 @@ export default function SlidingCartSummary() {
 
   const handleViewCart = () => {
     setIsOpen(false);
-    // Small delay to allow animation to complete before navigation
     setTimeout(() => {
       navigate('/cart');
     }, 300);
@@ -54,86 +48,54 @@ export default function SlidingCartSummary() {
 
   const handleCheckout = () => {
     setIsOpen(false);
-    // Small delay to allow animation to complete before navigation
     setTimeout(() => {
       navigate('/checkout');
     }, 300);
   };
 
-
-
   return (
     <>
-      {/* Floating Cart Button */}
-      {items.length > 0 && (
-        <button
-          onClick={() => {
-            // Set animating state first
-            setIsAnimating(true);
-            // Add a small delay to ensure the DOM is ready for the animation
-            setTimeout(() => {
-              setIsOpen(true);
-              // Trigger reflow for smooth animation
-              if (cartPanelRef.current) {
-                cartPanelRef.current.offsetHeight;
-              }
-            }, 10);
-          }}
-          className="fixed bottom-6 right-6 z-40 bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-110"
-          aria-label="Open cart summary"
-        >
-          {/* Cart Icon */}
-          <div className="relative">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-            </svg>
-            
-            {/* Item Count Badge */}
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-medium">
-              {items.length}
-            </span>
-          </div>
-        </button>
-      )}
 
-      {/* Cart Summary Panel */}
+
+      {/* Modern Cart Summary Panel */}
       {(isOpen || isAnimating) && (
         <>
-          {/* Backdrop with fade animation */}
+          {/* Backdrop */}
           <div 
-            className={`fixed inset-0 bg-black/50 z-50 transition-all duration-500 ease-out ${
+            className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 transition-all duration-300 ease-out ${
               isOpen ? 'opacity-100' : 'opacity-0'
             }`}
             onClick={handleClose}
           />
           
-          {/* Cart Panel with enhanced slide animation */}
+          {/* Cart Panel */}
           <div 
             ref={cartPanelRef}
-            className={`fixed top-0 right-0 h-full w-full sm:w-96 lg:w-[450px] bg-white dark:bg-gray-800 shadow-2xl z-50 transform transition-all duration-500 ease-out ${
+            className={`fixed top-0 right-0 max-h-screen w-full sm:w-96 lg:w-[420px] bg-white dark:bg-slate-900 shadow-2xl z-50 transform transition-all duration-300 ease-out ${
               isOpen ? 'translate-x-0' : 'translate-x-full'
             }`}
-            style={{
-              transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
-              boxShadow: isOpen ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : '0 0 0 0 rgba(0, 0, 0, 0)'
-            }}
           >
             
-            {/* Header */}
-            <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600 transition-all duration-500 ease-out">
+            {/* Modern Header */}
+            <div className="bg-slate-50 dark:bg-slate-800 px-6 py-6 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3 transition-all duration-500 ease-out">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-                  </svg>
-                  Cart Summary
-                </h2>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white dark:text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Shopping Cart</h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{items.length} item{items.length !== 1 ? 's' : ''}</p>
+                  </div>
+                </div>
                 <button
                   onClick={handleClose}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 hover:scale-110"
+                  className="w-8 h-8 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
                   aria-label="Close cart"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -141,18 +103,28 @@ export default function SlidingCartSummary() {
             </div>
 
             {/* Cart Content */}
-            <div className="flex flex-col h-full transition-all duration-500 ease-out">
+            <div className="flex flex-col">
               {/* Items List */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4 transition-all duration-500 ease-out">
+              <div className="overflow-y-auto p-6 space-y-4 max-h-[60vh]">
                 {items.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-6xl mb-4">🛒</div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  <div className="text-center py-16">
+                    <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-10 h-10 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
                       Your cart is empty
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      Start shopping to add games to your cart
+                    <p className="text-slate-600 dark:text-slate-400 mb-6">
+                      Start shopping to add amazing games to your cart
                     </p>
+                    <button
+                      onClick={handleClose}
+                      className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-all duration-200"
+                    >
+                      Start Shopping
+                    </button>
                   </div>
                 ) : (
                   items.map((item) => (
@@ -160,31 +132,47 @@ export default function SlidingCartSummary() {
                   ))
                 )}
               </div>
+              
+              {/* Spacer for empty cart */}
+              {items.length === 0 && <div className="flex-1" />}
 
-              {/* Cart Footer */}
+              {/* Modern Cart Footer */}
               {items.length > 0 && (
-                <div className="border-t border-gray-200 dark:border-gray-700 p-6 bg-gray-50 dark:bg-gray-700 transition-all duration-500 ease-out">
-                  {/* Total */}
-                  <div className="flex items-center justify-between mb-6 transition-all duration-500 ease-out">
-                    <span className="text-lg font-semibold text-gray-900 dark:text-white">Total:</span>
-                    <span className="text-2xl font-bold text-blue-600 dark:text-orange-400 transition-all duration-500 ease-out">
+                <div className="border-t border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800 mt-auto">
+                  {/* Total Section */}
+                  <div className="flex items-center justify-between mb-6 p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-slate-900 dark:bg-white rounded-lg flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white dark:text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      </div>
+                      <span className="text-lg font-semibold text-slate-900 dark:text-white">Total Amount</span>
+                    </div>
+                    <span className="text-2xl font-bold text-slate-900 dark:text-white">
                       ${getCartTotal().toFixed(2)}
                     </span>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="space-y-3 transition-all duration-500 ease-out">
+                  <div className="space-y-3">
                     <button
                       onClick={handleCheckout}
-                      className="w-full bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-lg"
+                      className="w-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-4 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-lg flex items-center justify-center gap-3"
                     >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
                       Proceed to Checkout
                     </button>
                     
                     <button
                       onClick={handleViewCart}
-                      className="w-full bg-white dark:bg-gray-800 border border-blue-500 dark:border-orange-500 text-blue-600 dark:text-orange-400 hover:bg-blue-50 dark:hover:bg-orange-900/20 font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-md"
+                      className="w-full bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-500 font-semibold py-4 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-3"
                     >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                      </svg>
                       View Full Cart
                     </button>
                   </div>
