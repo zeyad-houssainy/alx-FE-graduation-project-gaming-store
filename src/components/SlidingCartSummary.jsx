@@ -6,7 +6,7 @@ import CartItem from './CartItem';
 export default function SlidingCartSummary() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const { items, getCartTotal, clearCart } = useCartStore();
+  const { items, getCartTotal } = useCartStore();
   const navigate = useNavigate();
   const timeoutRef = useRef(null);
   const cartPanelRef = useRef(null);
@@ -60,11 +60,7 @@ export default function SlidingCartSummary() {
     }, 300);
   };
 
-  const handleClearCart = () => {
-    if (window.confirm('Are you sure you want to clear your cart?')) {
-      clearCart();
-    }
-  };
+
 
   return (
     <>
@@ -190,13 +186,6 @@ export default function SlidingCartSummary() {
                       className="w-full bg-white dark:bg-gray-800 border border-blue-500 dark:border-orange-500 text-blue-600 dark:text-orange-400 hover:bg-blue-50 dark:hover:bg-orange-900/20 font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-md"
                     >
                       View Full Cart
-                    </button>
-                    
-                    <button
-                      onClick={handleClearCart}
-                      className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-md"
-                    >
-                      Clear Cart
                     </button>
                   </div>
                 </div>

@@ -59,9 +59,9 @@ export default function CartItem({ item }) {
             )}
           </div>
           
-          {/* Price */}
-          <div className="text-xl font-bold text-blue-600 dark:text-orange-400 mb-3">
-            ${(item.price * item.quantity).toFixed(2)}
+          {/* Price per item */}
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            ${item.price.toFixed(2)} each
           </div>
         </div>
 

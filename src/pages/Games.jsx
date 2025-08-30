@@ -536,7 +536,7 @@ export default function Games() {
           ? 'bg-purple-100 dark:bg-purple-950' 
           : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900'
       }`}>
-        <div className={`container mx-auto px-2 sm:px-4 py-8 sm:py-12 transition-all duration-500 ${
+        <div className={`container mx-auto px-1 sm:px-2 py-8 sm:py-12 transition-all duration-500 ${
           isDebugOpen ? 'bg-purple-50 dark:bg-gray-800' : ''
         }`}>
                   
@@ -1434,9 +1434,9 @@ export default function Games() {
             ) : displayGames && displayGames.length > 0 ? (
               <>
                 {/* Games Grid */}
-                <div className="flex flex-wrap gap-4 justify-center max-w-[1800px] mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-[2000px] mx-auto">
                   {displayGames.map((game) => (
-                    <div key={game.id} className="w-[400px]">
+                    <div key={game.id} className="flex justify-center">
                       <GameCard 
                         game={game} 
                         activeFilters={{ 

@@ -8,6 +8,7 @@ export default function GameCard({ game }) {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   const { addToCart } = useCartStore();
 
@@ -38,6 +39,12 @@ export default function GameCard({ game }) {
     e.preventDefault();
     e.stopPropagation();
     addToCart(game);
+    setIsAddedToCart(true);
+    
+    // Reset the animation after 2 seconds
+    setTimeout(() => {
+      setIsAddedToCart(false);
+    }, 2000);
   };
 
   const handleWishlistToggle = (e) => {
@@ -175,9 +182,21 @@ export default function GameCard({ game }) {
             {/* Add to Cart Button - Fixed dimensions */}
             <button
               onClick={handleAddToCart}
-              className="w-[60px] h-[30px] bg-green-600 hover:bg-green-700 text-white rounded transition-all duration-300 flex items-center justify-center"
+              className={`w-[60px] h-[30px] rounded transition-all duration-500 ease-in-out flex items-center justify-center border ${
+                isAddedToCart 
+                  ? 'bg-green-500/50 border-green-400 text-white' 
+                  : 'bg-white/20 dark:bg-gray-800/20 hover:bg-gradient-to-r hover:from-blue-400/50 hover:to-purple-400/50 text-gray-700 dark:text-gray-300 hover:text-white border-gray-200 dark:border-gray-600 hover:border-transparent'
+              }`}
             >
-              <FaShoppingCart className="w-3 h-3" />
+              <div className={`transition-all duration-500 ease-in-out transform ${
+                isAddedToCart ? 'rotate-360 scale-110' : 'rotate-0 scale-100'
+              }`}>
+                {isAddedToCart ? (
+                  <img src="/assets/icons/check.svg" alt="Added to Cart" className="w-3 h-3 filter brightness-0 invert" />
+                ) : (
+                  <FaShoppingCart className="w-3 h-3" />
+                )}
+              </div>
             </button>
           </div>
         </div>
