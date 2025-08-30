@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGamesStore } from '../stores';
+import { useNavigate } from 'react-router-dom';
 
 export default function SearchBar({ 
   searchTerm = '', 
@@ -16,6 +17,7 @@ export default function SearchBar({
   const timeoutRef = useRef(null);
 
   const { globalSearch } = useGamesStore();
+  const navigate = useNavigate();
 
   // Handle click outside to close suggestions
   useEffect(() => {
@@ -111,9 +113,24 @@ export default function SearchBar({
 
   const handleSuggestionClick = (suggestion) => {
     console.log('SearchBar: Suggestion clicked:', suggestion);
-    onSearchChange(suggestion.name);
     setShowSuggestions(false);
-    onSearch(suggestion.name);
+    
+    // Navigate directly to game details if we have a game ID
+    if (suggestion.id) {
+      // Check if this is a RAWG game (which the GameDetail page can handle)
+      if (suggestion.source === 'rawg' || suggestion.rawgId) {
+        navigate(`/games/${suggestion.rawgId || suggestion.id}`);
+      } else {
+        // For other sources, perform a search instead
+        console.log('SearchBar: Non-RAWG game, performing search instead');
+        onSearchChange(suggestion.name);
+        onSearch(suggestion.name);
+      }
+    } else {
+      // Fallback to search if no game ID
+      onSearchChange(suggestion.name);
+      onSearch(suggestion.name);
+    }
   };
 
   const handleInputFocus = () => {

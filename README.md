@@ -18,9 +18,33 @@ A modern, responsive gaming marketplace built with React that allows users to di
 - **Responsive Design**: Works perfectly on all devices
 - **Theme Toggle**: Switch between light and dark modes
 
+### 🛒 **Shopping Experience**
+- **Advanced Search**: Real-time search with genre, platform, and price filters
+- **Game Catalog**: Browse games from RAWG API with infinite scrolling
+- **Deals Section**: Special offers from CheapShark API organized by store
+- **Wishlist**: Save favorite games for later
+- **Cart Management**: Add/remove items, quantity control, sliding cart summary
+- **Checkout Process**: Complete checkout with address and payment forms
+
+### 👤 **User Management**
+- **Profile System**: Complete user profiles with avatar upload
+- **Address Book**: Manage multiple shipping addresses
+- **Payment Methods**: Save and manage payment options
+- **Order History**: Track all previous purchases
+- **Favorites**: Personal collection of saved games
+
+### 🎨 **User Interface**
+- **Dark/Light Theme**: Persistent theme switching with smooth transitions
+- **Mobile First**: Responsive design with mobile navigation menu
+- **Game Media**: Screenshots and videos with lightbox gallery
+- **Platform Icons**: Visual indicators for different gaming platforms
+- **Live Search**: Real-time search suggestions
+- **News Ticker**: Top header news section
+
 ### 🔧 **Technical Features**
 - **Modern React**: Built with React 18 and functional components
-- **State Management**: React Context API for global state
+- **State Management**: React Context API + Zustand for global state
+- **HTTP Client**: Axios for API communication
 - **Routing**: React Router for smooth navigation
 - **Styling**: Tailwind CSS for modern, responsive design
 - **API Integration**: 
@@ -109,7 +133,7 @@ src/
 
 ## 🎯 Features to Implement
 
-### 🔴 **High Priority**
+### 🔴 **High Priority** ✅ **COMPLETED**
 - [x] **Game Search & Filtering**: Advanced search with genre, platform, price filters
 - [x] **Shopping Cart**: Add/remove games, quantity management
 - [x] **User Authentication**: Login, registration, profile management
@@ -119,14 +143,25 @@ src/
   - **RAWG API** integration for game data (Shop page)
   - **CheapShark API** integration for deals (Deals page)
 
-### 🟡 **Medium Priority**
+### 🟡 **Medium Priority** ✅ **COMPLETED**
 - [x] **Wishlist**: Save games for later (Add to favorites feature implemented)
+- [x] **Checkout Process**: Payment integration with form validation
+- [x] **Order History**: Track previous purchases
+- [x] **User Profile Management**: Complete profile with avatar upload
+- [x] **Address Management**: Multiple addresses support
+- [x] **Payment Methods**: Save and manage payment options
 - [ ] **Game Reviews**: User ratings and comments
-- [ ] **Checkout Process**: Payment integration
-- [ ] **Order History**: Track previous purchases
 - [ ] **Admin Panel**: Manage games and users
 
-### 🟢 **Low Priority**
+### 🟢 **Low Priority** ✅ **PARTIALLY COMPLETED**
+- [x] **Theme System**: Dark/light mode toggle with persistence
+- [x] **Mobile Navigation**: Responsive mobile menu
+- [x] **Game Media Gallery**: Screenshots and videos with lightbox
+- [x] **Platform Icons**: Visual platform indicators
+- [x] **Live Search**: Real-time search functionality
+- [x] **Infinite Scrolling**: Load more games as you scroll
+- [x] **Cart Summary**: Sliding cart sidebar
+- [x] **News Section**: Top header news ticker
 - [ ] **Social Features**: Share games, follow friends
 - [ ] **Game Recommendations**: AI-powered suggestions
 - [ ] **Multi-language Support**: Internationalization
@@ -156,12 +191,6 @@ npm run test:watch
 
 
 ## 📸 Screenshots
-
-### Homepage - Light Theme
-![Homepage Light Theme](public/assets/screenshots/homepage-light-theme.jpg)
-
-### Homepage - Dark Theme  
-![Homepage Dark Theme](public/assets/screenshots/homepage-dark-theme.jpg)
 
 ### Game Store Section
 ![Game Store](public/assets/screenshots/game-store-section.jpg)

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGamesStore } from '../stores';
+import { useNavigate } from 'react-router-dom';
 
 export default function HeroSearchBar({ onSearch, className = "" }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,6 +11,7 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
   const timeoutRef = useRef(null);
 
   const { globalSearch } = useGamesStore();
+  const navigate = useNavigate();
 
   const popularSearches = [
     'Action Games',
@@ -107,9 +109,24 @@ export default function HeroSearchBar({ onSearch, className = "" }) {
 
   const handleSuggestionClick = (suggestion) => {
     console.log('HeroSearchBar: Suggestion clicked:', suggestion);
-    setSearchTerm(suggestion.name);
     setShowSuggestions(false);
-    onSearch(suggestion.name);
+    
+    // Navigate directly to game details if we have a game ID
+    if (suggestion.id) {
+      // Check if this is a RAWG game (which the GameDetail page can handle)
+      if (suggestion.source === 'rawg' || suggestion.rawgId) {
+        navigate(`/games/${suggestion.rawgId || suggestion.id}`);
+      } else {
+        // For other sources, perform a search instead
+        console.log('HeroSearchBar: Non-RAWG game, performing search instead');
+        setSearchTerm(suggestion.name);
+        onSearch(suggestion.name);
+      }
+    } else {
+      // Fallback to search if no game ID
+      setSearchTerm(suggestion.name);
+      onSearch(suggestion.name);
+    }
   };
 
   const handlePopularSearchClick = (suggestion) => {

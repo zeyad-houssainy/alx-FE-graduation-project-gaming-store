@@ -49,7 +49,7 @@ export const useGamesStore = create(
         search: '',
         genres: [],
         platforms: [],
-        sortBy: 'relevance',
+        sortBy: 'released',
         priceRange: { min: '', max: '' },
         releaseDateAfter: '2021-01-01', // Show games released after 2021
       },
@@ -522,7 +522,7 @@ export const useGamesStore = create(
             search: '',
             genres: [],
             platforms: [],
-            sortBy: 'relevance',
+            sortBy: 'released',
             priceRange: { min: '', max: '' },
           },
         });
@@ -547,7 +547,7 @@ export const useGamesStore = create(
             search: '',
             genres: [],
             platforms: [],
-            sortBy: 'relevance',
+            sortBy: 'released',
             priceRange: { min: '', max: '' },
           },
         });
@@ -575,7 +575,7 @@ export const useGamesStore = create(
             search: '',
             genres: [],
             platforms: [],
-            sortBy: 'relevance',
+            sortBy: 'released',
             priceRange: { min: '', max: '' },
           },
         });
@@ -804,6 +804,7 @@ export const useGamesStore = create(
           if (response.data && response.data.results) {
             const transformedGames = response.data.results.map(game => ({
               id: `rawg-${game.id}`,
+              rawgId: game.id, // Store the original RAWG ID
               name: game.name,
               background_image: game.background_image || '/assets/images/featured-game-1.jpg',
               rating: game.rating || 0,
@@ -816,7 +817,8 @@ export const useGamesStore = create(
               originalPrice: Math.floor(Math.random() * 60) + 20,
               cheapestPrice: Math.floor(Math.random() * 60) + 20,
               store: 'rawg',
-              storeName: 'RAWG'
+              storeName: 'RAWG',
+              source: 'rawg'
             }));
             
             console.log('Store: RAWG transformed games:', transformedGames);
@@ -863,7 +865,8 @@ export const useGamesStore = create(
               originalPrice: parseFloat(game.cheapest) || 0,
               cheapestPrice: parseFloat(game.cheapest) || 0,
               store: 'cheapshark',
-              storeName: 'CheapShark'
+              storeName: 'CheapShark',
+              source: 'cheapshark'
             }));
             
             console.log('Store: CheapShark transformed games:', transformedGames);
@@ -899,7 +902,8 @@ export const useGamesStore = create(
             originalPrice: 59.99,
             cheapestPrice: 59.99,
             store: 'mock',
-            storeName: 'Mock Store'
+            storeName: 'Mock Store',
+            source: 'mock'
           },
           {
             id: 2,
@@ -913,7 +917,8 @@ export const useGamesStore = create(
             originalPrice: 69.99,
             cheapestPrice: 69.99,
             store: 'mock',
-            storeName: 'Mock Store'
+            storeName: 'Mock Store',
+            source: 'mock'
           },
           {
             id: 3,
@@ -927,7 +932,8 @@ export const useGamesStore = create(
             originalPrice: 79.99,
             cheapestPrice: 79.99,
             store: 'mock',
-            storeName: 'Mock Store'
+            storeName: 'Mock Store',
+            source: 'mock'
           },
           {
             id: 4,
@@ -941,7 +947,8 @@ export const useGamesStore = create(
             originalPrice: 49.99,
             cheapestPrice: 49.99,
             store: 'mock',
-            storeName: 'Mock Store'
+            storeName: 'Mock Store',
+            source: 'mock'
           },
           {
             id: 5,
@@ -955,7 +962,8 @@ export const useGamesStore = create(
             originalPrice: 39.99,
             cheapestPrice: 39.99,
             store: 'mock',
-            storeName: 'Mock Store'
+            storeName: 'Mock Store',
+            source: 'mock'
           },
         ];
         

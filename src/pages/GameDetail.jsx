@@ -55,7 +55,7 @@ export default function GameDetail() {
   const getPlatformIconComponent = (platformName, index) => {
     const iconProps = {
       key: index,
-      className: "w-8 h-8 filter dark:brightness-0 dark:invert"
+      className: "w-8 h-8 text-white"
     };
 
     const platformLower = platformName.toLowerCase();

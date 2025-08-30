@@ -1,11 +1,15 @@
 // src/components/SearchOverlay.jsx
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGamesStore } from '../../stores';
 
 export default function SearchOverlay({ onClose }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [suggestions, setSuggestions] = useState([
+  const [gameSuggestions, setGameSuggestions] = useState([]);
+  const [showGameSuggestions, setShowGameSuggestions] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [popularSearches] = useState([
     'Action Games',
     'RPG Games',
     'Strategy Games',
@@ -19,6 +23,7 @@ export default function SearchOverlay({ onClose }) {
   ]);
   const searchRef = useRef(null);
   const navigate = useNavigate();
+  const { globalSearch } = useGamesStore();
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -55,6 +60,41 @@ export default function SearchOverlay({ onClose }) {
     };
   }, [onClose, searchTerm]);
 
+  // Fetch game suggestions when search term changes
+  useEffect(() => {
+    if (searchTerm.trim().length < 2) {
+      setGameSuggestions([]);
+      setShowGameSuggestions(false);
+      return;
+    }
+
+    setLoading(true);
+    
+    const timeoutId = setTimeout(async () => {
+      try {
+        console.log('SearchOverlay: Fetching suggestions for:', searchTerm.trim());
+        
+        // Search across all store APIs
+        const result = await globalSearch(searchTerm.trim());
+        console.log('SearchOverlay: Search result:', result);
+        
+        // Limit to 5 suggestions maximum
+        const limitedSuggestions = result.games.slice(0, 5);
+        console.log('SearchOverlay: Limited suggestions:', limitedSuggestions);
+        
+        setGameSuggestions(limitedSuggestions);
+        setShowGameSuggestions(true);
+      } catch (error) {
+        console.error('SearchOverlay: Error fetching suggestions:', error);
+        setGameSuggestions([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, globalSearch]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
@@ -73,6 +113,29 @@ export default function SearchOverlay({ onClose }) {
       }
     } else {
       console.log('SearchOverlay: Empty search term, ignoring submit');
+    }
+  };
+
+  const handleGameSuggestionClick = (suggestion) => {
+    console.log('SearchOverlay: Game suggestion clicked:', suggestion);
+    setShowGameSuggestions(false);
+    
+    // Navigate directly to game details if we have a game ID
+    if (suggestion.id) {
+      // Check if this is a RAWG game (which the GameDetail page can handle)
+      if (suggestion.source === 'rawg' || suggestion.rawgId) {
+        navigate(`/games/${suggestion.rawgId || suggestion.id}`);
+        onClose();
+      } else {
+        // For other sources, perform a search instead
+        console.log('SearchOverlay: Non-RAWG game, performing search instead');
+        setSearchTerm(suggestion.name);
+        handleSubmit(new Event('submit'));
+      }
+    } else {
+      // Fallback to search if no game ID
+      setSearchTerm(suggestion.name);
+      handleSubmit(new Event('submit'));
     }
   };
 
@@ -124,12 +187,61 @@ export default function SearchOverlay({ onClose }) {
             </button>
           </div>
 
-          {/* Search Suggestions */}
-          {searchTerm.length === 0 && (
+          {/* Game Search Suggestions */}
+          {showGameSuggestions && gameSuggestions.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Game Suggestions</h3>
+              <div className="space-y-2">
+                {gameSuggestions.map((suggestion, index) => (
+                  <button
+                    key={`${suggestion.id}-${index}`}
+                    onClick={() => handleGameSuggestionClick(suggestion)}
+                    className="w-full p-3 text-left bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-orange-500/20 rounded-lg transition-colors group flex items-center gap-3"
+                  >
+                    {/* Game Image */}
+                    <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                      <img
+                        src={suggestion.background_image || '/assets/images/featured-game-1.jpg'}
+                        alt={suggestion.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = '/assets/images/featured-game-1.jpg';
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Game Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-gray-900 dark:text-white font-medium truncate">{suggestion.name}</div>
+                      <div className="text-gray-500 dark:text-gray-400 text-sm truncate">
+                        {suggestion.genres?.slice(0, 2).join(', ') || 'Action'}
+                      </div>
+                    </div>
+
+                    {/* Store Badge */}
+                    <div className="text-xs px-2 py-1 rounded bg-blue-600 text-white">
+                      {suggestion.storeName || 'Store'}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Loading State for Game Suggestions */}
+          {loading && searchTerm.trim().length >= 2 && (
+            <div className="mb-6 p-4 text-center">
+              <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">Searching for games...</p>
+            </div>
+          )}
+
+          {/* Popular Searches - Only show when no search term or no game suggestions */}
+          {(searchTerm.length === 0 || (!showGameSuggestions && gameSuggestions.length === 0)) && (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Popular Searches</h3>
               <div className="grid grid-cols-2 gap-3">
-                {suggestions.map((suggestion, index) => (
+                {popularSearches.map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => {

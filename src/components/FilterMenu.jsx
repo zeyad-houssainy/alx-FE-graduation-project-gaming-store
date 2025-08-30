@@ -203,11 +203,11 @@ export default function FilterMenu({
                 </div>
 
                 {/* Genres */}
-                <div className="bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 rounded-lg p-3">
+                <div className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-lg">🎮</span>
-                    <h4 className="font-medium text-white">Genres</h4>
-                    <span className="text-xs bg-white text-gray-900 px-2 py-1 rounded-full">
+                    <h4 className="font-medium text-gray-900 dark:text-white">Genres</h4>
+                    <span className="text-xs bg-blue-600 dark:bg-white text-white dark:text-gray-900 px-2 py-1 rounded-full">
                       {tempGenre.length} selected
                     </span>
                   </div>
@@ -218,8 +218,8 @@ export default function FilterMenu({
                         onClick={() => handleGenreToggle(genre)}
                         className={`px-3 py-2 text-sm rounded-lg border transition-all duration-200 ${
                           tempGenre.includes(genre)
-                            ? 'bg-white border-white text-gray-900 shadow-sm'
-                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500'
+                            ? 'bg-blue-600 dark:bg-white border-blue-600 dark:border-white text-white dark:text-gray-900 shadow-sm'
+                            : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                         }`}
                       >
                         {genre}
@@ -229,11 +229,11 @@ export default function FilterMenu({
                 </div>
 
                 {/* Platforms */}
-                <div className="bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 rounded-lg p-3">
+                <div className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-lg">🖥️</span>
-                    <h4 className="font-medium text-white">Platforms</h4>
-                    <span className="text-xs bg-white text-gray-900 px-2 py-1 rounded-full">
+                    <h4 className="font-medium text-gray-900 dark:text-white">Platforms</h4>
+                    <span className="text-xs bg-blue-600 dark:bg-white text-white dark:text-gray-900 px-2 py-1 rounded-full">
                       {tempPlatform.length} selected
                     </span>
                   </div>
@@ -244,8 +244,8 @@ export default function FilterMenu({
                         onClick={() => handlePlatformToggle(platform)}
                         className={`px-3 py-2 text-sm rounded-lg border transition-all duration-200 ${
                           tempPlatform.includes(platform)
-                            ? 'bg-white border-white text-gray-900 shadow-sm'
-                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500'
+                            ? 'bg-blue-600 dark:bg-white border-blue-600 dark:border-white text-white dark:text-gray-900 shadow-sm'
+                            : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                         }`}
                       >
                         {platform}
@@ -256,32 +256,32 @@ export default function FilterMenu({
 
                 {/* Active Filters Summary */}
                 {(tempGenre.length > 0 || tempPlatform.length > 0 || tempPriceRange.min || tempPriceRange.max) && (
-                  <div className="bg-gray-700 border border-gray-600 rounded-lg p-3">
-                    <h5 className="font-medium text-white mb-2 flex items-center gap-2">
+                  <div className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-3">
+                    <h5 className="font-medium text-gray-900 dark:text-white mb-2 flex items-center gap-2">
                       <span>⚡</span>
                       Active Filters
                     </h5>
                     <div className="space-y-1 text-sm">
                       {tempGenre.length > 0 && (
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-300">🎮</span>
-                          <span className="text-gray-300">
+                          <span className="text-gray-600 dark:text-gray-300">🎮</span>
+                          <span className="text-gray-600 dark:text-gray-300">
                             Genres: {tempGenre.join(', ')}
                           </span>
                         </div>
                       )}
                       {tempPlatform.length > 0 && (
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-300">🖥️</span>
-                          <span className="text-gray-300">
+                          <span className="text-gray-600 dark:text-gray-300">🖥️</span>
+                          <span className="text-gray-600 dark:text-gray-300">
                             Platforms: {tempPlatform.join(', ')}
                           </span>
                         </div>
                       )}
                       {(tempPriceRange.min || tempPriceRange.max) && (
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-300">💰</span>
-                          <span className="text-gray-300">
+                          <span className="text-gray-600 dark:text-gray-300">💰</span>
+                          <span className="text-gray-600 dark:text-gray-300">
                             Price: ${tempPriceRange.min || '0'} - ${tempPriceRange.max || '∞'}
                           </span>
                         </div>
@@ -292,23 +292,23 @@ export default function FilterMenu({
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between p-4 border-t border-gray-700 bg-gray-700/50">
+              <div className="flex items-center justify-between p-4 border-t border-gray-300 dark:border-gray-700 bg-gray-100/50 dark:bg-gray-700/50">
                 <button
                   onClick={clearAllFilters}
-                  className="px-4 py-2 text-gray-400 hover:text-white transition-colors font-medium"
+                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
                 >
                   Clear All
                 </button>
                 <div className="flex gap-2">
                   <button
                     onClick={handleClose}
-                    className="px-4 py-2 text-gray-400 hover:text-white transition-colors border border-gray-600 rounded-lg hover:bg-gray-600"
+                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleApply}
-                    className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                    className="px-6 py-2 bg-blue-600 dark:bg-white/20 hover:bg-blue-700 dark:hover:bg-white/30 text-white dark:text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
                   >
                     Apply Filters
                   </button>

@@ -56,10 +56,10 @@ export default function Cart() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 font-bold mb-6">
+            <div className="xl:col-span-2 space-y-4 sm:space-y-6">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 font-bold mb-4 sm:mb-6">
                 Cart Items ({getCartItemCount()})
               </h2>
              
@@ -71,28 +71,28 @@ export default function Cart() {
             </div>
 
             {/* Order Summary */}
-            <div className="lg:col-span-1">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200 dark:border-gray-700 sticky top-24">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 font-bold mb-6">
+            <div className="xl:col-span-1">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 md:p-6 shadow-lg border border-gray-200 dark:border-gray-700 sticky top-24">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100 font-bold mb-4 sm:mb-6">
                   Order Summary
                 </h3>
 
                 {/* Cart Items Summary */}
-                <div className="space-y-3 mb-6">
+                <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                   {items.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center text-sm">
-                      <div className="flex items-center space-x-3">
+                    <div key={item.id} className="flex justify-between items-center text-xs sm:text-sm">
+                      <div className="flex items-center space-x-2 sm:space-x-3">
                         <img
                           src={item.background_image || item.image || '/assets/images/featured-game-1.jpg'}
                           alt={item.name}
-                          className="w-12 h-12 rounded-lg object-cover"
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
                         />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">{item.name}</p>
-                          <p className="text-gray-500 dark:text-gray-400">Qty: {item.quantity}</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm">{item.name}</p>
+                          <p className="text-gray-500 dark:text-gray-400 text-xs">Qty: {item.quantity}</p>
                         </div>
                       </div>
-                      <span className="font-bold text-gray-900 dark:text-gray-100">
+                      <span className="font-bold text-gray-900 dark:text-gray-100 text-xs sm:text-sm">
                         ${(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
@@ -103,9 +103,9 @@ export default function Cart() {
                 <div className="border-t border-gray-200 dark:border-gray-600 my-4"></div>
 
                 {/* Total */}
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Total</span>
-                  <span className="text-2xl font-bold text-green-600">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">Total</span>
+                  <span className="text-xl sm:text-2xl font-bold text-green-600">
                     ${getCartTotal().toFixed(2)}
                   </span>
                 </div>
@@ -129,9 +129,9 @@ export default function Cart() {
                 </Button>
 
                 {/* Additional Info */}
-                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">What's included:</h4>
-                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2 text-sm sm:text-base">What's included:</h4>
+                  <ul className="text-xs sm:text-sm text-blue-800 dark:text-blue-200 space-y-1">
                     <li>• Digital download</li>
                     <li>• Instant access</li>
                     <li>• 24/7 support</li>

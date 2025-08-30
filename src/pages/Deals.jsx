@@ -34,19 +34,19 @@ const Deals = () => {
     switch (iconType) {
       case 'steam':
         return (
-          <img src="/assets/icons/steam.svg" alt="Steam" className="w-6 h-6" />
+          <img src="/assets/icons/steam.svg" alt="Steam" className="w-6 h-6 text-gray-800 dark:text-white" />
         );
       case 'epic':
         return (
-          <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-6 h-6" />
+          <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-6 h-6 text-gray-800 dark:text-white" />
         );
       case 'playstation':
         return (
-          <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-6 h-6" />
+          <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-6 h-6 text-gray-800 dark:text-white" />
         );
       case 'xbox':
         return (
-          <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-6 h-6" />
+          <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-6 h-6 text-gray-800 dark:text-white" />
         );
       default:
         return <span className="text-2xl">{iconType}</span>;
@@ -406,13 +406,27 @@ const Deals = () => {
                     <p className="text-gray-600 dark:text-gray-400">Best deals from all stores</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('all-deals-scroll').scrollLeft -= 300}>
-                    <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => {
+                      const allDealsGrid = document.getElementById('all-deals-grid');
+                      if (allDealsGrid) {
+                        allDealsGrid.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="px-6 py-2 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 hover:from-red-600 hover:via-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center gap-2"
+                  >
+                    <FaArrowDown className="w-4 h-4" />
+                    View More
                   </button>
-                  <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('all-deals-scroll').scrollLeft += 300}>
-                    <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('all-deals-scroll').scrollLeft -= 300}>
+                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('all-deals-scroll').scrollLeft += 300}>
+                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
                 </div>
               </div>
               <div id="all-deals-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
@@ -451,7 +465,7 @@ const Deals = () => {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 flex items-center justify-center">
-                      <img src="/assets/icons/steam.svg" alt="Steam" className="w-7 h-7" />
+                      <img src="/assets/icons/steam.svg" alt="Steam" className="w-7 h-7 text-gray-800 dark:text-white" />
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-800 bg-clip-text text-transparent">Steam Deals</h3>
@@ -501,7 +515,7 @@ const Deals = () => {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 flex items-center justify-center">
-                      <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-7 h-7" />
+                      <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-7 h-7 text-gray-800 dark:text-white" />
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">Epic Games</h3>
@@ -551,7 +565,7 @@ const Deals = () => {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 flex items-center justify-center">
-                      <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-7 h-7" />
+                      <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-7 h-7 text-gray-800 dark:text-white" />
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 bg-clip-text text-transparent">PS Store</h3>
@@ -601,7 +615,7 @@ const Deals = () => {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 flex items-center justify-center">
-                      <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-7 h-7" />
+                      <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-7 h-7 text-gray-800 dark:text-white" />
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 bg-clip-text text-transparent">Xbox</h3>
@@ -648,7 +662,7 @@ const Deals = () => {
             </div>
 
             {/* Deals Grid Section */}
-            <div className="mb-20">
+            <div id="all-deals-grid" className="mb-20">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -696,19 +710,19 @@ const renderPlatformIcon = (storeID) => {
     switch (storeID) {
       case '1': // Steam
         return (
-          <img src="/assets/icons/steam.svg" alt="Steam" className="w-4 h-4" />
+          <img src="/assets/icons/steam.svg" alt="Steam" className="w-4 h-4 text-gray-600 dark:text-gray-300" />
         );
       case '2': // Xbox
         return (
-          <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-4 h-4" />
+          <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-4 h-4 text-gray-600 dark:text-gray-300" />
         );
       case '3': // PlayStation
         return (
-          <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-4 h-4" />
+          <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-4 h-4 text-gray-600 dark:text-gray-300" />
         );
       default:
         return (
-          <img src="/assets/icons/check.svg" alt="Store" className="w-4 h-4" />
+          <img src="/assets/icons/check.svg" alt="Store" className="w-4 h-4 text-gray-600 dark:text-gray-300" />
         );
     }
   };

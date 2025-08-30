@@ -263,19 +263,19 @@ const Debug = () => {
               <div className="absolute top-3/4 right-1/4 w-48 h-48 border-2 border-orange-300 rotate-12 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
             </div>
             
-            <div className="relative z-10 container mx-auto px-4 py-16">
+            <div className="relative z-10 container mx-auto px-4 py-8 sm:py-12 md:py-16">
               <div className="text-center max-w-4xl mx-auto">
-                <div className="mb-8">
-                  <div className="inline-flex items-center justify-center w-24 h-24 bg-white/20 dark:bg-gray-800/20 rounded-full mb-6 backdrop-blur-md">
-                    <FaBug className="text-6xl text-white dark:text-gray-200" />
+                <div className="mb-6 sm:mb-8">
+                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white/20 dark:bg-gray-800/20 rounded-full mb-4 sm:mb-6 backdrop-blur-md">
+                    <FaBug className="text-4xl sm:text-5xl md:text-6xl text-white dark:text-gray-200" />
                   </div>
-                  <h1 className="text-5xl md:text-6xl font-black mb-4 text-white drop-shadow-2xl">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 sm:mb-4 text-white drop-shadow-2xl">
                     DEBUG MODE
                   </h1>
-                  <div className="w-32 h-2 bg-white/30 mx-auto rounded-full animate-pulse shadow-lg"></div>
+                  <div className="w-24 sm:w-32 h-1 sm:h-2 bg-white/30 mx-auto rounded-full animate-pulse shadow-lg"></div>
                 </div>
                 
-                <p className="text-xl md:text-2xl text-white max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg px-2">
                   System diagnostics, API status, and debugging information for developers
                 </p>
               </div>
@@ -283,21 +283,21 @@ const Debug = () => {
           </div>
 
           {/* Debug Content */}
-          <div className="container mx-auto px-4 py-16">
-            <div className="max-w-6xl mx-auto space-y-8">
+          <div className="container mx-auto px-4 py-8 sm:py-12 md:py-16">
+            <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
               
               {/* API Status Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 mb-6">
-                  <FaGlobe className="text-3xl text-blue-600 dark:text-blue-400" />
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">API Status</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <FaGlobe className="text-2xl sm:text-3xl text-blue-600 dark:text-blue-400" />
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">API Status</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {Object.entries(apiStatus).map(([apiName, status]) => (
-                    <div key={apiName} className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white capitalize">
+                    <div key={apiName} className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white capitalize">
                           {apiName} API
                         </h3>
                         {getStatusIcon(status.status)}
@@ -333,13 +333,13 @@ const Debug = () => {
               </div>
 
               {/* System Information Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 mb-6">
-                  <FaServer className="text-3xl text-green-600 dark:text-green-400" />
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">System Information</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <FaServer className="text-2xl sm:text-3xl text-green-600 dark:text-green-400" />
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">System Information</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {Object.entries(systemInfo).map(([key, value]) => (
                     <div key={key} className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                       <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 capitalize">
@@ -354,29 +354,29 @@ const Debug = () => {
               </div>
 
               {/* Debug Tools Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 mb-6">
-                  <FaCode className="text-3xl text-purple-600 dark:text-purple-400" />
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Debug Tools</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <FaCode className="text-2xl sm:text-3xl text-purple-600 dark:text-purple-400" />
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Debug Tools</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Console Logs</h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Console Logs</h3>
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
                       Check browser console for detailed logs and error messages
                     </p>
                     <button 
                       onClick={() => console.log('Debug: Manual console log test')}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base"
                     >
                       Test Console Log
                     </button>
                   </div>
                   
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Local Storage</h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Local Storage</h3>
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
                       View stored application data and settings
                     </p>
                     <button 
@@ -395,7 +395,7 @@ const Debug = () => {
                         console.log('Local Storage Data:', data);
                         alert('Local storage data logged to console');
                       }}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                      className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base"
                     >
                       View Storage
                     </button>
@@ -403,17 +403,17 @@ const Debug = () => {
                 </div>
 
                 {/* Development Tools */}
-                <div className="mt-8 p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-                  <div className="flex items-center gap-3 mb-4">
-                    <FaExclamationTriangle className="text-2xl text-red-600 dark:text-red-400" />
-                    <h3 className="text-xl font-semibold text-red-800 dark:text-red-200">Development Tools</h3>
+                <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <FaExclamationTriangle className="text-xl sm:text-2xl text-red-600 dark:text-red-400" />
+                    <h3 className="text-lg sm:text-xl font-semibold text-red-800 dark:text-red-200">Development Tools</h3>
                   </div>
-                  <p className="text-red-700 dark:text-red-300 mb-4">
+                  <p className="text-sm sm:text-base text-red-700 dark:text-red-300 mb-3 sm:mb-4">
                     ⚠️ These tools are for development purposes only and will permanently delete data.
                   </p>
                   <button
                     onClick={handleResetAllData}
-                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors shadow-lg"
+                    className="px-4 sm:px-6 py-2 sm:py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors shadow-lg text-sm sm:text-base"
                     title="Development only - Reset all data"
                   >
                     🔄 Reset All Data (Dev)
@@ -422,57 +422,57 @@ const Debug = () => {
               </div>
 
               {/* Performance Metrics */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 mb-6">
-                  <FaDatabase className="text-3xl text-orange-600 dark:text-orange-400" />
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Performance Metrics</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <FaDatabase className="text-2xl sm:text-3xl text-orange-600 dark:text-orange-400" />
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Performance Metrics</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600 text-center">
-                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-600 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                       {performance.now().toFixed(2)}
                     </div>
-                    <div className="text-gray-600 dark:text-gray-400">Performance Time (ms)</div>
+                    <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Performance Time (ms)</div>
                   </div>
                   
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600 text-center">
-                    <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-600 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
                       {navigator.hardwareConcurrency || 'N/A'}
                     </div>
-                    <div className="text-gray-600 dark:text-gray-400">CPU Cores</div>
+                    <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">CPU Cores</div>
                   </div>
                   
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600 text-center">
-                    <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-600 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                       {navigator.deviceMemory || 'N/A'}
                     </div>
-                    <div className="text-gray-600 dark:text-gray-400">Device Memory (GB)</div>
+                    <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Device Memory (GB)</div>
                   </div>
                 </div>
               </div>
 
               {/* Comprehensive API Testing Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 mb-6">
-                  <FaGlobe className="text-3xl text-purple-600 dark:text-purple-400" />
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Comprehensive API Testing</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <FaGlobe className="text-2xl sm:text-3xl text-purple-600 dark:text-purple-400" />
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Comprehensive API Testing</h2>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* API Testing Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
                     {/* Mock Store Test */}
-                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-                      <h5 className="text-lg font-semibold text-purple-800 dark:text-purple-200 mb-3">
+                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3 sm:p-4">
+                      <h5 className="text-base sm:text-lg font-semibold text-purple-800 dark:text-purple-200 mb-2 sm:mb-3">
                         🎯 Mock Store
                       </h5>
                       <div className="text-center">
-                        <div className="text-4xl mb-2">✅</div>
-                        <p className="text-purple-600 dark:text-purple-300 text-sm mb-3">
+                        <div className="text-3xl sm:text-4xl mb-2">✅</div>
+                        <p className="text-purple-600 dark:text-purple-300 text-xs sm:text-sm mb-2 sm:mb-3">
                           Local data - Always available
                         </p>
-                        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-left">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-2 sm:p-3 text-left">
                           <div className="text-xs text-purple-600 dark:text-purple-400 space-y-1">
                             <div>• Games: 8</div>
                             <div>• Status: Available</div>
@@ -484,20 +484,20 @@ const Debug = () => {
                     </div>
 
                     {/* CheapShark API Test */}
-                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                      <h5 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-3">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
+                      <h5 className="text-base sm:text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2 sm:mb-3">
                         💰 CheapShark API
                       </h5>
                       <div className="text-center">
-                        <div className="text-4xl mb-2">🔌</div>
-                        <p className="text-blue-600 dark:text-blue-300 text-sm mb-3">
+                        <div className="text-3xl sm:text-4xl mb-2">🔌</div>
+                        <p className="text-blue-600 dark:text-blue-300 text-xs sm:text-sm mb-2 sm:mb-3">
                           Test API connectivity
                         </p>
                         <button
                           onClick={testCheapSharkAPI}
                           disabled={isTestingCheapShark}
-                          className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors duration-200 ${
-                            isTestingCheapShark 
+                          className={`px-3 sm:px-4 py-2 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 ${
+                            isTestingCheapShark
                               ? 'bg-blue-400 cursor-not-allowed' 
                               : 'bg-blue-600 hover:bg-blue-700'
                           }`}

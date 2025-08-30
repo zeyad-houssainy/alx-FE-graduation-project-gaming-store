@@ -74,7 +74,7 @@ export default function Games() {
   
   const [sortBy, setLocalSortBy] = useState(() => {
     const savedSort = localStorage.getItem('gaming-sort-by');
-    return savedSort || 'relevance';
+    return savedSort || 'released';
   });
 
   const [localPriceRange, setLocalPriceRange] = useState(() => {
@@ -378,7 +378,7 @@ export default function Games() {
     setSelectedGenre([]);
     setSelectedPlatform([]);
     setLocalPriceRange({ min: '', max: '' });
-    setLocalSortBy('relevance');
+    setLocalSortBy('released');
     setSearchTerm('');
     setCurrentPageState(1);
     
@@ -544,43 +544,11 @@ export default function Games() {
                   <img 
                     src="/assets/icons/windows.svg" 
                     alt="PC" 
-                    className="w-full h-full"
+                    className="w-full h-full text-gray-800 dark:text-white"
                   />
                 </button>
 
-                {/* Steam */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('steam')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('Steam')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="Steam"
-                >
-                  <img 
-                    src="/assets/icons/steam.svg" 
-                    alt="Steam" 
-                    className="w-full h-full"
-                  />
-                </button>
 
-                {/* Epic Games */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('epic')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('Epic Games')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="Epic Games"
-                >
-                  <img 
-                    src="/assets/icons/epic-games.svg" 
-                    alt="Epic Games" 
-                    className="w-full h-full"
-                  />
-                </button>
 
                 {/* PlayStation */}
                 <button
@@ -595,7 +563,7 @@ export default function Games() {
                   <img 
                     src="/assets/icons/playstation.svg" 
                     alt="PlayStation" 
-                    className="w-full h-full"
+                    className="w-full h-full text-gray-800 dark:text-white"
                   />
                 </button>
 
@@ -612,7 +580,7 @@ export default function Games() {
                   <img 
                     src="/assets/icons/xbox.svg" 
                     alt="Xbox" 
-                    className="w-full h-full"
+                    className="w-full h-full text-gray-800 dark:text-white"
                   />
                 </button>
 
@@ -629,7 +597,7 @@ export default function Games() {
                   <img 
                     src="/assets/icons/nintendo-switch.svg" 
                     alt="Nintendo Switch" 
-                    className="w-full h-full"
+                    className="w-full h-full text-gray-800 dark:text-white"
                   />
                 </button>
 
@@ -646,26 +614,11 @@ export default function Games() {
                   <img 
                     src="/assets/icons/mac-os.svg" 
                     alt="macOS" 
-                    className="w-full h-full"
+                    className="w-full h-full text-gray-800 dark:text-white"
                   />
                 </button>
 
-                {/* Linux/Ubuntu */}
-                <button
-                  onClick={() => handlePlatformQuickFilter('linux')}
-                  className={`w-8 h-8 transition-all duration-300 hover:scale-110 ${
-                    selectedPlatform.includes('Linux')
-                      ? 'opacity-100 transform scale-110'
-                      : 'opacity-50 hover:opacity-75'
-                  }`}
-                  title="Linux"
-                >
-                  <img 
-                    src="/assets/icons/ubuntu.svg" 
-                    alt="Linux" 
-                    className="w-full h-full"
-                  />
-                </button>
+
               </div>
 
               {/* Sort By (separate control) */}
@@ -676,6 +629,7 @@ export default function Games() {
                   onChange={(e) => handleSortChange(e.target.value)}
                   className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 dark:focus:ring-orange-500 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2"
                 >
+                  <option value="released">Newest First</option>
                   <option value="relevance">Relevance</option>
                   <option value="name-asc">Name A-Z</option>
                   <option value="name-desc">Name Z-A</option>
@@ -684,7 +638,6 @@ export default function Games() {
                   <option value="rating">Highest Rated</option>
                   {activeStore === 'rawg' && (
                     <>
-                      <option value="released">Newest First</option>
                       <option value="metacritic">Highest Metacritic</option>
                       <option value="added">Most Popular</option>
                     </>
@@ -836,7 +789,7 @@ export default function Games() {
                     setSelectedGenre([]);
                     setSelectedPlatform([]);
                     setLocalPriceRange({ min: '', max: '' });
-                    setLocalSortBy('relevance');
+                    setLocalSortBy('released');
                   }}
                   className="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors"
                 >

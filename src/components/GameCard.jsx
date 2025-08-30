@@ -8,6 +8,8 @@ export default function GameCard({ game }) {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
+
+
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   const { addToCart } = useCartStore();
@@ -78,6 +80,8 @@ export default function GameCard({ game }) {
     }
   };
 
+
+
   // Get unique platform icons (avoid duplicates like PS4/PS5)
   const getUniquePlatformIcons = () => {
     if (!game.platforms || !Array.isArray(game.platforms) || game.platforms.length === 0) {
@@ -120,44 +124,43 @@ export default function GameCard({ game }) {
   // Get platform icon component
   const getPlatformIconComponent = (iconType, index) => {
     const iconProps = {
-      key: index,
-      className: "w-3 h-3 filter brightness-0 invert"
+      className: "w-3 h-3 text-black dark:text-white"
     };
 
     switch (iconType) {
       case 'steam':
-        return <img src="/assets/icons/steam.svg" alt="Steam" {...iconProps} />;
+        return <img key={index} src="/assets/icons/steam.svg" alt="Steam" {...iconProps} />;
       case 'epic':
-        return <img src="/assets/icons/epic-games.svg" alt="Epic Games" {...iconProps} />;
+        return <img key={index} src="/assets/icons/epic-games.svg" alt="Epic Games" {...iconProps} />;
       case 'playstation':
-        return <img src="/assets/icons/playstation.svg" alt="PlayStation" {...iconProps} />;
+        return <img key={index} src="/assets/icons/playstation.svg" alt="PlayStation" {...iconProps} />;
       case 'psp':
-        return <img src="/assets/icons/sony.svg" alt="PSP" {...iconProps} />;
+        return <img key={index} src="/assets/icons/sony.svg" alt="PSP" {...iconProps} />;
       case 'xbox':
-        return <img src="/assets/icons/xbox.svg" alt="Xbox" {...iconProps} />;
+        return <img key={index} src="/assets/icons/xbox.svg" alt="Xbox" {...iconProps} />;
       case 'nintendo':
-        return <img src="/assets/icons/nintendo-switch.svg" alt="Nintendo" {...iconProps} />;
+        return <img key={index} src="/assets/icons/nintendo-switch.svg" alt="Nintendo" {...iconProps} />;
       case 'pc':
-        return <img src="/assets/icons/windows.svg" alt="PC" {...iconProps} />;
+        return <img key={index} src="/assets/icons/windows.svg" alt="PC" {...iconProps} />;
       case 'mac':
-        return <img src="/assets/icons/mac-os.svg" alt="macOS" {...iconProps} />;
+        return <img key={index} src="/assets/icons/mac-os.svg" alt="macOS" {...iconProps} />;
       case 'linux':
-        return <img src="/assets/icons/ubuntu.svg" alt="Linux" {...iconProps} />;
+        return <img key={index} src="/assets/icons/ubuntu.svg" alt="Linux" {...iconProps} />;
       case 'android':
-        return <img src="/assets/icons/android.svg" alt="Android" {...iconProps} />;
+        return <img key={index} src="/assets/icons/android.svg" alt="Android" {...iconProps} />;
       default:
-        return <span key={index} className="text-xs text-white font-medium">P</span>;
+        return <span key={index} className="text-xs text-black dark:text-white font-medium">P</span>;
     }
   };
 
   return (
-    <div className="group bg-gradient-to-b from-gray-900 via-gray-800 to-black rounded-xl overflow-hidden border border-gray-700 transition-all duration-300 ease-in-out w-[400px] h-[350px] hover:h-[600px] flex flex-col hover:shadow-2xl shadow-lg relative">
+    <div className="group bg-gradient-to-b from-white/80 via-white/80 to-white/80 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-xl overflow-hidden border border-gray-300 dark:border-gray-700 transition-all duration-300 ease-in-out w-[400px] h-[350px] hover:h-[600px] flex flex-col hover:shadow-2xl shadow-lg relative">
       {/* Clickable Image Container - Links to Game Detail */}
       <Link to={`/games/${game.id}`} className="block flex-shrink-0">
-        <div className="relative overflow-hidden w-full h-[230px] bg-gray-900 group">
+        <div className="relative overflow-hidden w-full h-[230px] bg-white/80 dark:bg-gray-900 group">
           {/* Loading State */}
           {imageLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
             </div>
           )}
@@ -183,29 +186,17 @@ export default function GameCard({ game }) {
           
           {/* Rating Display */}
           <div className="absolute top-3 right-3">
-            <div className="bg-black/70 dark:bg-white/70 text-white dark:text-black px-2 py-1 rounded-lg text-xs font-bold">
+            <div className="bg-white/90 dark:bg-black/70 text-black dark:text-white px-2 py-1 rounded-lg text-xs font-bold">
               {game.rating ? `${game.rating.toFixed(1)}/5` : '4.2/5'}
             </div>
           </div>
 
-          {/* Image Gallery Dots */}
-          <div className="absolute bottom-3 right-3 flex gap-1">
-            {[1, 2, 3, 4, 5].map((_, index) => (
-              <div 
-                key={index} 
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                  index === 0 
-                    ? 'bg-white w-3' 
-                    : 'bg-white/40'
-                }`}
-              />
-            ))}
-            </div>
+
         </div>
       </Link>
 
       {/* Content Section - Fixed height for lower part */}
-      <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 h-[120px] flex flex-col justify-between transition-all duration-300 group-hover:h-[370px]">
+      <div className="p-4 bg-gradient-to-b from-white/80 to-white/80 dark:from-gray-800 dark:to-gray-900 h-[120px] flex flex-col justify-between transition-all duration-300 group-hover:h-[370px]">
         {/* Platform Icons Header */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -216,35 +207,61 @@ export default function GameCard({ game }) {
             ))}
           </div>
           
-          {/* Favorite Button */}
-          <button
-            onClick={handleFavoriteToggle}
-            className="w-6 h-6 flex items-center justify-center text-white hover:text-red-500 transition-all duration-200"
-            title={isInFavorites ? 'Remove from favorites' : 'Add to favorites'}
-          >
-            <FaHeart className={`w-5 h-5 ${isInFavorites ? 'fill-red-500 scale-110' : 'fill-white/30 hover:fill-red-400'}`} />
-          </button>
+          {/* Action Buttons - Favorite and Add to Cart */}
+          <div className="flex items-center gap-2">
+            {/* Favorite Button */}
+            <button
+              onClick={handleFavoriteToggle}
+              className="w-6 h-6 flex items-center justify-center text-black dark:text-white hover:text-red-500 transition-all duration-200 hover:scale-110"
+              title={isInFavorites ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <FaHeart className={`w-5 h-5 ${isInFavorites ? 'fill-red-500 scale-110' : 'fill-gray-400 dark:fill-white/30 hover:fill-red-400'}`} />
+            </button>
+            
+            {/* Add to Cart Button */}
+            <button
+              onClick={handleAddToCart}
+              className={`w-6 h-6 rounded-full transition-all duration-300 ease-in-out flex items-center justify-center hover:scale-110 shadow-md hover:shadow-lg ${
+                isAddedToCart 
+                  ? 'bg-green-600 hover:bg-green-700 text-white' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+              title={isAddedToCart ? 'Added to Cart!' : 'Add to Cart'}
+            >
+              <div className={`transition-all duration-300 ease-in-out transform ${
+                isAddedToCart ? 'rotate-360 scale-110' : 'rotate-0 scale-100'
+              }`}>
+                {isAddedToCart ? (
+                  <img src="/assets/icons/check.svg" alt="Added to Cart" className="w-4 h-4 filter brightness-0 invert" />
+                ) : (
+                  <FaShoppingCart className="w-4 h-4" />
+                )}
+              </div>
+            </button>
+          </div>
         </div>
         
         {/* Game Title and Price */}
         <div className="mb-3">
           <div className="flex items-start justify-between gap-2">
             <Link to={`/games/${game.id}`} className="block flex-1">
-              <h3 className="text-lg font-bold text-white line-clamp-2 leading-tight hover:text-blue-300 transition-colors cursor-pointer">
+              <h3 className="text-lg font-bold text-black dark:text-white line-clamp-2 leading-tight hover:text-blue-600 dark:hover:text-blue-300 transition-colors cursor-pointer">
                 {game.name || 'Untitled Game'}
               </h3>
             </Link>
             
             {/* Price Display */}
             <div className="flex-shrink-0 text-right">
-              <div className="text-lg font-bold text-green-400">
+              <div className="text-lg font-bold text-green-600 dark:text-green-400">
                 ${game.price ? game.price.toFixed(2) : '19.99'}
               </div>
               {game.originalPrice && game.originalPrice > game.price && (
-                <div className="text-sm text-gray-400 line-through">
+                <div className="text-sm text-black dark:text-gray-400 line-through">
                   ${game.originalPrice.toFixed(2)}
                 </div>
               )}
+              
+              
             </div>
           </div>
           
@@ -261,58 +278,40 @@ export default function GameCard({ game }) {
         <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 space-y-4 overflow-hidden">
           {/* Game Details */}
           <div className="space-y-3">
-            <div className="text-sm text-gray-300">
-              <span className="text-gray-400">Release date:</span>
-              <div className="text-white font-medium mt-1">{formatReleaseDate(game.released)}</div>
+            <div className="text-sm text-black dark:text-gray-300">
+              <span className="text-black dark:text-gray-400">Release date:</span>
+              <div className="text-black dark:text-white font-medium mt-1">{formatReleaseDate(game.released)}</div>
             </div>
             
-            <div className="text-sm text-gray-300">
-              <span className="text-gray-400">Genres:</span>
+            <div className="text-sm text-black dark:text-gray-300">
+              <span className="text-black dark:text-gray-400">Genres:</span>
               <div className="flex flex-wrap gap-2 mt-1">
-                <span className="text-white text-xs">{game.genres?.[0]?.name || 'Action'}</span>
+                <span className="text-black dark:text-white text-xs">{game.genres?.[0]?.name || 'Action'}</span>
                 {game.genres?.[1]?.name && (
                   <>
-                    <span className="text-gray-500 text-xs">•</span>
-                    <span className="text-white text-xs">{game.genres[1].name}</span>
+                    <span className="text-black text-xs">•</span>
+                    <span className="text-black dark:text-white text-xs">{game.genres[1].name}</span>
                   </>
                 )}
               </div>
             </div>
             
-            <div className="text-sm text-gray-300">
-              <span className="text-gray-400">Chart:</span>
-              <div className="text-white font-medium mt-1">#7 Top 2025</div>
+            <div className="text-sm text-black dark:text-gray-300">
+              <span className="text-black dark:text-gray-400">Chart:</span>
+              <div className="text-black dark:text-white font-medium mt-1">#7 Top 2025</div>
             </div>
           </div>
           
 
         </div>
 
-        {/* Bottom Action Button - Add to Cart (Only visible on hover) */}
-        <div className="mt-auto opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150">
-          <button
-            onClick={handleAddToCart}
-            className={`w-full py-3 px-4 rounded-lg font-bold transition-all duration-300 ease-in-out flex items-center justify-center gap-2 ${
-              isAddedToCart 
-                ? 'bg-green-600 hover:bg-green-700 text-white' 
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-          >
-            <div className={`transition-all duration-300 ease-in-out transform ${
-              isAddedToCart ? 'rotate-360 scale-110' : 'rotate-0 scale-100'
-            }`}>
-              {isAddedToCart ? (
-                <img src="/assets/icons/check.svg" alt="Added to Cart" className="w-4 h-4 filter brightness-0 invert" />
-              ) : (
-                <FaShoppingCart className="w-4 h-4" />
-              )}
-            </div>
-            <span className="font-semibold">
-              {isAddedToCart ? 'Added to Library!' : 'Add to Cart'}
-            </span>
-          </button>
-        </div>
+
       </div>
     </div>
   );
 }
+
+
+
+
+
