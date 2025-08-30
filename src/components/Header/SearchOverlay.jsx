@@ -140,7 +140,7 @@ export default function SearchOverlay({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-start justify-center pt-24 p-4">
+    <div className="fixed inset-0 bg-black/640 backdrop-blur-sm z-50 flex items-start justify-center pt-24 p-4">
       <div 
         ref={searchRef}
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 relative"

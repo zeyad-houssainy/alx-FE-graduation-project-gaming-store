@@ -9,7 +9,7 @@ import RatingStars from '../components/RatingStars';
 import Button from '../components/Button';
 import StoreInfo from '../components/StoreInfo';
 import { fetchGameScreenshots, fetchGameMovies } from '../services/rawgApi';
-import { FaHeart, FaShare, FaDownload, FaCalendar, FaGamepad, FaStar, FaShoppingCart, FaArrowLeft, FaTrophy, FaPlay, FaInfoCircle, FaTags, FaGlobe, FaUsers, FaClock, FaThumbsUp, FaThumbsDown, FaVideo, FaImages, FaExpand, FaCalendarAlt, FaEye, FaRocket, FaGem, FaLightbulb } from 'react-icons/fa';
+import { FaHeart, FaShare, FaDownload, FaCalendar, FaGamepad, FaStar, FaShoppingCart, FaArrowLeft, FaTrophy, FaPlay, FaInfoCircle, FaTags, FaGlobe, FaUsers, FaClock, FaThumbsUp, FaThumbsDown, FaVideo, FaImages, FaExpand, FaCalendarAlt, FaEye, FaRocket, FaGem, FaLightbulb, FaCheck } from 'react-icons/fa';
 
 export default function GameDetail() {
   const { id } = useParams();
@@ -35,6 +35,7 @@ export default function GameDetail() {
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   // Define media arrays early to avoid hoisting issues
   const allScreenshots = game ? [
@@ -281,6 +282,9 @@ export default function GameDetail() {
   const handleAddToCart = () => {
     if (game) {
       addToCart(game);
+      setIsAddedToCart(true);
+      // Reset the check icon after 2 seconds
+      setTimeout(() => setIsAddedToCart(false), 2000);
     }
   };
 
@@ -476,9 +480,17 @@ export default function GameDetail() {
                     size="large"
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 sm:gap-3 border-2 border-blue-500 hover:border-blue-600"
                   >
-                    <FaShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="hidden sm:inline">Add to Cart - {formatPrice(game.price)}</span>
-                    <span className="sm:hidden">Add to Cart</span>
+                    {isAddedToCart ? (
+                      <FaCheck className="w-4 h-4 sm:w-5 sm:h-5" />
+                    ) : (
+                      <FaShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                    )}
+                    <span className="hidden sm:inline">
+                      {isAddedToCart ? 'Added to Cart!' : `Add to Cart - ${formatPrice(game.price)}`}
+                    </span>
+                    <span className="sm:hidden">
+                      {isAddedToCart ? 'Added!' : 'Add to Cart'}
+                    </span>
                   </Button>
                   <button
                     onClick={handleWishlist}

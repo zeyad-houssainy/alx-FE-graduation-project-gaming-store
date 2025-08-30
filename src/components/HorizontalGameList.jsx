@@ -11,15 +11,25 @@ const HorizontalGameList = ({
   scrollId, 
   showScrollButtons = true 
 }) => {
-  // Scroll navigation functions
+  // Scroll navigation functions with smooth animation
   const scrollLeft = () => {
     const element = document.getElementById(scrollId);
-    if (element) element.scrollLeft -= 300;
+    if (element) {
+      element.scrollTo({
+        left: element.scrollLeft - 300,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const scrollRight = () => {
     const element = document.getElementById(scrollId);
-    if (element) element.scrollLeft += 300;
+    if (element) {
+      element.scrollTo({
+        left: element.scrollLeft + 300,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -63,7 +73,7 @@ const HorizontalGameList = ({
       </div>
       
       {/* Horizontal scrollable game list container */}
-      <div id={scrollId} className="flex flex-row gap-2 overflow-x-auto scrollbar-hide pb-4">
+      <div id={scrollId} className="flex flex-row gap-0 overflow-x-auto scrollbar-hide pb-4">
         {/* Individual game items */}
         {games.map((game) => (
           <>

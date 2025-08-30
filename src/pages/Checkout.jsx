@@ -151,11 +151,14 @@ export default function Checkout() {
       const total = subtotal + shipping + tax;
 
       const newOrder = {
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
         items: items.map(item => ({
           id: item.id,
           name: item.name,
           price: item.price,
-          quantity: item.quantity
+          quantity: item.quantity,
+          background_image: item.background_image || item.image || item.imageUrl
         })),
         subtotal: subtotal,
         shipping: shipping,

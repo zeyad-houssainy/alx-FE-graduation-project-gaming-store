@@ -61,7 +61,7 @@ A modern, responsive gaming marketplace built with React that allows users to di
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/alx-FE-graduation-project-gaming-store.git
+   git clone https://github.com/zeyad-houssainy/alx-FE-graduation-project-gaming-store.git
    cd alx-FE-graduation-project-gaming-store
    ```
 
@@ -72,14 +72,28 @@ A modern, responsive gaming marketplace built with React that allows users to di
    yarn install
    ```
 
-3. **Start development server**
+3. **Configure API Keys**
+   
+   **RAWG API Setup:**
+   - Go to [RAWG API Documentation](https://rawg.io/apidocs)
+   - Create an account and get your API key
+   - Update your API configuration with the new key
+   
+   **API Configuration:**
+   ```javascript
+   // In your API config file
+   Site/App URL: http://localhost:5000/games
+   API Key: Your-API-Key
+   ```
+
+4. **Start development server**
    ```bash
    npm run dev
    # or
    yarn dev
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to `http://localhost:5000` to view the application
 
 ### Build for Production
@@ -114,6 +128,34 @@ yarn build
 - **Purpose**: Fetch game deals, discounts, and pricing information from multiple retailers
 - **Implementation**: Used in the **Deals page** (`/deals`) to showcase special offers and price drops
 - **Features**: Deal tracking, price comparison, discount notifications
+
+## ⚠️ Troubleshooting
+
+### **Games Not Showing?**
+If games are not displaying in your application, it might be due to an expired RAWG API access token. Here's how to fix it:
+
+1. **Check API Key Status**
+   - Visit [RAWG API Documentation](https://rawg.io/apidocs)
+   - Sign in to your account or create a new one
+   - Generate a new API key
+
+2. **Update Configuration**
+   - Replace your old API key with the new one in your project files:
+     - **RAWG API**: Update in `src/services/rawgApi.js`
+     - **CheapShark API**: Update in `src/services/cheapsharkApi.js`
+   - Ensure your app URL is correctly set to `http://localhost:5000/games`
+   - Restart your development server
+
+3. **API Limits**
+   - Free tier: 20,000 requests per month
+   - Business tier: 50,000 requests per month
+   - Enterprise tier: 1,000,000 requests per month
+
+4. **Common Issues**
+   - **Expired Token**: API keys can expire, requiring renewal
+   - **Rate Limiting**: Exceeding monthly request limits
+   - **Invalid URL**: Ensure your app URL matches exactly
+   - **Network Issues**: Check your internet connection and firewall settings
 
 ## 📁 Project Structure
 
@@ -200,7 +242,7 @@ npm run test:watch
 
 ## 📞 Contact
 
-- **Project Link**: [https://github.com/yourusername/alx-FE-graduation-project-gaming-store](https://github.com/yourusername/alx-FE-graduation-project-gaming-store)
+- **Project Link**: [https://github.com/zeyad-houssainy/alx-FE-graduation-project-gaming-store](https://github.com/zeyad-houssainy/alx-FE-graduation-project-gaming-store)
 - **Live Demo**: [https://alx-fe-graduation-project-gaming-st.vercel.app/](https://alx-fe-graduation-project-gaming-st.vercel.app/)
 
 ---

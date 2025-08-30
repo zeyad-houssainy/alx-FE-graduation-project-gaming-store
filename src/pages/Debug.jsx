@@ -7,7 +7,7 @@ import { FaBug, FaCode, FaDatabase, FaGlobe, FaServer, FaExclamationTriangle, Fa
 
 const Debug = () => {
   const navigate = useNavigate();
-  const { resetAllData } = useAuthStore();
+  const { resetAllData, orders, addOrder, removeOrder } = useAuthStore();
   
   const [systemInfo, setSystemInfo] = useState({});
   const [apiStatus, setApiStatus] = useState({});
@@ -418,6 +418,103 @@ const Debug = () => {
                   >
                     🔄 Reset All Data (Dev)
                   </button>
+                </div>
+
+                {/* Orders Debug Section */}
+                <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <FaStore className="text-xl sm:text-2xl text-blue-600 dark:text-blue-400" />
+                    <h3 className="text-lg sm:text-xl font-semibold text-blue-800 dark:text-blue-200">Orders Debug</h3>
+                  </div>
+                  <p className="text-sm sm:text-base text-blue-700 dark:text-blue-300 mb-3 sm:mb-4">
+                    Debug order functionality and view current orders in the system.
+                  </p>
+                  
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4">
+                      <h4 className="font-semibold text-blue-800 dark:text-blue-200 text-sm sm:text-base mb-2">
+                        Current Orders: {orders?.length || 0}
+                      </h4>
+                      {orders && orders.length > 0 ? (
+                        <div className="space-y-2 text-xs sm:text-sm">
+                          {orders.map((order, index) => (
+                            <div key={order.id} className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                              <div className="font-medium">Order #{order.id}</div>
+                              <div className="text-gray-600 dark:text-gray-400">
+                                {order.items?.length || 0} items • ${order.total?.toFixed(2) || '0.00'}
+                              </div>
+                              <div className="text-gray-500 dark:text-gray-500 text-xs">
+                                {order.createdAt ? new Date(order.createdAt).toLocaleString() : 'No date'}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">No orders found</p>
+                      )}
+                    </div>
+                    
+                    <div className="flex gap-2 sm:gap-3">
+                      <button
+                        onClick={() => {
+                          const testOrder = {
+                            id: Date.now().toString(),
+                            createdAt: new Date().toISOString(),
+                                                         items: [
+                               { 
+                                 id: 'test-1', 
+                                 name: 'Test Game 1', 
+                                 price: 29.99, 
+                                 quantity: 1,
+                                 background_image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop&crop=center'
+                               },
+                               { 
+                                 id: 'test-2', 
+                                 name: 'Test Game 2', 
+                                 price: 19.99, 
+                                 quantity: 2,
+                                 background_image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=300&fit=crop&crop=center'
+                               }
+                             ],
+                            subtotal: 69.97,
+                            shipping: 0,
+                            tax: 3.50,
+                            total: 73.47,
+                            shippingAddress: {
+                              firstName: 'Test',
+                              lastName: 'User',
+                              address1: '123 Test St',
+                              city: 'Test City',
+                              state: 'TS',
+                              zip: '12345',
+                              country: 'Test Country'
+                            },
+                            paymentDetails: {
+                              cardType: 'Credit Card',
+                              cardNumber: '1234',
+                              expiryDate: '12/25',
+                              cardHolder: 'Test User'
+                            }
+                          };
+                          addOrder(testOrder);
+                        }}
+                        className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200"
+                      >
+                        ➕ Add Test Order
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          if (orders && orders.length > 0) {
+                            removeOrder(orders[0].id);
+                          }
+                        }}
+                        className="px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200"
+                      >
+                        🗑️ Remove First Order
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 

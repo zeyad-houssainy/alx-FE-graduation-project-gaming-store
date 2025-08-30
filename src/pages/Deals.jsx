@@ -11,11 +11,9 @@ import HorizontalGameList from '../components/HorizontalGameList';
 import GameCard from '../components/GameCard';
 
 const Deals = () => {
-  const [deals, setDeals] = useState([]);
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeSection, setActiveSection] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [consolidatedDeals, setConsolidatedDeals] = useState([]);
 
@@ -64,7 +62,6 @@ const Deals = () => {
       const dealsData = await fetchDeals({ pageSize: 100 });
       
       if (dealsData && Array.isArray(dealsData)) {
-        setDeals(dealsData);
         // Consolidate deals to remove duplicates and show only cheapest price
         const consolidated = consolidateDeals(dealsData);
         setConsolidatedDeals(consolidated);
@@ -74,23 +71,15 @@ const Deals = () => {
     } catch (err) {
       setError('Failed to fetch deals. Please try again later.');
       console.error('Error fetching deals:', err);
-      setDeals([]); // Set empty array on error
       setConsolidatedDeals([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Filter deals based on active section and search term
+  // Filter deals based on search term
   const getFilteredDeals = () => {
-    let filtered = consolidatedDeals.filter(deal => {
-      if (activeSection === 'all') return true;
-      if (activeSection === 'steam') return deal.cheapestDeal?.storeID === '1';
-      if (activeSection === 'epic') return deal.cheapestDeal?.storeID === '25';
-      if (activeSection === 'ps') return deal.cheapestDeal?.storeID === '3';
-      if (activeSection === 'xbox') return deal.cheapestDeal?.storeID === '2';
-      return true;
-    }).filter(deal => deal.title && deal.title.trim() !== ''); // Filter out deals without titles
+    let filtered = consolidatedDeals.filter(deal => deal.title && deal.title.trim() !== ''); // Filter out deals without titles
 
     // Apply search filter if searchTerm exists
     if (searchTerm && searchTerm.trim()) {
@@ -234,7 +223,7 @@ const Deals = () => {
                     <div
                       key={section.id}
                       className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-500 transform hover:scale-110 hover:rotate-1 overflow-hidden cursor-default ${
-                        activeSection === section.id
+                        section.id === 'all' // Changed to check for 'all' directly
                           ? `bg-gradient-to-r ${section.color} text-white shadow-2xl shadow-${section.color.split('-')[1]}/50 scale-105`
                           : 'bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/30 dark:hover:bg-gray-700/50 border-2 border-white/30 dark:border-gray-600/30 hover:border-white/50 dark:hover:border-gray-500/50 text-black dark:text-white'
                       }`}
@@ -252,7 +241,7 @@ const Deals = () => {
                       </div>
                        
                       {/* Active Indicator */}
-                      {activeSection === section.id && (
+                      {section.id === 'all' && ( // Changed to check for 'all' directly
                         <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full animate-pulse"></div>
                       )}
                     </div>
@@ -341,7 +330,7 @@ const Deals = () => {
           </div>
 
                      {/* Deals Sections */}
-           <div className="max-w-[1536px] mx-auto px-4 py-16 deals-section relative">
+           <div className="container mx-auto px-1 sm:px-2 py-8 sm:py-12 deals-section relative">
             {/* Flashy Background Elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               {/* Animated Gradient Circles */}
@@ -380,54 +369,7 @@ const Deals = () => {
               </div>
             </div>
             
-                         {/* All Deals Section */}
-             <div className="mb-20">
-               {getFilteredDeals().length > 0 ? (
-                 <>
-                   <HorizontalGameList
-                     title="All Deals"
-                     subtitle="Best deals from all stores"
-                     icon={<span className="text-2xl">🔥</span>}
-                     iconBgColor=""
-                     games={getFilteredDeals().slice(0, 15).map(deal => ({
-                       id: deal.gameId || deal.id,
-                       name: deal.title,
-                       background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                       price: deal.cheapestPrice,
-                       originalPrice: deal.normalPrice,
-                       rating: 4.0,
-                       platforms: ['PC'],
-                       genre: 'Action'
-                     }))}
-                     renderGameItem={(game) => <PortraitGameCard game={game} />}
-                     scrollId="all-deals-scroll"
-                     showScrollButtons={true}
-                   />
-                   
-                   {/* View More Button */}
-                   <div className="flex justify-center mt-6">
-                     <button 
-                       onClick={() => {
-                         const allDealsGrid = document.getElementById('all-deals-grid');
-                         if (allDealsGrid) {
-                           allDealsGrid.scrollIntoView({ behavior: 'smooth' });
-                         }
-                       }}
-                       className="px-6 py-2 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 hover:from-red-600 hover:via-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center gap-2"
-                     >
-                       <FaArrowDown className="w-4 h-4" />
-                       View More
-                     </button>
-                   </div>
-                 </>
-               ) : (
-                 <div className="text-center py-16">
-                   <div className="text-6xl mb-4">😔</div>
-                   <h3 className="text-2xl font-bold text-gray-600 dark:text-gray-400 mb-2">No deals at the moment</h3>
-                   <p className="text-gray-500 dark:text-gray-500">Check back later for amazing gaming deals!</p>
-                 </div>
-               )}
-             </div>
+                         
             
                          {/* Store-Specific Horizontal Scroll Sections */}
              <div className="space-y-16 mb-20">
@@ -438,16 +380,17 @@ const Deals = () => {
                    subtitle="Exclusive Steam discounts"
                    icon={<img src="/assets/icons/steam.svg" alt="Steam" className="w-7 h-7 text-gray-800 dark:text-white" />}
                    iconBgColor=""
-                   games={getStoreDeals('1').slice(0, 10).map(deal => ({
-                     id: deal.gameId || deal.id,
-                     name: deal.title,
-                     background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                     price: deal.cheapestPrice,
-                     originalPrice: deal.normalPrice,
-                     rating: 4.0,
-                     platforms: ['PC'],
-                     genre: 'Action'
-                   }))}
+                                        games={getStoreDeals('1').slice(0, 10).map(deal => ({
+                       id: deal.gameId || deal.id,
+                       name: deal.title,
+                       background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                       price: deal.cheapestPrice,
+                       originalPrice: deal.normalPrice,
+                       rating: 4.0,
+                       platforms: ['PC'],
+                       genre: 'Action',
+                       isDeal: true
+                     }))}
                    renderGameItem={(game) => <PortraitGameCard game={game} />}
                    scrollId="steam-scroll"
                    showScrollButtons={true}
@@ -467,16 +410,17 @@ const Deals = () => {
                    subtitle="Epic Games discounts"
                    icon={<img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-7 h-7 text-gray-800 dark:text-white" />}
                    iconBgColor=""
-                   games={getStoreDeals('25').slice(0, 10).map(deal => ({
-                     id: deal.gameId || deal.id,
-                     name: deal.title,
-                     background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                     price: deal.cheapestPrice,
-                     originalPrice: deal.normalPrice,
-                     rating: 4.0,
-                     platforms: ['PC'],
-                     genre: 'Action'
-                   }))}
+                                        games={getStoreDeals('25').slice(0, 10).map(deal => ({
+                       id: deal.gameId || deal.id,
+                       name: deal.title,
+                       background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                       price: deal.cheapestPrice,
+                       originalPrice: deal.normalPrice,
+                       rating: 4.0,
+                       platforms: ['PC'],
+                       genre: 'Action',
+                       isDeal: true
+                     }))}
                    renderGameItem={(game) => <PortraitGameCard game={game} />}
                    scrollId="epic-scroll"
                    showScrollButtons={true}
@@ -496,16 +440,17 @@ const Deals = () => {
                    subtitle="PlayStation Store discounts"
                    icon={<img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-7 h-7 text-gray-800 dark:text-white" />}
                    iconBgColor=""
-                   games={getStoreDeals('3').slice(0, 10).map(deal => ({
-                     id: deal.gameId || deal.id,
-                     name: deal.title,
-                     background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                     price: deal.cheapestPrice,
-                     originalPrice: deal.normalPrice,
-                     rating: 4.0,
-                     platforms: ['PC'],
-                     genre: 'Action'
-                   }))}
+                                        games={getStoreDeals('3').slice(0, 10).map(deal => ({
+                       id: deal.gameId || deal.id,
+                       name: deal.title,
+                       background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                       price: deal.cheapestPrice,
+                       originalPrice: deal.normalPrice,
+                       rating: 4.0,
+                       platforms: ['PC'],
+                       genre: 'Action',
+                       isDeal: true
+                     }))}
                    renderGameItem={(game) => <PortraitGameCard game={game} />}
                    scrollId="ps-scroll"
                    showScrollButtons={true}
@@ -525,16 +470,17 @@ const Deals = () => {
                     subtitle="Xbox Store discounts"
                     icon={<img src="/assets/icons/xbox.svg" alt="Xbox" className="w-7 h-7 text-gray-800 dark:text-white" />}
                     iconBgColor=""
-                    games={getStoreDeals('2').slice(0, 10).map(deal => ({
-                      id: deal.gameId || deal.id,
-                      name: deal.title,
-                      background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                      price: deal.cheapestPrice,
-                      originalPrice: deal.normalPrice,
-                      rating: 4.0,
-                      platforms: ['PC'],
-                      genre: 'Action'
-                    }))}
+                                         games={getStoreDeals('2').slice(0, 10).map(deal => ({
+                       id: deal.gameId || deal.id,
+                       name: deal.title,
+                       background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                       price: deal.cheapestPrice,
+                       originalPrice: deal.normalPrice,
+                       rating: 4.0,
+                       platforms: ['PC'],
+                       genre: 'Action',
+                       isDeal: true
+                     }))}
                     renderGameItem={(game) => <PortraitGameCard game={game} />}
                     scrollId="xbox-scroll"
                     showScrollButtons={true}
@@ -556,23 +502,25 @@ const Deals = () => {
                   </h3>
                 </div>
               
-                                                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[2000px] mx-auto">
+                                                           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-[2000px] mx-auto">
                  {getFilteredDeals().length > 0 ? (
                    getFilteredDeals().slice(0, 20).map((deal) => (
-                     <GameCard
-                       key={deal.id}
-                       game={{
-                         id: deal.gameId || deal.id,
-                         name: deal.title,
-                         background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
-                         price: deal.cheapestPrice,
-                         originalPrice: deal.normalPrice,
-                         rating: 4.0,
-                         platforms: ['PC'],
-                         genres: [{ name: 'Action' }],
-                         released: deal.releaseDate ? new Date(deal.releaseDate * 1000).toISOString() : null
-                       }}
-                     />
+                     <div key={deal.id} className="flex justify-center">
+                       <GameCard
+                         game={{
+                           id: deal.gameId || deal.id,
+                           name: deal.title,
+                           background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                           price: deal.cheapestPrice,
+                           originalPrice: deal.normalPrice,
+                           rating: 4.0,
+                           platforms: ['PC'],
+                           genres: [{ name: 'Action' }],
+                           released: deal.releaseDate ? new Date(deal.releaseDate * 1000).toISOString() : null,
+                           isDeal: true
+                         }}
+                       />
+                     </div>
                    ))
                  ) : (
                    <div className="col-span-full text-center py-16">

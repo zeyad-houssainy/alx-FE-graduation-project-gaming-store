@@ -30,19 +30,19 @@ export default function MyProfile() {
   const renderTabIcon = (iconType) => {
     switch (iconType) {
       case 'profile':
-        return <img src="/assets/icons/profile.svg" alt="Profile" className="w-5 h-5" />;
+        return <img src="/assets/icons/profile.svg" alt="Profile" className="w-5 h-5 filter dark:brightness-0 dark:invert" />;
       case 'favorite':
-        return <img src="/assets/icons/favorite.svg" alt="Favorites" className="w-5 h-5" />;
+        return <img src="/assets/icons/favorite.svg" alt="Favorites" className="w-5 h-5 filter dark:brightness-0 dark:invert" />;
       case 'box':
-        return <img src="/assets/icons/box.svg" alt="Orders" className="w-5 h-5" />;
+        return <img src="/assets/icons/box.svg" alt="Orders" className="w-5 h-5 filter dark:brightness-0 dark:invert" />;
       case 'star':
-        return <img src="/assets/icons/star.svg" alt="Rated Games" className="w-5 h-5" />;
+        return <img src="/assets/icons/star.svg" alt="Rated Games" className="w-5 h-5 filter dark:brightness-0 dark:invert" />;
       case 'location':
-        return <img src="/assets/icons/location.svg" alt="Addresses" className="w-5 h-5" />;
+        return <img src="/assets/icons/location.svg" alt="Addresses" className="w-5 h-5 filter dark:brightness-0 dark:invert" />;
       case 'payment':
-        return <img src="/assets/icons/payment-48-regular.svg" alt="Payment" className="w-5 h-5" />;
+        return <img src="/assets/icons/payment-48-regular.svg" alt="Payment" className="w-5 h-5 filter dark:brightness-0 dark:invert" />;
       case 'security':
-        return <img src="/assets/icons/security.svg" alt="Security" className="w-5 h-5" />;
+        return <img src="/assets/icons/security.svg" alt="Security" className="w-5 h-5 filter dark:brightness-0 dark:invert" />;
       default:
         return <span className="text-lg">{iconType}</span>;
     }
@@ -475,7 +475,7 @@ export default function MyProfile() {
 
                   {favorites.length === 0 ? (
                     <div className="text-center py-8 sm:py-16">
-                      <img src="/assets/icons/favorite.svg" alt="Favorites" className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 mb-4 sm:mb-6 mx-auto" />
+                      <img src="/assets/icons/favorite.svg" alt="Favorites" className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 mb-4 sm:mb-6 mx-auto filter dark:brightness-0 dark:invert" />
                       <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">
                         No Favorite Games Yet
                       </h3>
@@ -519,7 +519,7 @@ export default function MyProfile() {
                             <span>Added {new Date(game.addedAt).toLocaleDateString()}</span>
                             {game.rating && (
                               <span className="flex items-center gap-1">
-                                <img src="/assets/icons/star.svg" alt="Rating" className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <img src="/assets/icons/star.svg" alt="Rating" className="w-3 h-3 sm:w-4 sm:h-4 filter dark:brightness-0 dark:invert" />
                                 {game.rating}/5
                               </span>
                             )}
@@ -538,22 +538,149 @@ export default function MyProfile() {
                 </div>
               )}
 
-              {/* Other tabs will be implemented similarly */}
+              {/* Orders Tab */}
               {activeTab === 'orders' && (
-                <div className="text-center py-8 sm:py-16">
-                  <img src="/assets/icons/box.svg" alt="Orders" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-3 sm:mb-4 mx-auto" />
-                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">
-                    Orders Section
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 px-2">
-                    This section will show your order history
-                  </p>
+                <div className="py-6 sm:py-8">
+                  <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+                    <img src="/assets/icons/box.svg" alt="Orders" className="w-8 h-8 sm:w-10 sm:h-10 filter dark:brightness-0 dark:invert" />
+                    <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                      Order History
+                    </h3>
+                  </div>
+
+                  {/* Orders List */}
+                  <div className="space-y-4 sm:space-y-6">
+                    {orders.length > 0 ? (
+                      orders.map((order, index) => (
+                        <div key={order.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+                          {/* Order Header */}
+                          <div className="flex items-start justify-between mb-4 sm:mb-6">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 sm:gap-4 mb-2">
+                                <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-base sm:text-lg">
+                                  Order #{order.id}
+                                </h4>
+                                <span className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">
+                                  Completed
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric'
+                                }) : 'Date not available'}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+                                ${order.total.toFixed(2)}
+                              </p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Order Items */}
+                          <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+                            {order.items.map((item, itemIndex) => (
+                              <div key={itemIndex} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                  {item.background_image ? (
+                                    <img 
+                                      src={item.background_image} 
+                                      alt={item.name}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                      }}
+                                    />
+                                  ) : null}
+                                  <span className="text-gray-500 dark:text-gray-400 text-lg" style={{ display: item.background_image ? 'none' : 'flex' }}>
+                                    🎮
+                                  </span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h5 className="font-medium text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
+                                    {item.name}
+                                  </h5>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    Qty: {item.quantity}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
+                                    ${item.price.toFixed(2)}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Order Summary */}
+                          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6">
+                            <div className="space-y-2 text-sm sm:text-base">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                                <span className="text-gray-900 dark:text-gray-100">${order.subtotal.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600 dark:text-gray-400">Shipping:</span>
+                                <span className="text-gray-900 dark:text-gray-100">${order.shipping.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600 dark:text-gray-400">Tax:</span>
+                                <span className="text-gray-900 dark:text-gray-100">${order.tax.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-2">
+                                <span className="font-semibold text-gray-900 dark:text-gray-100">Total:</span>
+                                <span className="font-bold text-lg text-gray-900 dark:text-gray-100">${order.total.toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Shipping Address */}
+                          {order.shippingAddress && (
+                            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                              <h6 className="font-medium text-gray-900 dark:text-gray-100 text-sm sm:text-base mb-2">
+                                Shipping Address
+                              </h6>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {order.shippingAddress.firstName} {order.shippingAddress.lastName}<br />
+                                {order.shippingAddress.address1}<br />
+                                {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}<br />
+                                {order.shippingAddress.country}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-12 sm:py-16 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
+                        <img src="/assets/icons/box.svg" alt="No Orders" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-gray-400 dark:text-gray-500 filter dark:brightness-0 dark:invert" />
+                        <h4 className="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                          No Orders Yet
+                        </h4>
+                        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-500 mb-4 sm:mb-6">
+                          Start shopping to see your order history here
+                        </p>
+                        <button
+                          onClick={() => navigate('/games')}
+                          className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-orange-500 dark:to-red-600 hover:from-blue-600 hover:to-purple-700 dark:hover:from-orange-600 dark:hover:to-red-700 text-white font-medium rounded-lg transition-all duration-200"
+                        >
+                          Browse Games
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
               {activeTab === 'ranked-games' && (
                 <div className="text-center py-8 sm:py-16">
-                  <img src="/assets/icons/star.svg" alt="Rated Games" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-3 sm:mb-4 mx-auto" />
+                  <img src="/assets/icons/star.svg" alt="Rated Games" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-3 sm:mb-4 mx-auto filter dark:brightness-0 dark:invert" />
                   <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">
                     Rated Games Section
                   </h3>
@@ -567,7 +694,7 @@ export default function MyProfile() {
                 <div className="py-6 sm:py-8">
                   <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <img src="/assets/icons/location.svg" alt="Addresses" className="w-8 h-8 sm:w-10 sm:h-10" />
+                      <img src="/assets/icons/location.svg" alt="Addresses" className="w-8 h-8 sm:w-10 sm:h-10 filter dark:brightness-0 dark:invert" />
                       <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
                         Saved Addresses
                       </h3>
@@ -619,7 +746,7 @@ export default function MyProfile() {
                       ))
                     ) : (
                       <div className="text-center py-12 sm:py-16 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
-                        <img src="/assets/icons/location.svg" alt="No Addresses" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+                        <img src="/assets/icons/location.svg" alt="No Addresses" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-gray-400 dark:text-gray-500 filter dark:brightness-0 dark:invert" />
                         <h4 className="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
                           No Saved Addresses
                         </h4>
@@ -820,7 +947,7 @@ export default function MyProfile() {
                 <div className="py-6 sm:py-8">
                   <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <img src="/assets/icons/payment-48-regular.svg" alt="Payment" className="w-8 h-8 sm:w-10 sm:h-10" />
+                      <img src="/assets/icons/payment-48-regular.svg" alt="Payment" className="w-8 h-8 sm:w-10 sm:h-10 filter dark:brightness-0 dark:invert" />
                       <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
                         Payment Methods
                       </h3>
@@ -875,7 +1002,7 @@ export default function MyProfile() {
                       ))
                     ) : (
                       <div className="text-center py-12 sm:py-16 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
-                        <img src="/assets/icons/payment-48-regular.svg" alt="No Payment Methods" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+                        <img src="/assets/icons/payment-48-regular.svg" alt="No Payment Methods" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-gray-400 dark:text-gray-500 filter dark:brightness-0 dark:invert" />
                         <h4 className="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
                           No Payment Methods
                         </h4>
@@ -1037,7 +1164,7 @@ export default function MyProfile() {
 
               {activeTab === 'security' && (
                 <div className="text-center py-8 sm:py-16">
-                  <img src="/assets/icons/security.svg" alt="Security" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-3 sm:mb-4 mx-auto" />
+                  <img src="/assets/icons/security.svg" alt="Security" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-3 sm:mb-4 mx-auto filter dark:brightness-0 dark:invert" />
                   <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">
                     Security Section
                   </h3>

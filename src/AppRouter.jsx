@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/HomePage/HomePage';
 import Deals from './pages/Deals';
+import DealDetail from './pages/DealDetail';
 import Games from './pages/Games';
 import GameDetail from './pages/GameDetail';
 import Cart from './pages/Cart';
@@ -23,6 +24,7 @@ export default function AppRouter() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/deals" element={<Deals />} />
+        <Route path="/deals/:dealId" element={<DealDetail />} />
         <Route path="/games" element={<Games />} />
         <Route path="/games/:id" element={<GameDetail />} />
         <Route path="/cart" element={<Cart />} />

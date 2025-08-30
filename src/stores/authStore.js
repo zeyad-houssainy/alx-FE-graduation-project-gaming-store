@@ -70,7 +70,7 @@ export const useAuthStore = create(
       addOrder: (order) => {
         const { orders } = get();
         set({
-          orders: [...orders, { ...order, id: Date.now().toString() }],
+          orders: [...orders, order],
         });
       },
 

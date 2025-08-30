@@ -123,24 +123,39 @@ export default function MobileMenu({ isOpen, onClose }) {
             {/* User Actions */}
             <div className="flex flex-col space-y-3">
               {isLoggedIn ? (
-                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                  <div className="flex items-center space-x-3">
+                <>
+                  {/* Profile Link */}
+                  <Link
+                    to="/profile"
+                    onClick={handleLinkClick}
+                    className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                  >
                     <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-bold">
                         {user?.name?.charAt(0) || 'U'}
                       </span>
                     </div>
-                    <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">
-                      {user?.name || 'User'}
-                    </span>
-                  </div>
+                    <div className="flex-1 text-left">
+                      <span className="text-gray-700 dark:text-gray-300 text-sm font-medium block">
+                        {user?.name || 'User'}
+                      </span>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">
+                        View Profile
+                      </span>
+                    </div>
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  
+                  {/* Logout Button */}
                   <button
                     onClick={handleLogout}
-                    className="px-3 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400 rounded-md text-xs font-medium transition-colors"
+                    className="w-full px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400 rounded-md text-xs font-medium transition-colors"
                   >
                     Logout
                   </button>
-                </div>
+                </>
               ) : (
                 <div className="flex space-x-2">
                   <Link 

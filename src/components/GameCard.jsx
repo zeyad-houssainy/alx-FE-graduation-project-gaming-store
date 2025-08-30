@@ -156,7 +156,7 @@ export default function GameCard({ game }) {
   return (
     <div className="group bg-gradient-to-b from-white/80 via-white/80 to-white/80 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-xl overflow-hidden border border-gray-300 dark:border-gray-700 transition-all duration-300 ease-in-out w-[400px] h-[350px] hover:h-[600px] flex flex-col hover:shadow-2xl shadow-lg relative">
       {/* Clickable Image Container - Links to Game Detail */}
-      <Link to={`/games/${game.id}`} className="block flex-shrink-0">
+              <Link to={game.isDeal ? `/deals/${game.id}` : `/games/${game.id}`} className="block flex-shrink-0">
         <div className="relative overflow-hidden w-full h-[230px] bg-white/80 dark:bg-gray-900 group">
           {/* Loading State */}
           {imageLoading && (
@@ -244,7 +244,7 @@ export default function GameCard({ game }) {
         {/* Game Title and Price */}
         <div className="mb-3">
           <div className="flex items-start justify-between gap-2">
-            <Link to={`/games/${game.id}`} className="block flex-1">
+            <Link to={game.isDeal ? `/deals/${game.id}` : `/games/${game.id}`} className="block flex-1">
               <h3 className="text-lg font-bold text-black dark:text-white line-clamp-2 leading-tight hover:text-blue-600 dark:hover:text-blue-300 transition-colors cursor-pointer">
                 {game.name || 'Untitled Game'}
               </h3>
