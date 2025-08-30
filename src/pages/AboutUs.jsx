@@ -145,7 +145,7 @@ export default function AboutUs() {
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-500 dark:from-orange-400 dark:to-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
                   👨‍💻
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">John Doe</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Zeyad Alhoussainy</h3>
                 <p className="text-blue-600 dark:text-orange-400 font-medium mb-2">Founder & CEO</p>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
                   Gaming enthusiast and tech visionary leading GAMING STORE into the future of digital gaming.
@@ -198,7 +198,7 @@ export default function AboutUs() {
                     <span className="text-green-600 dark:text-green-400 text-xl">📞</span>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Phone</p>
-                      <p className="text-gray-600 dark:text-gray-300">+24 1245 654 235</p>
+                      <p className="text-gray-600 dark:text-gray-300">+20 1000388906</p>
                     </div>
                   </div>
                   
@@ -206,7 +206,7 @@ export default function AboutUs() {
                     <span className="text-red-500 dark:text-red-400 text-xl">📧</span>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Email</p>
-                      <p className="text-gray-600 dark:text-gray-300">info@gamingstore.com</p>
+                      <p className="text-gray-600 dark:text-gray-300">zeyad.houssainy@gmail.com</p>
                     </div>
                   </div>
                   
@@ -214,7 +214,16 @@ export default function AboutUs() {
                     <span className="text-purple-600 dark:text-purple-400 text-xl">🌐</span>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Website</p>
-                      <p className="text-gray-600 dark:text-gray-300">www.gamingstore.com</p>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        <a 
+                          href="https://www.linkedin.com/in/zeyad-houssainy/" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 dark:text-orange-400 hover:underline"
+                        >
+                          https://www.linkedin.com/in/zeyad-houssainy/
+                        </a>
+                      </p>
                     </div>
                   </div>
                 </div>

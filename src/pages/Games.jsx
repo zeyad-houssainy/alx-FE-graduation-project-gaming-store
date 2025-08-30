@@ -741,7 +741,7 @@ export default function Games() {
             ) : visibleGames && visibleGames.length > 0 ? (
               <>
                 {/* Games Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-[2000px] mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-[2000px] mx-auto">
                   {visibleGames.map((game) => (
                     <div key={game.id} className="flex justify-center">
                       <GameCard 
