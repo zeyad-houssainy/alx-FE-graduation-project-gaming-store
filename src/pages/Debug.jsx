@@ -230,7 +230,7 @@ const Debug = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center pt-20">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 dark:border-orange-400 mx-auto"></div>
-            <p className="text-gray-900 dark:text-white text-xl mt-4">Loading debug information...</p>
+            <p className="text-gray-900 dark:text-gray-100 text-xl mt-4">Loading debug information...</p>
           </div>
         </div>
         <Footer />
@@ -254,7 +254,7 @@ const Debug = () => {
               <div className="text-center max-w-4xl mx-auto">
                 <div className="mb-8">
                   <div className="inline-flex items-center justify-center w-24 h-24 bg-white/20 dark:bg-gray-800/20 rounded-full mb-6 backdrop-blur-md">
-                    <FaBug className="text-6xl text-white" />
+                    <FaBug className="text-6xl text-white dark:text-gray-200" />
                   </div>
                   <h1 className="text-5xl md:text-6xl font-black mb-4 text-white drop-shadow-2xl">
                     DEBUG MODE
@@ -262,7 +262,7 @@ const Debug = () => {
                   <div className="w-32 h-2 bg-white/30 mx-auto rounded-full animate-pulse shadow-lg"></div>
                 </div>
                 
-                <p className="text-xl md:text-2xl text-white dark:text-gray-100 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
+                <p className="text-xl md:text-2xl text-white max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
                   System diagnostics, API status, and debugging information for developers
                 </p>
               </div>

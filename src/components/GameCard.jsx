@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useCartStore } from '../stores';
 import { Link } from 'react-router-dom';
-import { FaShoppingCart, FaCalendarAlt, FaGamepad, FaHeart, FaEllipsisH, FaArrowRight, FaEyeSlash } from 'react-icons/fa';
+import { FaShoppingCart } from 'react-icons/fa';
 
 export default function GameCard({ game }) {
   // Image handling state
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   const { addToCart } = useCartStore();
@@ -47,15 +47,6 @@ export default function GameCard({ game }) {
     }, 2000);
   };
 
-  const handleWishlistToggle = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
-  };
-
-  // Generate random rating for demo
-  const rating = Math.floor(Math.random() * 5) + 1;
-
   // Format release date
   const formatReleaseDate = (dateString) => {
     if (!dateString) return 'TBA';
@@ -71,25 +62,87 @@ export default function GameCard({ game }) {
     }
   };
 
-  // Get genres as string
-  const getGenresString = () => {
-    if (game.genres && Array.isArray(game.genres) && game.genres.length > 0) {
-      return game.genres.slice(0, 3).map(g => g.name).join(', ');
-    } else if (game.genre) {
-      return game.genre;
+  // Get unique platform icons (avoid duplicates like PS4/PS5)
+  const getUniquePlatformIcons = () => {
+    if (!game.platforms || !Array.isArray(game.platforms) || game.platforms.length === 0) {
+      return [{ icon: 'generic', name: 'Platform' }];
     }
-    return 'Action, Adventure';
+
+    const platformIconMap = new Map();
+    
+    game.platforms.forEach((platform) => {
+      const platformName = typeof platform === 'string' ? platform.toLowerCase() : platform?.platform?.name?.toLowerCase() || '';
+      
+      // Group similar platforms to avoid duplicates
+      if (platformName.includes('steam')) {
+        platformIconMap.set('steam', { icon: 'steam', name: 'Steam' });
+      } else if (platformName.includes('epic')) {
+        platformIconMap.set('epic', { icon: 'epic', name: 'Epic Games' });
+      } else if (platformName.includes('playstation') || platformName.includes('ps')) {
+        platformIconMap.set('playstation', { icon: 'playstation', name: 'PlayStation' });
+      } else if (platformName.includes('psp')) {
+        platformIconMap.set('psp', { icon: 'psp', name: 'PSP' });
+      } else if (platformName.includes('xbox')) {
+        platformIconMap.set('xbox', { icon: 'xbox', name: 'Xbox' });
+      } else if (platformName.includes('nintendo') || platformName.includes('switch')) {
+        platformIconMap.set('nintendo', { icon: 'nintendo', name: 'Nintendo' });
+      } else if (platformName.includes('windows') || platformName.includes('pc')) {
+        platformIconMap.set('pc', { icon: 'pc', name: 'PC' });
+      } else if (platformName.includes('mac') || platformName.includes('macos')) {
+        platformIconMap.set('mac', { icon: 'mac', name: 'macOS' });
+      } else if (platformName.includes('ubuntu') || platformName.includes('linux')) {
+        platformIconMap.set('linux', { icon: 'linux', name: 'Linux' });
+      } else if (platformName.includes('android')) {
+        platformIconMap.set('android', { icon: 'android', name: 'Android' });
+      }
+    });
+
+    // Convert Map to Array and limit to first 4 icons for clean display
+    return Array.from(platformIconMap.values()).slice(0, 4);
+  };
+
+  // Get platform icon component
+  const getPlatformIconComponent = (iconType, index) => {
+    const iconProps = {
+      key: index,
+      className: "w-3 h-3 filter brightness-0 invert"
+    };
+
+    switch (iconType) {
+      case 'steam':
+        return <img src="/assets/icons/steam.svg" alt="Steam" {...iconProps} />;
+      case 'epic':
+        return <img src="/assets/icons/epic-games.svg" alt="Epic Games" {...iconProps} />;
+      case 'playstation':
+        return <img src="/assets/icons/playstation.svg" alt="PlayStation" {...iconProps} />;
+      case 'psp':
+        return <img src="/assets/icons/sony.svg" alt="PSP" {...iconProps} />;
+      case 'xbox':
+        return <img src="/assets/icons/xbox.svg" alt="Xbox" {...iconProps} />;
+      case 'nintendo':
+        return <img src="/assets/icons/nintendo-switch.svg" alt="Nintendo" {...iconProps} />;
+      case 'pc':
+        return <img src="/assets/icons/windows.svg" alt="PC" {...iconProps} />;
+      case 'mac':
+        return <img src="/assets/icons/mac-os.svg" alt="macOS" {...iconProps} />;
+      case 'linux':
+        return <img src="/assets/icons/ubuntu.svg" alt="Linux" {...iconProps} />;
+      case 'android':
+        return <img src="/assets/icons/android.svg" alt="Android" {...iconProps} />;
+      default:
+        return <span key={index} className="text-xs text-white font-medium">P</span>;
+    }
   };
 
   return (
-    <div className="group bg-white/50 dark:bg-white/50 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 ease-in-out w-[400px] h-[350px] hover:h-[500px] flex flex-col hover:shadow-2xl dark:hover:shadow-gray-900/50 shadow-lg relative">
+    <div className="group bg-gradient-to-b from-gray-900 via-gray-800 to-black rounded-xl overflow-hidden border border-gray-700 transition-all duration-300 ease-in-out w-[400px] h-[350px] hover:h-[600px] flex flex-col hover:shadow-2xl shadow-lg relative">
       {/* Clickable Image Container - Links to Game Detail */}
       <Link to={`/games/${game.id}`} className="block flex-shrink-0">
-        <div className="relative overflow-hidden w-full h-[230px] bg-gray-100 dark:bg-gray-700 group">
+        <div className="relative overflow-hidden w-full h-[230px] bg-gray-900 group">
           {/* Loading State */}
           {imageLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-600">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-orange-400"></div>
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
             </div>
           )}
           
@@ -112,191 +165,98 @@ export default function GameCard({ game }) {
             }}
           />
           
-          {/* Image Quality Indicator */}
-          {!imageError && !imageLoading && (
-            <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-              HD
+          {/* Rating Display */}
+          <div className="absolute top-3 right-3">
+            <div className="bg-black/70 dark:bg-white/70 text-white dark:text-black px-2 py-1 rounded-lg text-xs font-bold">
+              {game.rating ? `${game.rating.toFixed(1)}/5` : '4.2/5'}
             </div>
-          )}
-          
-          {/* Rating Badge */}
-          <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 px-2 py-1 rounded-lg text-xs font-medium text-gray-900 dark:text-white">
-            ⭐ {rating}
           </div>
-          
-          {/* Genre Badge */}
-          {(game.genres && Array.isArray(game.genres) && game.genres.length > 0 && game.genres[0]?.name) || game.genre ? (
-            <div className="absolute top-3 left-3 bg-blue-500/90 px-3 py-1 rounded-lg text-xs font-medium text-white">
-              {game.genres && Array.isArray(game.genres) && game.genres.length > 0 ? game.genres[0].name : game.genre}
-            </div>
-          ) : null}
 
-          {/* Image Gallery Indicator (like in the reference image) */}
-          <div className="absolute bottom-2 right-2 flex gap-1">
+          {/* Image Gallery Dots */}
+          <div className="absolute bottom-3 right-3 flex gap-1">
             {[1, 2, 3, 4, 5].map((_, index) => (
               <div 
                 key={index} 
-                className={`w-1 h-1 rounded-full transition-all duration-300 ${
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                   index === 0 
-                    ? 'bg-white w-2' 
-                    : 'bg-white/50'
+                    ? 'bg-white w-3' 
+                    : 'bg-white/40'
                 }`}
               />
             ))}
-          </div>
+            </div>
         </div>
       </Link>
 
       {/* Content Section - Fixed height for lower part */}
-      <div className="p-4 bg-gray-50 dark:bg-gray-800 h-[120px] flex flex-col justify-between transition-all duration-200 group-hover:h-[270px]">
-        {/* Platform Icons Row - First */}
+      <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 h-[120px] flex flex-col justify-between transition-all duration-300 group-hover:h-[370px]">
+        {/* Platform Icons Header */}
         <div className="flex items-center gap-2 mb-2">
-          {(game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) ? (
-            <div className="flex items-center gap-1">
-              {game.platforms.slice(0, 3).map((platform, index) => {
-                const platformName = typeof platform === 'string' ? platform.toLowerCase() : platform?.platform?.name?.toLowerCase() || '';
-                return (
-                  <div key={index} className="w-4 h-4 flex items-center justify-center text-gray-900 dark:text-white">
-                    {platformName.includes('steam') ? (
-                      <img src="/assets/icons/steam.svg" alt="Steam" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('epic') ? (
-                      <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('playstation') || platformName.includes('ps') ? (
-                      <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('psp') ? (
-                      <img src="/assets/icons/sony.svg" alt="PSP" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('xbox') ? (
-                      <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('nintendo') || platformName.includes('switch') ? (
-                      <img src="/assets/icons/nintendo-switch.svg" alt="Nintendo Switch" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('windows') || platformName.includes('pc') ? (
-                      <img src="/assets/icons/windows.svg" alt="Windows" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('mac') || platformName.includes('macos') ? (
-                      <img src="/assets/icons/mac-os.svg" alt="macOS" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('ubuntu') || platformName.includes('linux') ? (
-                      <img src="/assets/icons/ubuntu.svg" alt="Ubuntu" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : platformName.includes('android') ? (
-                      <img src="/assets/icons/android.svg" alt="Android" className="w-3 h-3 dark:filter dark:brightness-0 dark:invert" />
-                    ) : (
-                      <span className="text-xs text-gray-900 dark:text-white font-medium">P</span>
-                    )}
-                  </div>
-                );
-              })}
+          {getUniquePlatformIcons().map((platformData, index) => (
+            <div key={index} className="w-4 h-4 flex items-center justify-center">
+              {getPlatformIconComponent(platformData.icon, index)}
             </div>
-          ) : (
-            <div className="w-4 h-4 flex items-center justify-center text-gray-900 dark:text-white">
-              <span className="text-xs text-gray-900 dark:text-white font-medium">P</span>
-            </div>
-          )}
+          ))}
         </div>
         
-        {/* Title and Price Row - Second */}
-        <div className="flex items-center justify-between mb-2">
-          <Link to={`/games/${game.id}`} className="block flex-1 mr-2">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2 leading-tight hover:text-blue-600 dark:hover:text-blue-300 transition-colors cursor-pointer">
-              {game.name || 'Untitled Game'}
-            </h3>
-          </Link>
-          <span className="text-lg font-bold text-green-400 dark:text-green-300 flex-shrink-0">
-            ${game.price || '29.99'}
-          </span>
-        </div>
-        
-        {/* Action Row - Third (All in one row) */}
-        <div className="flex items-center justify-between mb-2">
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            {/* Wishlist Button */}
-            <button
-              onClick={handleWishlistToggle}
-              className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-all duration-300"
-              title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
-            >
-              <svg className="w-3 h-3" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </button>
-            
-            {/* Gift Button */}
-            <button
-              className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-purple-500 hover:text-white transition-all duration-300"
-              title="Gift this game"
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-              </svg>
-            </button>
-            
-            {/* More Options Button */}
-            <button
-              className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-500 hover:text-white transition-all duration-300"
-              title="More options"
-            >
-              <FaEllipsisH className="w-3 h-3" />
-            </button>
+        {/* Game Title */}
+        <div className="mb-3">
+          <Link to={`/games/${game.id}`} className="block">
+            <h3 className="text-lg font-bold text-white line-clamp-2 leading-tight hover:text-blue-300 transition-colors cursor-pointer">
+            {game.name || 'Untitled Game'}
+          </h3>
+        </Link>
+          {/* Target Icon */}
+          <div className="flex items-center gap-1 mt-1">
+            <span className="text-red-500 text-sm">🎯</span>
           </div>
         </div>
+        
+        {/* Empty space for better spacing */}
+        <div className="mb-2"></div>
 
         {/* Extended Content - Only visible on hover */}
-        <div className="opacity-0 group-hover:opacity-100 transition-all duration-150 delay-100 space-y-3 overflow-hidden">
-          {/* Release Date */}
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-              <FaCalendarAlt className="w-3 h-3" />
-              Release date:
-            </span>
-            <span className="text-gray-900 dark:text-white font-medium">
-              {formatReleaseDate(game.released)}
-            </span>
+        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 space-y-4 overflow-hidden">
+          {/* Game Details */}
+          <div className="space-y-3">
+            <div className="text-sm text-gray-300">
+              <span className="text-gray-400">Release date:</span>
+              <div className="text-white font-medium mt-1">{formatReleaseDate(game.released)}</div>
+            </div>
+            
+            <div className="text-sm text-gray-300">
+              <span className="text-gray-400">Genres:</span>
+              <div className="flex flex-wrap gap-2 mt-1">
+                <span className="text-white text-xs">{game.genres?.[0]?.name || 'Action'}</span>
+                {game.genres?.[1]?.name && (
+                  <>
+                    <span className="text-gray-500 text-xs">•</span>
+                    <span className="text-white text-xs">{game.genres[1].name}</span>
+                  </>
+                )}
+              </div>
+            </div>
+            
+            <div className="text-sm text-gray-300">
+              <span className="text-gray-400">Chart:</span>
+              <div className="text-white font-medium mt-1">#7 Top 2025</div>
+            </div>
           </div>
+          
 
-          {/* Genres */}
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-              <FaGamepad className="w-3 h-3" />
-              Genres:
-            </span>
-            <span className="text-blue-600 dark:text-blue-400 font-medium underline cursor-pointer hover:text-blue-800 dark:hover:text-blue-300">
-              {getGenresString()}
-            </span>
-          </div>
-
-          {/* Chart Position */}
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-              📊 Chart:
-            </span>
-            <span className="text-blue-600 dark:text-blue-400 font-medium underline cursor-pointer hover:text-blue-800 dark:hover:text-blue-300">
-              #{Math.floor(Math.random() * 20) + 1} Top {new Date().getFullYear()}
-            </span>
-          </div>
         </div>
 
-        {/* Bottom Action Buttons - Full width, only visible on hover */}
-        <div className="opacity-0 group-hover:opacity-100 transition-all duration-150 delay-150 space-y-2 mt-auto">
-          {/* Show more like this button */}
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 group/btn">
-            Show more like this
-            <FaArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform duration-300" />
-          </button>
-          
-          {/* Hide this game button */}
-          <button className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2">
-            <FaEyeSlash className="w-3 h-3" />
-            Hide this game
-          </button>
-
-          {/* Add to Cart Button - Full width at the bottom */}
+        {/* Bottom Action Button - Add to Cart (Only visible on hover) */}
+        <div className="mt-auto opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150">
           <button
             onClick={handleAddToCart}
-            className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-500 ease-in-out flex items-center justify-center gap-2 ${
+            className={`w-full py-3 px-4 rounded-lg font-bold transition-all duration-300 ease-in-out flex items-center justify-center gap-2 ${
               isAddedToCart 
-                ? 'bg-green-500 hover:bg-green-600 text-white' 
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+                ? 'bg-green-600 hover:bg-green-700 text-white' 
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
             }`}
           >
-            <div className={`transition-all duration-500 ease-in-out transform ${
+            <div className={`transition-all duration-300 ease-in-out transform ${
               isAddedToCart ? 'rotate-360 scale-110' : 'rotate-0 scale-100'
             }`}>
               {isAddedToCart ? (
@@ -306,7 +266,7 @@ export default function GameCard({ game }) {
               )}
             </div>
             <span className="font-semibold">
-              {isAddedToCart ? 'Added to Cart!' : 'Add to Cart'}
+              {isAddedToCart ? 'Added to Library!' : 'Add to Cart'}
             </span>
           </button>
         </div>

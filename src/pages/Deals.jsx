@@ -215,7 +215,7 @@ const Deals = () => {
             <p className="text-xl mb-6">{error}</p>
             <button 
               onClick={fetchDealsData}
-              className="bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-black dark:text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              className="bg-blue-600 dark:bg-orange-500 hover:bg-blue-700 dark:hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
             >
               Try Again
             </button>
@@ -323,7 +323,7 @@ const Deals = () => {
               <HorizontalGameList
                 title="Steam Deals"
                 subtitle="Exclusive Steam discounts"
-                icon={<span className="text-black dark:text-white">{renderStoreIcon('steam')}</span>}
+                icon={<span className="text-gray-900 dark:text-white">{renderStoreIcon('steam')}</span>}
                 iconBgColor=""
                 games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '1').slice(0, 10)}
                 renderGameItem={(deal) => (
@@ -347,7 +347,7 @@ const Deals = () => {
               <HorizontalGameList
                 title="Epic Games"
                 subtitle="Epic store exclusives"
-                icon={<span className="text-black dark:text-white">{renderStoreIcon('epic')}</span>}
+                icon={<span className="text-gray-900 dark:text-white">{renderStoreIcon('epic')}</span>}
                 iconBgColor=""
                 games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '25').slice(0, 10)}
                 renderGameItem={(deal) => (
@@ -371,7 +371,7 @@ const Deals = () => {
               <HorizontalGameList
                 title="PS Store"
                 subtitle="PlayStation exclusives and deals"
-                icon={<span className="text-black dark:text-white">{renderStoreIcon('playstation')}</span>}
+                icon={<span className="text-gray-900 dark:text-white">{renderStoreIcon('playstation')}</span>}
                 iconBgColor=""
                 games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '3').slice(0, 10)}
                 renderGameItem={(deal) => (
@@ -395,7 +395,7 @@ const Deals = () => {
               <HorizontalGameList
                 title="Xbox"
                 subtitle="Xbox Game Pass and deals"
-                icon={<span className="text-black dark:text-white">{renderStoreIcon('xbox')}</span>}
+                icon={<span className="text-gray-900 dark:text-white">{renderStoreIcon('xbox')}</span>}
                 iconBgColor=""
                 games={filteredDeals.filter(deal => deal.cheapestDeal?.storeID === '2').slice(0, 10)}
                 renderGameItem={(deal) => (

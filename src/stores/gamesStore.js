@@ -51,6 +51,7 @@ export const useGamesStore = create(
         platforms: [],
         sortBy: 'relevance',
         priceRange: { min: '', max: '' },
+        releaseDateAfter: '2021-01-01', // Show games released after 2021
       },
       activeStore: 'rawg', // 'rawg', 'cheapshark', 'mock'
       
@@ -157,6 +158,22 @@ export const useGamesStore = create(
           );
         }
 
+        // Apply release date filter (show games after 2021)
+        if (filters.releaseDateAfter) {
+          const filterDate = new Date(filters.releaseDateAfter);
+          filtered = filtered.filter(game => {
+            if (!game.released) return false; // Exclude games without release date
+            try {
+              const gameReleaseDate = new Date(game.released);
+              return gameReleaseDate >= filterDate;
+            } catch {
+              console.warn('Store: Invalid release date for game:', game.name, game.released);
+              return false; // Exclude games with invalid dates
+            }
+          });
+          console.log(`Store: Applied release date filter (after ${filters.releaseDateAfter}). Games remaining:`, filtered.length);
+        }
+
         // Apply platform filter
         if (filters.platforms.length > 0) {
           console.log('Store: Applying platform filter for:', filters.platforms);
@@ -259,7 +276,7 @@ export const useGamesStore = create(
 
       // API calls
       fetchGames: async () => {
-        const { activeStore, filters, pagination } = get();
+        const { activeStore } = get();
         
         try {
           set({ loading: true, error: null });
@@ -311,14 +328,21 @@ export const useGamesStore = create(
                      filters.sortBy === 'released' ? '-released' : 
                      filters.sortBy === 'name-asc' ? 'name' : 
                      filters.sortBy === 'name-desc' ? '-name' : '-rating',
+            // Add platform filtering to ensure we get games from desired platforms
+            platforms: '1,2,3,7', // PC, PlayStation, Xbox, Nintendo
+            exclude_platforms: '4,5,6,8,21,34,37', // Exclude Web, Android, iOS, Linux, Gameboy, Mobile
+            dates: '2021-01-01,2025-12-31', // Games released after 2021
           };
           
           if (filters.search) baseParams.search = filters.search;
           if (filters.genres.length > 0) baseParams.genres = filters.genres.join(',');
-          if (filters.platforms.length > 0) baseParams.platforms = filters.platforms.join(',');
+          if (filters.platforms.length > 0) {
+            // Override default platforms if user has selected specific ones
+            baseParams.platforms = filters.platforms.join(',');
+          }
           
           // Calculate how many pages we need to get 100 games
-          const gamesNeeded = Math.min(pagination.pageSize, 100);
+          const gamesNeeded = 100; // Always fetch 100 games
           const pagesNeeded = Math.ceil(gamesNeeded / 40);
           
           let allGames = [];
@@ -614,17 +638,26 @@ export const useGamesStore = create(
         getQuickFilters: () => {
           // Platform-based quick filters for all stores - using exact RAWG platform names
           const platformFilters = {
+            // Original keys
             pc: { name: 'PC', filter: { platform: 'PC' } },
             ps5: { name: 'PlayStation 5', filter: { platform: 'PlayStation 5' } },
             ps4: { name: 'PlayStation 4', filter: { platform: 'PlayStation 4' } },
             xboxSeriesX: { name: 'Xbox Series X', filter: { platform: 'Xbox Series X' } },
             xboxOne: { name: 'Xbox One', filter: { platform: 'Xbox One' } },
             nintendoSwitch: { name: 'Nintendo Switch', filter: { platform: 'Nintendo Switch' } },
-            // Add more common platforms
             ps3: { name: 'PlayStation 3', filter: { platform: 'PlayStation 3' } },
             xbox360: { name: 'Xbox 360', filter: { platform: 'Xbox 360' } },
             nintendo3ds: { name: 'Nintendo 3DS', filter: { platform: 'Nintendo 3DS' } },
-            nintendoWii: { name: 'Nintendo Wii', filter: { platform: 'Nintendo Wii' } }
+            nintendoWii: { name: 'Nintendo Wii', filter: { platform: 'Nintendo Wii' } },
+            
+            // Additional keys used by the UI icons
+            steam: { name: 'Steam', filter: { platform: 'PC' } }, // Steam is PC platform
+            epic: { name: 'Epic Games', filter: { platform: 'PC' } }, // Epic is PC platform
+            playstation: { name: 'PlayStation', filter: { platform: 'PlayStation 5' } }, // Default to PS5
+            xbox: { name: 'Xbox', filter: { platform: 'Xbox Series X' } }, // Default to Xbox Series X
+            'nintendo-switch': { name: 'Nintendo Switch', filter: { platform: 'Nintendo Switch' } },
+            mac: { name: 'macOS', filter: { platform: 'macOS' } },
+            linux: { name: 'Linux', filter: { platform: 'Linux' } }
           };
           
           return platformFilters;
@@ -632,7 +665,6 @@ export const useGamesStore = create(
 
       // Apply quick filter
       applyQuickFilter: (filterKey) => {
-        const { activeStore } = get();
         const quickFilters = get().getQuickFilters();
         const filter = quickFilters[filterKey];
         

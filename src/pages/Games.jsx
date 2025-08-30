@@ -40,7 +40,7 @@ export default function Games() {
   const displayGames = filteredGames && filteredGames.length > 0 ? filteredGames : games;
 
   // Infinite scrolling state
-  const [visibleGamesCount, setVisibleGamesCount] = useState(16); // Show 4 rows initially (4x4 grid)
+  const [visibleGamesCount, setVisibleGamesCount] = useState(100); // Show all 100 games initially
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMoreGames, setHasMoreGames] = useState(true);
   const scrollObserverRef = useRef(null);
@@ -97,14 +97,14 @@ export default function Games() {
     
     // Simulate loading delay for better UX
     setTimeout(() => {
-      setVisibleGamesCount(prev => prev + 16); // Load 4 more rows
+      setVisibleGamesCount(prev => prev + 20); // Load 5 more rows
       setIsLoadingMore(false);
     }, 500);
   }, [isLoadingMore, hasMoreGames]);
 
   // Reset infinite scroll when filters change
   useEffect(() => {
-    setVisibleGamesCount(16); // Reset to 4 rows
+    setVisibleGamesCount(100); // Reset to show all 100 games
     setHasMoreGames(true);
   }, [selectedGenre, selectedPlatform, sortBy, searchTerm, localPriceRange]);
 
@@ -413,7 +413,7 @@ export default function Games() {
               <p className="text-gray-600 dark:text-gray-300 mb-8">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200"
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200"
               >
                 Try Again
               </button>
@@ -434,7 +434,7 @@ export default function Games() {
           {/* Page Header */}
           <div className="text-center mb-8 sm:mb-12">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
-              RAWG <span className="text-blue-600 dark:text-white">STORE</span>
+              RAWG <span className="text-blue-600 dark:text-orange-400">STORE</span>
             </h1>
             <p className="text-base sm:text-lg max-w-2xl mx-auto leading-relaxed px-4 text-gray-600 dark:text-gray-400">
               Your ultimate destination for discovering and collecting games across all platforms
@@ -780,7 +780,7 @@ export default function Games() {
                 <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
                 <button
                   onClick={() => fetchGames()}
-                  className="px-4 py-2 bg-blue-600 dark:bg-white/20 hover:bg-blue-700 dark:hover:bg-white/30 text-white dark:text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors"
                 >
                   Try Again
                 </button>
@@ -838,7 +838,7 @@ export default function Games() {
                     setLocalPriceRange({ min: '', max: '' });
                     setLocalSortBy('relevance');
                   }}
-                  className="px-4 py-2 bg-blue-600 dark:bg-white/20 hover:bg-blue-700 dark:hover:bg-white/30 text-white dark:text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors"
                 >
                   Clear All Filters
                 </button>

@@ -339,7 +339,7 @@ export const fetchGames = async (options = {}) => {
       ordering = '-rating,-metacritic,-added',
       platforms = [],
       genres = [],
-      dates = '2020-01-01,2025-12-31', // Focus on recent games (2020-2025)
+      dates = '2021-01-01,2025-12-31', // Focus on recent games (2021-2025)
       metacritic = 70, // Focus on games with good ratings
       tags = [],
       publishers = [],
