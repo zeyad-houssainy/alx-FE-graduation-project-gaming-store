@@ -88,7 +88,7 @@ export default function Cart() {
                           className="w-12 h-12 rounded-lg object-cover"
                         />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{item.name}</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{item.name}</p>
                           <p className="text-gray-500 dark:text-gray-400">Qty: {item.quantity}</p>
                         </div>
                       </div>

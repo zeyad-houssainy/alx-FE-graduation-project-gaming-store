@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useGamesStore, useCartStore, useAuthStore } from '../stores';
+import { useGamesStore, useAuthStore } from '../stores';
 import { useSearchParams } from 'react-router-dom';
-import axios from 'axios';
 import FilterMenu from '../components/FilterMenu';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
@@ -369,42 +368,53 @@ export default function Games() {
       
       console.log('🧪 Testing CheapShark API...');
       
-      // Test stores endpoint to verify API accessibility
-      const storesResponse = await axios.get('https://www.cheapshark.com/api/1.0/stores');
+      // Import the CheapShark API service function dynamically to avoid CORS issues
+      const { testCheapSharkConnectivity } = await import('../services/cheapsharkApi');
       
-      if (storesResponse.status === 200) {
-        const storesData = storesResponse.data;
-        
-        // Also test games endpoint to get total count
-        const gamesResponse = await axios.get('https://www.cheapshark.com/api/1.0/games', {
-          params: { limit: 1 }
-        });
-        let totalGames = 'Unknown';
-        
-        if (gamesResponse.status === 200) {
-          // CheapShark doesn't provide total count directly, but we can show
-          // that games endpoint is accessible
-          totalGames = 'Available (requires search terms)';
-        }
-        
-        const result = {
+      // Use the CheapShark API service which handles CORS and authentication properly
+      const result = await testCheapSharkConnectivity();
+      
+      if (result.success) {
+        setCheapSharkTestResult({
           success: true,
-          message: 'API is accessible',
-          storesCount: storesData.length,
-          totalGames: totalGames,
-          sampleStore: storesData[0]
-        };
-        setCheapSharkTestResult(result);
+          message: 'API is accessible and responding',
+          storesCount: result.storesCount,
+          totalGames: result.totalGames || 'Available (requires search terms)',
+          sampleStore: result.sampleStore,
+          note: 'CheapShark API is working correctly'
+        });
         console.log('✅ CheapShark API test successful:', result);
       } else {
-        throw new Error(`HTTP ${storesResponse.status}: ${storesResponse.statusText}`);
+        setCheapSharkTestResult({
+          success: false,
+          message: result.message || 'API test failed',
+          error: result.error || 'Unknown error',
+          note: result.note || 'This may be due to network issues or API restrictions'
+        });
       }
     } catch (error) {
       console.error('❌ CheapShark API test failed:', error);
+      
+      // Provide more specific error information
+      let errorMessage = error.message;
+      let note = 'This may be due to network issues or API restrictions';
+      
+      if (error.message === 'Failed to fetch') {
+        errorMessage = 'Network request failed';
+        note = 'This may be due to CORS restrictions, network issues, or API being blocked. CheapShark API requires proper network access.';
+      } else if (error.message.includes('CORS')) {
+        errorMessage = 'CORS policy blocked the request';
+        note = 'CheapShark API has CORS restrictions. This API is designed for server-side use, not direct browser requests.';
+      } else if (error.message.includes('TypeError')) {
+        errorMessage = 'Request type error';
+        note = 'This may indicate a network connectivity issue or API endpoint problem.';
+      }
+      
       const result = {
         success: false,
-        message: error.message || 'Network error',
-        error: error.message
+        message: errorMessage,
+        error: error.message,
+        note: note
       };
       setCheapSharkTestResult(result);
     } finally {

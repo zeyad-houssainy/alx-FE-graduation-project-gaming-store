@@ -41,7 +41,7 @@ export default function CartItem({ item }) {
 
         {/* Game Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             {item.name}
           </h3>
           
