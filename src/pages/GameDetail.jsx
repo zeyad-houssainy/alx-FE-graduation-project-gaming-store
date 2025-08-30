@@ -335,7 +335,7 @@ export default function GameDetail() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pt-20">
+        <div className="min-h-screen bg-gray-100 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pt-20">
           <div className="flex items-center justify-center min-h-[80vh]">
             <div className="text-center">
               <div className="relative">
@@ -354,7 +354,7 @@ export default function GameDetail() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-pink-50 dark:from-slate-900 dark:via-red-900/20 dark:to-pink-900/20 pt-20">
+        <div className="min-h-screen bg-gray-100 dark:bg-gradient-to-br dark:from-slate-900 dark:via-red-900/20 dark:to-pink-900/20 pt-20">
           <div className="container mx-auto px-6 py-12">
             <div className="text-center">
               <div className="text-8xl mb-6 animate-bounce">😞</div>
@@ -381,7 +381,7 @@ export default function GameDetail() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="min-h-screen bg-gray-100 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         {/* Hero Section - Modern Flat Design */}
         <div className="relative min-h-screen overflow-hidden">
           {/* Background Image with Modern Overlay */}
@@ -652,7 +652,7 @@ export default function GameDetail() {
         </div>
 
         {/* Main Content Section */}
-        <div className="relative z-20 -mt-12 sm:-mt-16 md:-mt-20 pb-12 sm:pb-16 md:pb-20">
+        <div className="relative z-20 -mt-12 sm:-mt-16 md:-mt-20 pb-12 sm:pb-16 md:pb-20 bg-gray-100 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
               {/* Left Column - Game Details */}
@@ -870,43 +870,9 @@ export default function GameDetail() {
         </div>
 
         {/* Additional Game Information */}
-        <div className="relative z-20 pb-12 sm:pb-16 md:pb-20">
+        <div className="relative z-20 pb-12 sm:pb-16 md:pb-20 bg-gray-100 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-              {/* Game Screenshots */}
-              {allScreenshots.length > 1 && (
-                <div className={`bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-lg border border-slate-200 dark:border-slate-700 transform transition-all duration-700 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
-                  <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-                    <div className="w-10 h-10 sm:w-14 sm:h-14 bg-purple-500 rounded-xl sm:rounded-2xl flex items-center justify-center">
-                      <FaImages className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Screenshots</h2>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-                    {allScreenshots.slice(1, 7).map((screenshot, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setLightboxImage(screenshot);
-                          setShowLightbox(true);
-                        }}
-                        className="relative group aspect-video rounded-xl overflow-hidden border-2 border-slate-200 dark:border-slate-600 hover:border-blue-400 dark:hover:border-orange-400 transition-all duration-300 transform hover:scale-105"
-                      >
-                        <img
-                          src={screenshot}
-                          alt={`${game.name} screenshot ${index + 2}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <FaExpand className="w-6 h-6 text-white" />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Game Videos */}
+            <div className="grid grid-cols-1 gap-6 sm:gap-8">{/* Game Videos */}
               {allMovies.length > 0 && (
                 <div className={`bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-lg border border-slate-200 dark:border-slate-700 transform transition-all duration-700 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
                   <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
