@@ -16,40 +16,9 @@ const Deals = () => {
   const [activeSection, setActiveSection] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [consolidatedDeals, setConsolidatedDeals] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   
   const { addToCart } = useCartStore();
-
-  // Function to render SVG icons for store sections
-  const renderStoreIcon = (iconType) => {
-    switch (iconType) {
-      case 'steam':
-        return (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 432 400">
-            <path d="M372 119q0 26-18 44.5T310 182t-44.5-18.5T247 119t18.5-44.5T310 56t44 18.5t18 44.5zM0 319V209l65 26q20-12 45-12h9l73-105q0-48 34.5-82T309 2q49 0 83.5 34.5t34.5 83t-34.5 83T309 237l-112 82q-3 34-28 56.5T110 398q-32 0-56-19.5T24 329zM309.5 40Q277 40 254 63.5t-23 56t23 55.5t55.5 23t55.5-23t23-55.5t-23-56T309.5 40zM110 246q-7 0-14 2l27 10q19 8 27.5 27.5t.5 39.5t-27.5 28t-39.5 1q-6-3-16.5-7.5T53 341q18 34 57 34q26 0 45-19t19-45.5t-19-45.5t-45-19z"/>
-          </svg>
-        );
-      case 'epic':
-        return (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 32 32">
-            <path d="M4.719 0C2.886 0 2.214.677 2.214 2.505v22.083c0 .209.011.401.027.579c.047.401.047.792.421 1.229c.036.052.412.328.412.328c.203.099.343.172.572.265l11.115 4.656c.573.261.819.371 1.235.355h.005c.421.016.667-.093 1.24-.355l11.109-4.656c.235-.093.369-.167.577-.265c0 0 .376-.287.412-.328c.375-.437.375-.828.421-1.229c.016-.177.027-.369.027-.573V2.506c0-1.828-.677-2.505-2.505-2.505zm17.808 4.145h.905c1.511 0 2.251.735 2.251 2.267v2.505H23.85V6.51c0-.489-.224-.713-.699-.713h-.312c-.489 0-.713.224-.713.713v7.749c0 .489.224.713.713.713h.349c.468 0 .692-.224.692-.713v-2.771h1.833v2.86c0 1.525-.749 2.276-2.265 2.276h-.921c-1.521 0-2.267-.756-2.267-2.276V6.425c0-1.525.745-2.281 2.267-2.281zm-16.251.106h4.151v1.703H8.14v3.468h2.204v1.699H8.14v3.697h2.319v1.704H6.276zm5.088 0h2.928c1.515 0 2.265.755 2.265 2.28v3.261c0 1.525-.751 2.276-2.265 2.276h-1.057v4.453h-1.871zm6.037 0h1.864v12.271h-1.864zm-4.172 1.65v4.52H14c.469 0 .693-.228.693-.719V6.619c0-.489-.224-.719-.693-.719zM8.088 19.437h.276l.063.011h.1l.052.016h.052l.047.015l.052.011l.041.011l.093.021l.053.015l.036.011l.041.016l.052.016l.036.015l.053.021l.047.021l.041.025l.047.021l.036.025l.053.027l.041.025l.041.021l.041.031l.043.027l.036.031l.125.095l-.032.041l-.036.036l-.032.037l-.036.041l-.025.036l-.032.037l-.036.036l-.032.041l-.025.036l-.037.043l-.031.036l-.036.041l-.032.037l-.025.041l-.037.036l-.031.043l-.036.036l-.032.036l-.036-.025l-.041-.037l-.043-.025l-.077-.052l-.047-.027l-.043-.025l-.047-.027l-.036-.021l-.041-.02l-.084-.032l-.052-.009l-.041-.011l-.047-.011l-.053-.011l-.052-.005h-.052l-.061-.011h-.1l-.052.005h-.052l-.052.016l-.041.011l-.047.016l-.047.009l-.043.021l-.052.021l-.072.052l-.043.025l-.036.032l-.036.025l-.037.032l-.025.036l-.043.036l-.052.073l-.025.041l-.021.047l-.025.037l-.027.047l-.016.047l-.02.041l-.016.052l-.005.052l-.015.048l-.011.052v.052l-.005.052v.12l.005.052v.041l.005.052l.009.047l.016.041l.005.053l.016.041l.015.036l.021.052l.027.052l.02.037l.052.083l.032.041l.025.037l.043.031l.025.036l.036.032l.084.063l.036.02l.041.027l.048.021l.052.02l.036.021l.104.031l.047.005l.052.016l.052.005h.224l.063-.005h.047l.053-.021l.052-.005l.052-.015l.041-.011l.047-.021l.041-.02l.047-.021l.032-.021l.041-.025v-.464h-.735v-.744h1.661v1.667l-.036.025l-.036.031l-.037.027l-.041.031l-.041.021l-.036.032l-.084.052l-.052.025l-.083.052l-.053.021l-.041.02l-.047.021l-.104.041l-.041.021l-.095.031l-.047.011l-.047.016l-.052.016l-.041.009l-.156.032l-.048.005l-.104.011l-.057.005l-.052.004l-.057.005h-.26l-.052-.009h-.052l-.052-.011h-.047l-.052-.016l-.152-.031l-.041-.016l-.047-.005l-.052-.021l-.095-.031l-.093-.041l-.052-.021l-.036-.021l-.052-.02l-.037-.032l-.052-.02l-.031-.027l-.041-.025l-.084-.063l-.041-.027l-.032-.031l-.041-.032l-.068-.067l-.036-.032l-.031-.036l-.037-.037l-.025-.041l-.032-.031l-.025-.043l-.032-.041l-.025-.036l-.027-.041l-.025-.048l-.021-.041l-.021-.047l-.02-.041l-.041-.095l-.016-.036l-.021-.047l-.011-.047l-.009-.041l-.011-.052l-.016-.048l-.011-.052l-.005-.041l-.009-.052l-.011-.093l-.011-.104v-.276l.011-.053v-.052l.016-.052v-.052l.015-.047l.016-.052l.021-.093l.015-.052l.016-.047l.063-.141l.02-.041l.021-.047l.027-.048l.02-.041l.027-.036l.052-.084l.031-.041l.032-.036l.025-.041l.068-.068l.031-.037l.037-.036l.031-.036l.043-.032l.072-.063l.041-.031l.043-.027l.036-.031l.041-.027l.043-.02l.047-.027l.052-.025l.036-.027l.052-.02l.047-.021l.047-.025l.043-.011l.052-.016l.041-.021l.047-.009l.047-.016l.052-.011l.043-.016l.052-.011h.052l.047-.015h.052L8 19.444h.047zm15.985.011h.276l.063.011h.099l.052.015h.057l.052.016l.093.021l.052.011l.047.009l.053.016l.047.016l.041.011l.047.015l.052.016l.041.021l.052.02l.048.021l.047.027l.036.02l.047.027l.047.02l.043.027l.047.031l.036.027l.084.063l.041.025l-.032.041l-.025.043l-.031.036l-.032.041l-.025.047l-.027.043l-.031.036l-.032.041l-.025.043l-.032.041l-.025.036l-.032.041l-.025.048l-.032.041l-.031.036l-.032.041l-.025.043l-.041-.032l-.048-.025l-.036-.027l-.041-.025l-.047-.021l-.043-.027l-.047-.02l-.036-.021l-.052-.02l-.037-.021l-.041-.016l-.093-.031l-.104-.032l-.156-.031l-.052-.005l-.095-.011h-.109l-.057.011l-.052.011l-.047.011l-.041.02l-.037.021l-.041.036l-.031.047l-.021.048v.124l.027.057l.02.032l.032.031l.052.027l.041.025l.047.021l.052.02l.068.016l.036.016l.043.011l.052.011l.041.015l.047.011l.057.016l.052.016l.057.015l.057.011l.047.016l.057.015l.052.011l.047.011l.157.047l.041.016l.052.016l.047.02l.052.027l.104.041l.047.027l.084.052l.077.057l.048.031l.036.036l.036.043l.037.036l.025.036l.037.052l.025.037l.021.052l.02.031l.016.052l.016.043l.011.047l.02.104l.005.052l.005.047v.125l-.005.057l-.011.104l-.011.052l-.015.047l-.011.052l-.016.052l-.015.047l-.021.037l-.021.047l-.025.041l-.032.037l-.052.083l-.063.073l-.036.025l-.041.037l-.032.031l-.041.031l-.041.021l-.041.032l-.048.025l-.093.047l-.052.021l-.047.02l-.052.016l-.047.016l-.043.011l-.104.02l-.036.011l-.052.011h-.052l-.047.011h-.052l-.052.011h-.371l-.156-.016l-.052-.011l-.047-.005l-.104-.02l-.057-.011l-.047-.011l-.052-.016l-.053-.011l-.047-.015l-.052-.016l-.052-.021l-.041-.015l-.052-.016l-.052-.021l-.037-.02l-.052-.016l-.041-.027l-.052-.02l-.041-.027l-.037-.025l-.052-.027l-.036-.02l-.041-.032l-.041-.025l-.043-.032l-.036-.031l-.041-.032l-.037-.025l-.041-.037l.032-.041l.036-.036l.031-.037l.037-.041l.025-.036l.032-.041l.036-.037l.031-.036l.037-.041l.025-.037l.037-.036l.031-.041l.032-.037l.036-.041l.025-.036l.037-.037l.036-.041l.036.032l.048.031l.036.031l.052.027l.036.027l.047.031l.043.027l.047.02l.036.027l.047.015l.052.021l.043.021l.047.015l.041.021l.052.016l.047.015l.052.016l.052.005l.048.016l.052.005h.057l.047.015h.281l.047-.009l.052-.011l.036-.005l.043-.016l.036-.02l.047-.032l.027-.036l.02-.041l.016-.048v-.12l-.021-.047l-.025-.041l-.032-.031l-.047-.032l-.036-.015l-.047-.021l-.052-.021l-.057-.025l-.037-.011l-.041-.011l-.052-.016l-.036-.009l-.052-.016l-.052-.005l-.053-.021l-.052-.005l-.057-.015l-.047-.011l-.052-.016l-.052-.011l-.052-.015l-.047-.016l-.052-.011l-.041-.016l-.095-.031l-.052-.021l-.052-.015l-.104-.043l-.047-.025l-.052-.027l-.036-.025l-.048-.027l-.036-.025l-.047-.027l-.068-.068l-.036-.031l-.063-.073l-.027-.036l-.02-.036l-.032-.048l-.015-.036l-.048-.125l-.009-.052l-.011-.047v-.047l-.011-.052v-.213l.011-.104l.011-.043l.009-.047l.016-.041l.011-.052l.021-.036l.02-.053l.021-.041l.02-.052l.027-.036l.036-.041l.027-.043l.041-.036l.031-.036l.032-.043l.047-.036l.032-.027l.041-.031l.083-.052l.047-.027l.095-.047l.041-.015l.047-.016l.052-.021l.052-.015l.037-.011l.047-.011l.041-.011l.047-.011l.052-.011l.104-.009l.048-.005zm-12.318.036h.943l.043.095l.02.041l.016.052l.021.047l.015.041l.027.047l.031.095l.027.047l.041.093l.011.041l.083.188l.016.047l.021.043l.025.047l.011.047l.027.052l.009.047l.048.093l.02.037l.021.052l.016.052l.015.036l.027.052l.016.043l.02.052l.016.036l.021.052l.047.093l.015.047l.011.048l.021.047l.025.041l.021.052l.021.047l.015.041l.043.095l.015.047l.021.047l.016.047l.02.041l.027.048l.02.047l.021.041l.011.052l.041.093l.021.043l.015.047l.043.093l.025.052l.011.041l.027.053l.009.036l.021.052l.027.052l.02.036l.016.052l.021.043l.015.052l.027.036l.031.104l.021.037l.02.052l.027.041l.021.052l.009.047l.016.041l.021.047l.025.043h-1.041l-.025-.043l-.016-.047l-.021-.047l-.02-.052l-.011-.041l-.043-.093l-.015-.043l-.041-.093l-.016-.041l-.021-.052l-.031-.095l-.021-.041h-1.448l-.02.047l-.016.043l-.021.052l-.02.047l-.011.041l-.021.052l-.02.041l-.016.047l-.021.043l-.02.052l-.016.036l-.021.052l-.015.052l-.021.037l-.016.052h-1.031l.015-.048l.043-.093l.015-.052l.016-.041l.027-.047l.02-.047l.021-.043l.011-.047l.02-.052l.027-.041l.02-.047l.032-.095l.047-.093l.016-.047l.02-.041l.016-.048l.063-.14l.021-.052l.015-.041l.016-.047l.027-.043l.02-.052l.016-.047l.016-.041l.02-.052l.027-.037l.016-.052l.02-.041l.016-.047l.021-.052l.025-.041l.016-.052l.02-.037l.016-.052l.021-.052l.02-.036l.021-.052l.016-.043l.02-.052l.016-.036l.027-.052l.02-.052l.021-.041l.011-.047l.02-.048l.027-.047l.02-.041l.011-.052l.021-.047l.021-.043l.041-.093l.015-.041l.043-.104l.02-.037l.021-.052l.016-.041l.015-.052l.021-.047l.027-.041l.02-.052l.016-.037l.016-.052l.02-.041l.027-.047l.016-.052l.015-.043l.021-.052l.02-.036l.027-.052l.016-.052l.015-.036l.021-.052zm2.928.027h1.031l.032.041l.052.084l.025.047l.027.036l.025.047l.027.041l.025.048l.027.041l.025.036l.027.047l.025.043l.037.041l.015.041l.032.047l.025.043l.032.036l.021.047l.025.041l.032.043l.015.041l.037.047l.077.125l.021.041l.031.041l.027.041l.025.048l.079.124l.025.048l.027.041l.031-.041l.021-.053l.031-.036l.027-.047l.025-.036l.021-.052l.036-.037l.027-.047l.021-.036l.025-.043l.032-.047l.025-.036l.027-.052l.025-.036l.032-.048l.02-.036l.027-.052l.025-.031l.027-.043l.031-.052l.027-.036l.02-.047l.032-.037l.025-.052l.027-.031l.031-.041l.027-.052l.025-.037l.027-.047l.025-.036l.027-.052l.031-.037l.021-.047l.027-.036h1.047v3.719h-.98V21.04l-.025.037l-.032.052l-.025.031l-.032.041l-.02.052l-.032.037l-.025.036l-.032.052l-.052.073l-.031.041l-.027.052l-.031.037l-.027.036l-.02.052l-.032.036l-.025.037l-.032.052l-.025.036l-.032.041l-.025.047l-.021.037l-.031.041l-.027.047l-.031.036l-.032.043l-.02.041l-.027.047l-.031.037l-.032.041l-.02.052l-.037.031l-.02.041l-.032.053l-.025.036H16.6l-.031-.047l-.027-.043l-.025-.047l-.027-.036l-.031-.047l-.027-.041l-.031-.043l-.027-.041l-.025-.047l-.027-.036l-.036-.048l-.021-.041l-.031-.047l-.027-.036l-.025-.047l-.032-.043l-.025-.052l-.032-.036l-.025-.047l-.027-.043l-.025-.047l-.032-.036l-.025-.047l-.032-.041l-.02-.043l-.032-.041l-.025-.047l-.032-.036l-.025-.048l-.032-.041l-.02-.047l-.037-.036l-.02-.048l-.032-.041v2.193h-.963v-3.683zm4.624 0h2.933v.839h-1.959v.599h1.76v.792h-1.76v.635h1.984v.844h-2.953v-3.677zm-7.094 1.14l-.016.047l-.015.043l-.021.052l-.021.047l-.015.047l-.043.093l-.02.052l-.016.043l-.016.052l-.02.036l-.016.052l-.021.052l-.02.037l-.016.052l-.02.041l-.016.052l-.027.047l-.011.041l-.02.052l-.021.048l-.016.041l-.02.052h.859l-.02-.052l-.016-.047l-.041-.095l-.016-.047l-.021-.041l-.015-.052l-.021-.047l-.016-.047l-.02-.043l-.016-.047l-.021-.052l-.015-.041l-.043-.093l-.009-.048l-.021-.047l-.021-.052l-.015-.036l-.043-.104l-.015-.047zm-1.53 6.964h10.681l-5.452 1.797z"/>
-          </svg>
-        );
-      case 'playstation':
-        return (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8.984 2.596v17.547l3.915 1.261V6.688c0-.69.304-1.151.794-.991c.636.18.76.814.76 1.505v5.875c2.441 1.193 4.362-.002 4.362-3.152c0-3.237-1.126-4.675-4.438-5.827c-1.307-.448-3.728-1.186-5.39-1.502zm4.656 16.241l6.296-2.275c.715-.258.826-.625.246-.818c-.586-.192-1.637-.139-2.357.123l-4.205 1.5V14.98l.24-.085s1.201-.42 2.913-.615c1.696-.18 3.785.03 5.437.661c1.848.601 2.04 1.472 1.576 2.072c-.465.6-1.622 1.036-1.622 1.036l-8.544 3.107V18.86zM1.807 18.6c-1.9-.545-2.214-1.668-1.352-2.32c.801-.586 2.16-1.052 2.16-1.052l5.615-2.013v2.313L4.205 17c-.705.271-.825.632-.239.826c.586.195 1.637.15 2.343-.12L8.247 17v2.074c-.12.03-.256.044-.39.073c-1.939.331-3.996.196-6.038-.479z"/>
-          </svg>
-        );
-      case 'xbox':
-        return (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 432 432">
-            <path d="M213 85q-24-18-47-27.5T127.5 47t-28 0T81 51l-6 3Q134 3 213 3t139 51q-3-1-7-3t-17.5-4t-28.5 0t-38.5 11T213 85zm-56 41q-39 40-65 78t-34.5 63.5t-12 44.5t-1.5 28l3 9Q0 291 0 216q0-84 57-145q38 16 100 55zm270 90q0 75-47 133q1-3 2.5-9t-1.5-27.5t-12-45.5t-34.5-62.5T269 126q28-17 53-31t36-19l11-5q58 61 58 145zm-215-44q38 27 67.5 57t45 53t26 42t13.5 29l3 10q-62 66-153.5 66T59 363q2-4 5-11.5t15-30t28-44.5t44-51t61-54z"/>
-          </svg>
-        );
-      default:
-        return <span className="text-2xl">{iconType}</span>;
-    }
-  };
 
   // Store sections configuration with SVG icons
   const storeSections = [
@@ -59,6 +28,30 @@ const Deals = () => {
     { id: 'ps', name: 'PS Store', icon: 'playstation', color: 'from-blue-500 via-indigo-500 to-purple-600' },
     { id: 'xbox', name: 'Xbox', icon: 'xbox', color: 'from-green-500 via-emerald-500 to-teal-600' }
   ];
+
+  // Function to render SVG icons for store sections
+  const renderStoreIcon = (iconType) => {
+    switch (iconType) {
+      case 'steam':
+        return (
+          <img src="/assets/icons/steam.svg" alt="Steam" className="w-6 h-6" />
+        );
+      case 'epic':
+        return (
+          <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-6 h-6" />
+        );
+      case 'playstation':
+        return (
+          <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-6 h-6" />
+        );
+      case 'xbox':
+        return (
+          <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-6 h-6" />
+        );
+      default:
+        return <span className="text-2xl">{iconType}</span>;
+    }
+  };
 
   useEffect(() => {
     fetchDealsData();
@@ -113,6 +106,11 @@ const Deals = () => {
     return filtered;
   };
 
+  // Get deals for specific store
+  const getStoreDeals = (storeID) => {
+    return getFilteredDeals().filter(deal => deal.cheapestDeal?.storeID === storeID);
+  };
+
   // Function to consolidate deals by game title, keeping only the cheapest price
   const consolidateDeals = (dealsData) => {
     const dealsByTitle = {};
@@ -155,9 +153,20 @@ const Deals = () => {
     }
   };
 
+  // Wishlist functions
+  const addToWishlist = (dealId) => {
+    setWishlist(prev => {
+      if (prev.includes(dealId)) {
+        return prev.filter(id => id !== dealId);
+      } else {
+        return [...prev, dealId];
+      }
+    });
+  };
 
-
-
+  const isInWishlist = (dealId) => {
+    return wishlist.includes(dealId);
+  };
 
   if (loading) {
     return (
@@ -233,36 +242,36 @@ const Deals = () => {
                   <span className="text-orange-300 dark:text-orange-200 font-bold"> Save big</span> on AAA titles, indie gems, and classic favorites!
                 </p>
                 
-                                 {/* Enhanced Store Selection Buttons - Dummy/Non-functional */}
-                 <div className="flex flex-wrap justify-center gap-6 mb-12">
-                   {storeSections.map((section, index) => (
-                     <div
-                       key={section.id}
-                       className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-500 transform hover:scale-110 hover:rotate-1 overflow-hidden cursor-default ${
-                         activeSection === section.id
-                           ? `bg-gradient-to-r ${section.color} text-white shadow-2xl shadow-${section.color.split('-')[1]}/50 scale-105`
-                           : 'bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/30 dark:hover:bg-gray-700/50 border-2 border-white/30 dark:border-gray-600/30 hover:border-white/50 dark:hover:border-gray-500/50 text-black dark:text-white'
-                       }`}
-                       style={{ animationDelay: `${index * 0.1}s` }}
-                     >
-                       {/* Hover Effect Background */}
-                       <div className={`absolute inset-0 bg-gradient-to-r ${section.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                {/* Enhanced Store Selection Buttons - Dummy/Non-functional */}
+                <div className="flex flex-wrap justify-center gap-6 mb-12">
+                  {storeSections.map((section, index) => (
+                    <div
+                      key={section.id}
+                      className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-500 transform hover:scale-110 hover:rotate-1 overflow-hidden cursor-default ${
+                        activeSection === section.id
+                          ? `bg-gradient-to-r ${section.color} text-white shadow-2xl shadow-${section.color.split('-')[1]}/50 scale-105`
+                          : 'bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/30 dark:hover:bg-gray-700/50 border-2 border-white/30 dark:border-gray-600/30 hover:border-white/50 dark:hover:border-gray-500/50 text-black dark:text-white'
+                      }`}
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      {/* Hover Effect Background */}
+                      <div className={`absolute inset-0 bg-gradient-to-r ${section.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
                        
-                       {/* Content */}
-                       <div className="relative z-10 flex items-center">
-                         <span className="mr-3 group-hover:scale-125 transition-transform duration-300 group-hover:rotate-12">
-                           {renderStoreIcon(section.icon)}
-                         </span>
-                         <span className="group-hover:tracking-wider transition-all duration-300 font-bold">{section.name}</span>
-                       </div>
+                      {/* Content */}
+                      <div className="relative z-10 flex items-center">
+                        <span className="mr-3 group-hover:scale-125 transition-transform duration-300 group-hover:rotate-12">
+                          {renderStoreIcon(section.icon)}
+                        </span>
+                        <span className="group-hover:tracking-wider transition-all duration-300 font-bold">{section.name}</span>
+                      </div>
                        
-                       {/* Active Indicator */}
-                       {activeSection === section.id && (
-                         <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full animate-pulse"></div>
-                       )}
-                     </div>
-                   ))}
-                 </div>
+                      {/* Active Indicator */}
+                      {activeSection === section.id && (
+                        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full animate-pulse"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
                 
                 {/* Stats Section */}
                 <div className="max-w-4xl mx-auto mb-12">
@@ -364,6 +373,7 @@ const Deals = () => {
               <div className="absolute top-1/3 right-0 w-24 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent animate-pulse" style={{ animationDelay: '1s' }}></div>
               <div className="absolute bottom-1/3 left-0 w-20 h-1 bg-gradient-to-r from-transparent via-orange-400 to-transparent animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
+            
             {/* Search Section - Moved Above All Deals */}
             <div className="max-w-4xl mx-auto mb-16">
               <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-gray-600/30">
@@ -384,16 +394,64 @@ const Deals = () => {
               </div>
             </div>
             
+            {/* All Deals Section */}
+            <div className="mb-20">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-2xl">🔥</span>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">All Deals</h3>
+                    <p className="text-gray-600 dark:text-gray-400">Best deals from all stores</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('all-deals-scroll').scrollLeft -= 300}>
+                    <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  </button>
+                  <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('all-deals-scroll').scrollLeft += 300}>
+                    <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  </button>
+                </div>
+              </div>
+              <div id="all-deals-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
+                {getFilteredDeals().length > 0 ? (
+                  getFilteredDeals().slice(0, 15).map((deal) => (
+                    <div key={deal.id} className="flex-shrink-0 w-80">
+                      <PortraitGameCard 
+                        game={{
+                          id: deal.gameId || deal.id,
+                          name: deal.title,
+                          background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                          price: deal.cheapestPrice,
+                          originalPrice: deal.normalPrice,
+                          rating: 4.0,
+                          platforms: ['PC'],
+                          genre: 'Action'
+                        }}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex-shrink-0 w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-4xl mb-2">🎮</div>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm">No deals available</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             {/* Store-Specific Horizontal Scroll Sections */}
             <div className="space-y-16 mb-20">
               {/* Steam Section */}
               <div className="relative">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
-                      <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 432 400">
-                        <path d="M372 119q0 26-18 44.5T310 182t-44.5-18.5T247 119t18.5-44.5T310 56t44 18.5t18 44.5zM0 319V209l65 26q20-12 45-12h9l73-105q0-48 34.5-82T309 2q49 0 83.5 34.5t34.5 83t-34.5 83T309 237l-112 82q-3 34-28 56.5T110 398q-32 0-56-19.5T24 329zM309.5 40Q277 40 254 63.5t-23 56t23 55.5t55.5 23t55.5-23t23-55.5t-23-56T309.5 40zM110 246q-7 0-14 2l27 10q19 8 27.5 27.5t.5 39.5t-27.5 28t-39.5 1q-6-3-16.5-7.5T53 341q18 34 57 34q26 0 45-19t19-45.5t-19-45.5t-45-19z"/>
-                      </svg>
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <img src="/assets/icons/steam.svg" alt="Steam" className="w-7 h-7" />
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-800 bg-clip-text text-transparent">Steam Deals</h3>
@@ -410,10 +468,8 @@ const Deals = () => {
                   </div>
                 </div>
                 <div id="steam-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
-                  {getFilteredDeals()
-                    .filter(deal => deal.cheapestDeal?.storeID === '1')
-                    .slice(0, 10)
-                    .map((deal) => (
+                  {getStoreDeals('1').length > 0 ? (
+                    getStoreDeals('1').slice(0, 10).map((deal) => (
                       <div key={deal.id} className="flex-shrink-0 w-80">
                         <PortraitGameCard 
                           game={{
@@ -428,7 +484,15 @@ const Deals = () => {
                           }}
                         />
                       </div>
-                    ))}
+                    ))
+                  ) : (
+                    <div className="flex-shrink-0 w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🎮</div>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">No Steam deals available</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -436,17 +500,187 @@ const Deals = () => {
               <div className="relative">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
-                      <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 32 32">
-                        <path d="M4.719 0C2.886 0 2.214.677 2.214 2.505v22.083c0 .209.011.401.027.579c.047.401.047.792.421 1.229c.036.052.412.328.412.328c.203.099.343.172.572.265l11.115 4.656c.573.261.819.371 1.235.355h.005c.421.016.667-.093 1.24-.355l11.109-4.656c.235-.093.369-.167.577-.265c0 0 .376-.287.412-.328c.375-.437.375-.828.421-1.229c.016-.177.027-.369.027-.573V2.506c0-1.828-.677-2.505-2.505-2.505zm17.808 4.145h.905c1.511 0 2.251.735 2.251 2.267v2.505H23.85V6.51c0-.489-.224-.713-.699-.713h-.312c-.489 0-.713.224-.713.713v7.749c0 .489.224.713.713.713h.349c.468 0 .692-.224.692-.713v-2.771h1.833v2.86c0 1.525-.749 2.276-2.265 2.276h-.921c-1.521 0-2.267-.756-2.267-2.276V6.425c0-1.525.745-2.281 2.267-2.281zm-16.251.106h4.151v1.703H8.14v3.468h2.204v1.699H8.14v3.697h2.319v1.704H6.276zm5.088 0h2.928c1.515 0 2.265.755 2.265 2.28v3.261c0 1.525-.751 2.276-2.265 2.276h-1.057v4.453h-1.871zm6.037 0h1.864v12.271h-1.864zm-4.172 1.65v4.52H14c.469 0 .693-.228.693-.719V6.619c0-.489-.224-.719-.693-.719z"/>
-                      </svg>
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <img src="/assets/icons/epic-games.svg" alt="Epic Games" className="w-7 h-7" />
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">Epic Games</h3>
                       <p className="text-gray-600 dark:text-gray-400">Epic Games discounts</p>
                     </div>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('epic-scroll').scrollLeft -= 300}>
+                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('epic-scroll').scrollLeft += 300}>
+                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
                 </div>
+                <div id="epic-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
+                  {getStoreDeals('25').length > 0 ? (
+                    getStoreDeals('25').slice(0, 10).map((deal) => (
+                      <div key={deal.id} className="flex-shrink-0 w-80">
+                        <PortraitGameCard 
+                          game={{
+                            id: deal.gameId || deal.id,
+                            name: deal.title,
+                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                            price: deal.cheapestPrice,
+                            originalPrice: deal.normalPrice,
+                            rating: 4.0,
+                            platforms: ['PC'],
+                            genre: 'Action'
+                          }}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex-shrink-0 w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🎮</div>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">No Epic Games deals available</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* PlayStation Section */}
+              <div className="relative">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-7 h-7" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 bg-clip-text text-transparent">PS Store</h3>
+                      <p className="text-gray-600 dark:text-gray-400">PlayStation Store discounts</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('ps-scroll').scrollLeft -= 300}>
+                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('ps-scroll').scrollLeft += 300}>
+                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+                <div id="ps-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
+                  {getStoreDeals('3').length > 0 ? (
+                    getStoreDeals('3').slice(0, 10).map((deal) => (
+                      <div key={deal.id} className="flex-shrink-0 w-80">
+                        <PortraitGameCard 
+                          game={{
+                            id: deal.gameId || deal.id,
+                            name: deal.title,
+                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                            price: deal.cheapestPrice,
+                            originalPrice: deal.normalPrice,
+                            rating: 4.0,
+                            platforms: ['PC'],
+                            genre: 'Action'
+                          }}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex-shrink-0 w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🎮</div>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">No PlayStation deals available</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Xbox Section */}
+              <div className="relative">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-7 h-7" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 bg-clip-text text-transparent">Xbox</h3>
+                      <p className="text-gray-600 dark:text-gray-400">Xbox Store discounts</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('xbox-scroll').scrollLeft -= 300}>
+                      <FaArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <button className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" onClick={() => document.getElementById('xbox-scroll').scrollLeft += 300}>
+                      <FaArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+                <div id="xbox-scroll" className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
+                  {getStoreDeals('2').length > 0 ? (
+                    getStoreDeals('2').slice(0, 10).map((deal) => (
+                      <div key={deal.id} className="flex-shrink-0 w-80">
+                        <PortraitGameCard 
+                          game={{
+                            id: deal.gameId || deal.id,
+                            name: deal.title,
+                            background_image: deal.thumb || '/assets/images/featured-game-1.jpg',
+                            price: deal.cheapestPrice,
+                            originalPrice: deal.normalPrice,
+                            rating: 4.0,
+                            platforms: ['PC'],
+                            genre: 'Action'
+                          }}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex-shrink-0 w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🎮</div>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">No Xbox deals available</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Deals Grid Section */}
+            <div className="mb-20">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">All Deals Grid</h3>
+                    <p className="text-gray-600 dark:text-gray-400">Browse all deals in a grid layout</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {getFilteredDeals().length > 0 ? (
+                  getFilteredDeals().slice(0, 20).map((deal) => (
+                    <DealCard
+                      key={deal.id}
+                      deal={deal}
+                      onAddToCart={addToCart}
+                      onAddToWishlist={addToWishlist}
+                      isInWishlist={isInWishlist(deal.id)}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-16">
+                    <div className="text-6xl mb-4">😔</div>
+                    <h3 className="text-2xl font-bold text-gray-600 dark:text-gray-400 mb-2">No deals found</h3>
+                    <p className="text-gray-500 dark:text-gray-500">
+                      {searchTerm ? `No deals match "${searchTerm}"` : 'Try adjusting your search or filters'}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -462,27 +696,19 @@ const renderPlatformIcon = (storeID) => {
     switch (storeID) {
       case '1': // Steam
         return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 432 400">
-            <path d="M372 119q0 26-18 44.5T310 182t-44.5-18.5T247 119t18.5-44.5T310 56t44 18.5t18 44.5zM0 319V209l65 26q20-12 45-12h9l73-105q0-48 34.5-82T309 2q49 0 83.5 34.5t34.5 83t-34.5 83T309 237l-112 82q-3 34-28 56.5T110 398q-32 0-56-19.5T24 329zM309.5 40Q277 40 254 63.5t-23 56t23 55.5t55.5 23t55.5-23t23-55.5t-23-56T309.5 40zM110 246q-7 0-14 2l27 10q19 8 27.5 27.5t.5 39.5t-27.5 28t-39.5 1q-6-3-16.5-7.5T53 341q18 34 57 34q26 0 45-19t19-45.5t-19-45.5t-45-19z"/>
-          </svg>
+          <img src="/assets/icons/steam.svg" alt="Steam" className="w-4 h-4" />
         );
       case '2': // Xbox
         return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 432 432">
-            <path d="M213 85q-24-18-47-27.5T127.5 47t-28 0T81 51l-6 3Q134 3 213 3t139 51q-3-1-7-3t-17.5-4t-28.5 0t-38.5 11T213 85zm-56 41q-39 40-65 78t-34.5 63.5t-12 44.5t-1.5 28l3 9Q0 291 0 216q0-84 57-145q38 16 100 55zm270 90q0 75-47 133q1-3 2.5-9t-1.5-27.5t-12-45.5t-34.5-62.5T269 126q28-17 53-31t36-19l11-5q58 61 58 145zm-215-44q38 27 67.5 57t45 53t26 42t13.5 29l3 10q-62 66-153.5 66T59 363q2-4 5-11.5t15-30t28-44.5t44-51t61-54z"/>
-          </svg>
+          <img src="/assets/icons/xbox.svg" alt="Xbox" className="w-4 h-4" />
         );
       case '3': // PlayStation
         return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8.984 2.596v17.547l3.915 1.261V6.688c0-.69.304-1.151.794-.991c.636.18.76.814.76 1.505v5.875c2.441 1.193 4.362-.002 4.362-3.152c0-3.237-1.126-4.675-4.438-5.827c-1.307-.448-3.728-1.186-5.39-1.502zm4.656 16.241l6.296-2.275c.715-.258.826-.625.246-.818c-.586-.192-1.637-.139-2.357.123l-4.205 1.5V14.98l.24-.085s1.201-.42 2.913-.615c1.696-.18 3.785.03 5.437.661c1.848.601 2.04 1.472 1.576 2.072c-.465.6-1.622 1.036-1.622 1.036l-8.544 3.107V18.86zM1.807 18.6c-1.9-.545-2.214-1.668-1.352-2.32c.801-.586 2.16-1.052 2.16-1.052l5.615-2.013v2.313L4.205 17c-.705.271-.825.632-.239.826c.586.195 1.637.15 2.343-.12L8.247 17v2.074c-.12.03-.256.044-.39.073c-1.939.331-3.996.196-6.038-.479z"/>
-          </svg>
+          <img src="/assets/icons/playstation.svg" alt="PlayStation" className="w-4 h-4" />
         );
       default:
         return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-          </svg>
+          <img src="/assets/icons/check.svg" alt="Store" className="w-4 h-4" />
         );
     }
   };

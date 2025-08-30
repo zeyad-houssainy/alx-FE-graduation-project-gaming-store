@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCartStore } from '../stores';
+import { useCartStore, useAuthStore } from '../stores';
+import { FaHeart } from 'react-icons/fa';
 
 const PortraitGameCard = ({ game }) => {
   const [imageLoading, setImageLoading] = useState(true);
@@ -8,6 +9,22 @@ const PortraitGameCard = ({ game }) => {
   const [cartButtonState, setCartButtonState] = useState('idle'); // 'idle', 'loading', 'success'
   
   const { addToCart } = useCartStore();
+  const { addToFavorites, removeFromFavorites, isFavorite } = useAuthStore();
+
+  // Check if this game is in favorites
+  const isInFavorites = isFavorite(game?.id);
+
+  // Handle favorite toggle
+  const handleFavoriteToggle = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isInFavorites) {
+      removeFromFavorites(game.id);
+    } else {
+      addToFavorites(game);
+    }
+  };
 
   const handleImageLoad = () => {
     setImageLoading(false);
@@ -27,8 +44,18 @@ const PortraitGameCard = ({ game }) => {
     <div className="group relative bg-gray-800/20 dark:bg-gray-800/30 rounded-lg overflow-hidden transition-all duration-300 w-[230px] flex flex-col border border-gray-700 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400 shadow-lg hover:shadow-xl backdrop-blur-sm">
       {/* Game Cover Art Section (Top ~60% of the card) */}
       <div className="relative overflow-hidden w-[230px] h-[300px] flex-shrink-0 bg-gray-800">
-        {/* Add to Cart Icon - Top Right */}
-        <div className="absolute top-3 right-3 z-10">
+        {/* Action Icons - Top Right */}
+        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
+          {/* Favorite Button */}
+          <button 
+            onClick={handleFavoriteToggle}
+            className="w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm transition-all duration-200 flex items-center justify-center text-white shadow-lg"
+            title={isInFavorites ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <FaHeart className={`w-4 h-4 ${isInFavorites ? 'fill-red-500 scale-110' : 'fill-white/70 hover:fill-red-400'}`} />
+          </button>
+          
+          {/* Add to Cart Button */}
           <button 
             className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
               cartButtonState === 'success' 
@@ -61,7 +88,7 @@ const PortraitGameCard = ({ game }) => {
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M5.1 4.8a.499.499 0 0 1 .471-.795a.5.5 0 0 1 .329.195L8 7V.5a.5.5 0 0 1 .5.5V7l2.1-2.8a.501.501 0 0 1 .895.229a.5.5 0 0 1-.095.371l-3 4c-.006.008-.017.012-.024.02a.5.5 0 0 1-.116.1a.3.3 0 0 1-.05.034a.47.47 0 0 1-.42 0a.3.3 0 0 1-.05-.034a.5.5 0 0 1-.116-.1c-.007-.008-.018-.012-.024-.02zm.65 9.95a1.245 1.245 0 0 1-.772 1.154a1.252 1.252 0 0 1-1.704-.91a1.25 1.25 0 1 1 2.475-.245zm8 0a1.245 1.245 0 0 1-.772 1.154a1.252 1.252 0 0 1-1.704-.91a1.249 1.249 0 1 1 2.475-.245zM14 5.5a.5.5 0 0 0-.5.5l-.5 4H4.09l-1.1-6.58a.5.5 0 0 0-.49-.418h-1a.5.5 0 0 0 .5.5a.5.5 0 0 0 .5.5h.576l1.43 8.58a.496.496 0 0 0 .493.418h9a.5.5 0 0 0 0-1h-8.58l-.167-1h8.74a1 1 0 0 0 .992-.876l.508-4.12a.5.5 0 0 0-.5-.5z"/>
+                <path d="M5.1 4.8a.499.499 0 0 1 .471-.795a.5.5 0 0 1 .329.195L8 7V.5a.5.5 0 0 1 .5.5V7l2.1-2.8a.501.501 0 0 1 .895.229a.5.5 0 0 1-.095.371l-3 4c-.006.008-.017.012-.024.02a.5.5 0 0 1-.116.1a.3.3 0 0 1-.05.034a.47.47 0 0 1-.42 0a.3.3 0 0 1-.05-.034a.5.5 0 0 1-.116-.1c-.007-.008-.018-.012-.024-.02zm.65 9.95a1.245 1.245 0 0 1-.772 1.154a1.252 1.252 0 0 1-1.704-.91a1.25 1.25 0 1 1 2.475-.245zm8 0a1.245 1.245 0 0 1-.772 1.154a1.252 1.252 0 0 1-1.704-.91a1.249 1.249 0 1 1 2.475-.245zM14 5.5a.5.5 0 0 0-.5.5l-.5 4H4.09l-1.1-6.58a.5.5 0 0 0-.49-.418h-1a.5.5 0 0 0 .5.5a.5.5 0 0 0 .5.5h.4l1.43 8.58a.496.496 0 0 0 .493.418h9a.5.5 0 0 0 0-1h-8.58l-.167-1h8.74a1 1 0 0 0 .992-.876l.508-4.12a.5.5 0 0 0-.5-.5z"/>
               </svg>
             )}
           </button>

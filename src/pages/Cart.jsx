@@ -83,7 +83,7 @@ export default function Cart() {
                     <div key={item.id} className="flex justify-between items-center text-sm">
                       <div className="flex items-center space-x-3">
                         <img
-                          src={item.background_image}
+                          src={item.background_image || item.image || '/assets/images/featured-game-1.jpg'}
                           alt={item.name}
                           className="w-12 h-12 rounded-lg object-cover"
                         />

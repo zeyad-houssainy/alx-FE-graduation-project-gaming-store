@@ -1,269 +1,179 @@
-# 🎮 Gaming Store - Your Ultimate Gaming Marketplace
+# 🎮 Gaming Store - React Gaming Marketplace
 
-Welcome to **Gaming Store**, a modern, responsive web application that brings the gaming world to your fingertips! This project is a full-featured gaming marketplace where players can discover, browse, and purchase their favorite games.
+A modern, responsive gaming marketplace built with React that allows users to discover, browse, and purchase games with a beautiful dark/light theme interface.
 
-## ✨ What Makes This Special?
+## 🌐 Live Demo
 
-- **🎯 Modern Design**: Clean, intuitive interface that works beautifully on all devices
-- **🌙 Dark Mode**: Eye-friendly dark theme that's easy on your eyes during late-night gaming sessions
-- **📱 Mobile First**: Fully responsive design that looks great on phones, tablets, and desktops
-- **🛒 Smart Shopping**: Intelligent cart system with real-time updates and smooth checkout
-- **🔍 Powerful Search**: Find games quickly with advanced filtering and search capabilities
+**[View Live Demo](https://alx-fe-graduation-project-gaming-st.vercel.app/)**
 
-## 🚀 Features That Gamers Love
+![Light Theme Demo](public/assets/screenshots/homepage-light-theme.jpg)
+![Dark Theme Demo](public/assets/screenshots/homepage-dark-theme.jpg)
 
-### 🎮 **Game Discovery**
-- Browse through an extensive collection of games
-- Filter by genre, platform, and price
-- Search with intelligent autocomplete
-- Beautiful game cards with ratings and details
+## ✨ Key Features
 
-### 🛒 **Shopping Experience**
-- Add games to cart with one click
-- Real-time cart updates
-- Smooth checkout process
-- Order history tracking
+### 🎮 **Core Functionality**
+- **Game Discovery**: Browse extensive game collection with search and filters
+- **Shopping Cart**: Add games to cart with real-time updates
+- **User Authentication**: Secure login/registration system
+- **Responsive Design**: Works perfectly on all devices
+- **Theme Toggle**: Switch between light and dark modes
 
-### 👤 **User Management**
-- Easy registration and login
-- Personal profile management
-- Upload custom profile pictures
-- Secure authentication system
-
-### 🎨 **Visual Appeal**
-- Stunning game imagery
-- Smooth animations and transitions
-- Responsive grid layouts
-- Professional typography
-
-## 🛠️ Tech Stack
-
-This project is built with cutting-edge technologies that ensure reliability, performance, and maintainability:
-
-### **Frontend Framework**
-- **React 18** - Modern React with hooks and functional components
-- **Vite** - Lightning-fast build tool and development server
-
-### **Styling & Design**
-- **Tailwind CSS** - Utility-first CSS framework for rapid development
-- **CSS Modules** - Scoped styling for components
-
-### **State Management**
-- **React Context API** - Built-in state management solution
-- **Local Storage** - Persistent data storage
-
-### **Routing**
-- **React Router DOM** - Client-side routing for smooth navigation
-
-### **Testing**
-- **Jest** - Comprehensive testing framework
-- **React Testing Library** - Component testing utilities
-- **User Event** - User interaction simulation
-
-### **Build Tools**
-- **ESLint** - Code quality and consistency
-- **Prettier** - Code formatting
-
-## 📁 Project Structure
-
-```
-Gaming-store/
-├── 📁 public/                    # Static assets
-│   ├── 📁 assets/
-│   │   ├── 📁 css/              # Global styles
-│   │   ├── 📁 images/           # Game images and icons
-│   │   └── 📁 js/               # JavaScript utilities
-│   └── index.html               # Main HTML file
-├── 📁 src/                       # Source code
-│   ├── 📁 components/            # Reusable UI components
-│   │   ├── 📁 Auth/             # Authentication components
-│   │   ├── 📁 Header/           # Navigation components
-│   │   ├── 📁 Footer/           # Footer component
-│   │   └── __tests__/           # Component tests
-│   ├── 📁 context/              # React Context providers
-│   │   ├── AuthContext.jsx      # User authentication state
-│   │   ├── CartContext.jsx      # Shopping cart state
-│   │   └── ThemeContext.jsx     # Dark/light theme state
-│   ├── 📁 hooks/                 # Custom React hooks
-│   │   ├── useFetchGames.js     # Game data fetching
-│   │   └── useCountdown.js      # Timer functionality
-│   ├── 📁 pages/                 # Main page components
-│   │   ├── 📁 HomePage/         # Homepage sections
-│   │   ├── 📁 CheckOut/         # Checkout flow
-│   │   └── 📁 MyProfile/        # User profile management
-│   ├── 📁 services/              # API and external services
-│   │   └── gamesApi.js          # Game data API integration
-│   ├── 📁 styles/                # Additional styling
-│   ├── App.jsx                   # Main application component
-│   ├── AppRouter.jsx             # Routing configuration
-│   └── main.jsx                  # Application entry point
-├── 📁 docs/                      # Documentation files
-├── package.json                  # Dependencies and scripts
-├── tailwind.config.js            # Tailwind CSS configuration
-├── vite.config.js                # Vite build configuration
-└── README.md                     # This file
-```
+### 🔧 **Technical Features**
+- **Modern React**: Built with React 18 and functional components
+- **State Management**: React Context API for global state
+- **Routing**: React Router for smooth navigation
+- **Styling**: Tailwind CSS for modern, responsive design
+- **API Integration**: 
+  - **RAWG API** - For fetching comprehensive game data (used in Shop page)
+  - **CheapShark API** - For fetching game deals and discounts (used in Deals page)
 
 ## 🚀 Getting Started
 
-### **Prerequisites**
-Make sure you have the following installed on your machine:
-- **Node.js** (version 16 or higher)
-- **npm** (comes with Node.js)
+### Prerequisites
+- Node.js (version 16 or higher)
+- npm or yarn package manager
 
-### **Installation Steps**
+### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/gaming-store.git
-   cd gaming-store
+   git clone https://github.com/yourusername/alx-FE-graduation-project-gaming-store.git
+   cd alx-FE-graduation-project-gaming-store
    ```
 
 2. **Install dependencies**
    ```bash
    npm install
+   # or
+   yarn install
    ```
 
-3. **Start the development server**
+3. **Start development server**
    ```bash
    npm run dev
+   # or
+   yarn dev
    ```
 
 4. **Open your browser**
-   Navigate to `http://localhost:5000` (or the port shown in your terminal)
+   Navigate to `http://localhost:5000` to view the application
 
-### **Available Scripts**
+### Build for Production
 
-- **`npm run dev`** - Start development server
-- **`npm run build`** - Build for production
-- **`npm run preview`** - Preview production build
-- **`npm test`** - Run test suite
-- **`npm run test:watch`** - Run tests in watch mode
-- **`npm run test:coverage`** - Generate test coverage report
+```bash
+npm run build
+# or
+yarn build
+```
 
-## 🎯 Key Components Explained
+## 🛠️ Tech Stack
 
-### **🛒 Shopping Cart System**
-The cart is built with React Context for global state management. It automatically saves to localStorage and provides real-time updates across all components.
+- **Frontend**: React 18, Vite
+- **Styling**: Tailwind CSS
+- **State Management**: React Context API, Zustand
+- **HTTP Client**: Axios
+- **Routing**: React Router DOM
+- **APIs**: 
+  - **RAWG API** - Game data and information
+  - **CheapShark API** - Game deals and pricing
+- **Testing**: Jest, React Testing Library
+- **Code Quality**: ESLint, Prettier
 
-### **🔍 Search & Filtering**
-Advanced search functionality with debounced input, genre filtering, and platform selection. Built for performance with optimized re-renders.
+## 🔌 API Integrations
 
-### **🌙 Theme System**
-Dark/light theme toggle that persists user preference and provides consistent styling across all components.
+### **RAWG API** 🎮
+- **Purpose**: Fetch comprehensive game data including titles, descriptions, ratings, genres, and platforms
+- **Implementation**: Used in the **Shop page** (`/games`) to display the main game catalog
+- **Features**: Game search, filtering by genre/platform, detailed game information
 
-### **📱 Responsive Design**
-Mobile-first approach with Tailwind CSS breakpoints ensuring perfect display on all device sizes.
+### **CheapShark API** 💰
+- **Purpose**: Fetch game deals, discounts, and pricing information from multiple retailers
+- **Implementation**: Used in the **Deals page** (`/deals`) to showcase special offers and price drops
+- **Features**: Deal tracking, price comparison, discount notifications
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── Auth/          # Authentication components
+│   ├── Header/        # Navigation components
+│   ├── Footer/        # Footer component
+│   └── Store/         # Store-related components
+├── context/            # React Context providers
+├── hooks/              # Custom React hooks
+├── pages/              # Main page components
+├── services/           # API services
+└── stores/             # State management stores
+```
+
+## 🎯 Features to Implement
+
+### 🔴 **High Priority**
+- [x] **Game Search & Filtering**: Advanced search with genre, platform, price filters
+- [x] **Shopping Cart**: Add/remove games, quantity management
+- [x] **User Authentication**: Login, registration, profile management
+- [x] **Game Details**: Comprehensive game information pages
+- [x] **Responsive Design**: Mobile-first approach
+- [x] **API Integration**: 
+  - **RAWG API** integration for game data (Shop page)
+  - **CheapShark API** integration for deals (Deals page)
+
+### 🟡 **Medium Priority**
+- [x] **Wishlist**: Save games for later (Add to favorites feature implemented)
+- [ ] **Game Reviews**: User ratings and comments
+- [ ] **Checkout Process**: Payment integration
+- [ ] **Order History**: Track previous purchases
+- [ ] **Admin Panel**: Manage games and users
+
+### 🟢 **Low Priority**
+- [ ] **Social Features**: Share games, follow friends
+- [ ] **Game Recommendations**: AI-powered suggestions
+- [ ] **Multi-language Support**: Internationalization
+- [ ] **Push Notifications**: Price alerts, new releases
+- [ ] **Offline Support**: PWA capabilities
 
 ## 🧪 Testing
 
-This project includes comprehensive testing with Jest and React Testing Library:
-
-- **Unit Tests**: Individual component testing
-- **Integration Tests**: User workflow testing
-- **Accessibility Tests**: Screen reader and keyboard navigation
-- **Performance Tests**: Loading and rendering optimization
-
-Run tests with:
 ```bash
+# Run tests
 npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in watch mode
+npm run test:watch
 ```
+
+## 📦 Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
+
 
 ## 📸 Screenshots
 
-*Coming soon! We'll add beautiful screenshots of the website here to showcase the amazing design and functionality.*
+### Homepage - Light Theme
+![Homepage Light Theme](public/assets/screenshots/homepage-light-theme.jpg)
 
-### **Planned Screenshots:**
-- 🏠 **Homepage** - Hero section and featured games
-- 🎮 **Games Shop** - Game grid and filtering
-- 🛒 **Shopping Cart** - Cart management interface
-- 👤 **User Profile** - Profile management and settings
-- 📱 **Mobile View** - Responsive design showcase
-- 🌙 **Dark Mode** - Beautiful dark theme examples
+### Homepage - Dark Theme  
+![Homepage Dark Theme](public/assets/screenshots/homepage-dark-theme.jpg)
 
-## 🤝 Contributing
+### Game Store Section
+![Game Store](public/assets/screenshots/game-store-section.jpg)
 
-We welcome contributions! Here's how you can help:
+### Game Details
+![Game Details](public/assets/screenshots/game-details.jpg)
 
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
-4. **Push to the branch** (`git push origin feature/amazing-feature`)
-5. **Open a Pull Request**
+## 📞 Contact
 
-### **Development Guidelines**
-- Follow the existing code style
-- Add tests for new features
-- Ensure mobile responsiveness
-- Test dark/light themes
-- Update documentation as needed
-
-## 🐛 Bug Reports
-
-Found a bug? Please report it! Here's how:
-
-1. **Check existing issues** to see if it's already reported
-2. **Create a new issue** with:
-   - Clear description of the problem
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - Device/browser information
-
-## 📱 Browser Support
-
-- ✅ **Chrome** (latest)
-- ✅ **Firefox** (latest)
-- ✅ **Safari** (latest)
-- ✅ **Edge** (latest)
-- ✅ **Mobile browsers** (iOS Safari, Chrome Mobile)
-
-## 🚀 Performance Features
-
-- **Lazy Loading** - Images and components load as needed
-- **Debounced Search** - Optimized search performance
-- **Memoized Components** - Reduced unnecessary re-renders
-- **Optimized Images** - Compressed and responsive images
-- **Code Splitting** - Efficient bundle loading
-
-## 🔒 Security Features
-
-- **Input Validation** - All user inputs are sanitized
-- **XSS Protection** - Secure rendering of user content
-- **Secure Storage** - Safe localStorage usage
-- **Error Boundaries** - Graceful error handling
-
-## 📈 Future Enhancements
-
-We're always working to make Gaming Store even better! Here's what's coming:
-
-- 🎯 **Wishlist System** - Save games for later
-- ⭐ **User Reviews** - Rate and review games
-- 🎁 **Gift Cards** - Perfect gaming gifts
-- 📱 **PWA Support** - Install as mobile app
-- 🌍 **Multi-language** - International support
-- 💳 **Payment Integration** - Secure checkout options
-
-## 📞 Support
-
-Need help? We're here for you:
-
-- **GitHub Issues** - For bugs and feature requests
-- **Documentation** - Check this README and code comments
-- **Community** - Join our developer community
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **React Team** - For the amazing framework
-- **Tailwind CSS** - For the beautiful styling system
-- **Vite** - For the lightning-fast build tool
-- **Gaming Community** - For inspiration and feedback
+- **Project Link**: [https://github.com/yourusername/alx-FE-graduation-project-gaming-store](https://github.com/yourusername/alx-FE-graduation-project-gaming-store)
+- **Live Demo**: [https://alx-fe-graduation-project-gaming-st.vercel.app/](https://alx-fe-graduation-project-gaming-st.vercel.app/)
 
 ---
 
-**Made with ❤️ by passionate developers who love gaming as much as you do!**
-
-*Happy gaming! 🎮✨*
+⭐ **Star this repository if you find it helpful!**

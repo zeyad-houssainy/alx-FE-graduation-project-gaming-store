@@ -12,6 +12,7 @@ export const useAuthStore = create(
       savedAddresses: [],
       savedPaymentMethods: [],
       avatar: null,
+      favorites: [], // New favorites array
       
       // Actions
       login: (userData) => {
@@ -40,6 +41,29 @@ export const useAuthStore = create(
 
       setFreshStart: (value) => {
         set({ isFreshStart: value });
+      },
+
+      // Favorites management
+      addToFavorites: (game) => {
+        const { favorites } = get();
+        const existingIndex = favorites.findIndex(fav => fav.id === game.id);
+        if (existingIndex === -1) {
+          set({
+            favorites: [...favorites, { ...game, addedAt: new Date().toISOString() }],
+          });
+        }
+      },
+
+      removeFromFavorites: (gameId) => {
+        const { favorites } = get();
+        set({
+          favorites: favorites.filter(fav => fav.id !== gameId),
+        });
+      },
+
+      isFavorite: (gameId) => {
+        const { favorites } = get();
+        return favorites.some(fav => fav.id === gameId);
       },
 
       // Orders management
@@ -114,13 +138,52 @@ export const useAuthStore = create(
         });
       },
 
+      // Getter methods
+      getAddresses: () => {
+        return get().savedAddresses;
+      },
+
+      getPaymentMethods: () => {
+        return get().savedPaymentMethods;
+      },
+
       // Avatar management
       setAvatar: (avatarData) => {
         set({ avatar: avatarData });
       },
 
+      updateAvatar: (avatarData) => {
+        set({ avatar: avatarData });
+      },
+
       removeAvatar: () => {
         set({ avatar: null });
+      },
+
+      // Mock data management
+      clearMockData: () => {
+        set({ orders: [] });
+      },
+
+      cleanupMockData: () => {
+        // Clear cart data to ensure completely fresh start
+        localStorage.removeItem('gaming-cart');
+        set({ isFreshStart: false });
+      },
+
+      resetAllData: () => {
+        set({
+          isLoggedIn: false,
+          user: null,
+          isFreshStart: true,
+          orders: [],
+          savedAddresses: [],
+          savedPaymentMethods: [],
+          avatar: null,
+          favorites: [],
+        });
+        localStorage.removeItem('gaming-cart');
+        localStorage.removeItem('gaming-auth');
       },
 
       // Admin functions
@@ -139,31 +202,7 @@ export const useAuthStore = create(
         return user?.isAdmin || false;
       },
 
-      // Cleanup mock data
-      cleanupMockData: () => {
-        // Clear cart data to ensure completely fresh start
-        localStorage.removeItem('gaming-cart');
-        set({ isFreshStart: false });
-      },
 
-      // Load initial data from localStorage
-      loadInitialData: () => {
-        const savedAuth = localStorage.getItem('gaming-auth');
-        if (savedAuth) {
-          try {
-            const authData = JSON.parse(savedAuth);
-            if (authData.isLoggedIn && authData.user) {
-              set({
-                isLoggedIn: authData.isLoggedIn,
-                user: authData.user,
-                isFreshStart: false,
-              });
-            }
-          } catch (error) {
-            console.error('Error loading auth data:', error);
-          }
-        }
-      },
     }),
     {
       name: 'gaming-auth', // localStorage key
@@ -174,6 +213,7 @@ export const useAuthStore = create(
         savedAddresses: state.savedAddresses,
         savedPaymentMethods: state.savedPaymentMethods,
         avatar: state.avatar,
+        favorites: state.favorites,
       }),
     }
   )

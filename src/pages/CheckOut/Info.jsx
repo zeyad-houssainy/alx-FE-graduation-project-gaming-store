@@ -29,7 +29,7 @@ export default function Info() {
                 <ListItem sx={{ py: 2, px: 0 }}>
                   <Box
                     component="img"
-                    src={item.imageUrl || '/assets/images/featured-game-1.jpg'}
+                    src={item.background_image || item.image || '/assets/images/featured-game-1.jpg'}
                     alt={item.name}
                     sx={{
                       width: 60,

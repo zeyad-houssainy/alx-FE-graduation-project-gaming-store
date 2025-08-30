@@ -1,6 +1,6 @@
 // src/components/Utility.jsx
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCartStore, useAuthStore } from "../../stores";
 import SearchOverlay from "./SearchOverlay";
 import ThemeToggle from "../ThemeToggle";
@@ -11,6 +11,12 @@ export default function Utility() {
   const { getCartItemCount } = useCartStore();
   const { isLoggedIn, user, logout } = useAuthStore();
   const profileMenuRef = useRef(null);
+  const location = useLocation();
+  
+  // Check if we're on checkout-related pages
+  const isOnCheckoutPage = location.pathname.includes('/checkout') || 
+                           location.pathname.includes('/cart') ||
+                           location.pathname.includes('/payment');
 
   // Close profile menu when clicking outside
   useEffect(() => {
@@ -56,21 +62,23 @@ export default function Utility() {
         </svg>
       </button>
 
-      {/* Cart Button */}
-      <button
-        onClick={handleCartClick}
-        className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-      >
-        <div className="relative">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-          </svg>
-          {/* Cart Badge */}
-          <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-medium">
-            {getCartItemCount()}
-          </span>
-        </div>
-      </button>
+      {/* Cart Button - Hidden on checkout pages */}
+      {!isOnCheckoutPage && (
+        <button
+          onClick={handleCartClick}
+          className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          <div className="relative">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+            </svg>
+            {/* Cart Badge */}
+            <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-medium">
+              {getCartItemCount()}
+            </span>
+          </div>
+        </button>
+      )}
 
 
 

@@ -631,7 +631,7 @@ export default function Checkout() {
                     <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
                       <div className="flex items-center space-x-3">
                         <img 
-                          src={item.imageUrl || '/assets/images/featured-game-1.jpg'} 
+                          src={item.background_image || item.image || '/assets/images/featured-game-1.jpg'} 
                           alt={item.name}
                           className="w-16 h-16 rounded-lg object-cover"
                         />

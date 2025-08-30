@@ -22,7 +22,7 @@ export default function CartItem({ item }) {
         {/* Game Image */}
         <div className="relative flex-shrink-0">
           <img
-            src={item.background_image || item.image}
+            src={item.background_image || item.image || '/assets/images/featured-game-1.jpg'}
             alt={item.name}
             className="w-20 h-20 rounded-xl object-cover shadow-sm"
           />
@@ -41,9 +41,17 @@ export default function CartItem({ item }) {
 
         {/* Game Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3 line-clamp-2">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">
             {item.name}
           </h3>
+          
+          {/* Quantity Counter - Moved below title */}
+          <div className="text-sm text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            Quantity: {item.quantity}
+          </div>
           
           {/* Genre */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -52,14 +60,6 @@ export default function CartItem({ item }) {
                 {item.genres && item.genres[0]?.name ? item.genres[0].name : item.genre}
               </span>
             )}
-          </div>
-          
-          {/* Price per item */}
-          <div className="text-sm text-slate-600 dark:text-slate-400 mb-4 flex items-center gap-2">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            ${item.price.toFixed(2)} each
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useCartStore } from '../stores';
+import { useCartStore, useAuthStore } from '../stores';
 import { Link } from 'react-router-dom';
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaShoppingCart, FaHeart } from 'react-icons/fa';
 
 export default function GameCard({ game }) {
   // Image handling state
@@ -11,6 +11,10 @@ export default function GameCard({ game }) {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   const { addToCart } = useCartStore();
+  const { addToFavorites, removeFromFavorites, isFavorite } = useAuthStore();
+
+  // Check if this game is in favorites
+  const isInFavorites = isFavorite(game?.id);
 
   // Safety check - if game is undefined, don't render
   if (!game) {
@@ -45,6 +49,18 @@ export default function GameCard({ game }) {
     setTimeout(() => {
       setIsAddedToCart(false);
     }, 2000);
+  };
+
+  // Handle favorite toggle
+  const handleFavoriteToggle = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isInFavorites) {
+      removeFromFavorites(game.id);
+    } else {
+      addToFavorites(game);
+    }
   };
 
   // Format release date
@@ -191,21 +207,47 @@ export default function GameCard({ game }) {
       {/* Content Section - Fixed height for lower part */}
       <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 h-[120px] flex flex-col justify-between transition-all duration-300 group-hover:h-[370px]">
         {/* Platform Icons Header */}
-        <div className="flex items-center gap-2 mb-2">
-          {getUniquePlatformIcons().map((platformData, index) => (
-            <div key={index} className="w-4 h-4 flex items-center justify-center">
-              {getPlatformIconComponent(platformData.icon, index)}
-            </div>
-          ))}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            {getUniquePlatformIcons().map((platformData, index) => (
+              <div key={index} className="w-4 h-4 flex items-center justify-center">
+                {getPlatformIconComponent(platformData.icon, index)}
+              </div>
+            ))}
+          </div>
+          
+          {/* Favorite Button */}
+          <button
+            onClick={handleFavoriteToggle}
+            className="w-6 h-6 flex items-center justify-center text-white hover:text-red-500 transition-all duration-200"
+            title={isInFavorites ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <FaHeart className={`w-5 h-5 ${isInFavorites ? 'fill-red-500 scale-110' : 'fill-white/30 hover:fill-red-400'}`} />
+          </button>
         </div>
         
-        {/* Game Title */}
+        {/* Game Title and Price */}
         <div className="mb-3">
-          <Link to={`/games/${game.id}`} className="block">
-            <h3 className="text-lg font-bold text-white line-clamp-2 leading-tight hover:text-blue-300 transition-colors cursor-pointer">
-            {game.name || 'Untitled Game'}
-          </h3>
-        </Link>
+          <div className="flex items-start justify-between gap-2">
+            <Link to={`/games/${game.id}`} className="block flex-1">
+              <h3 className="text-lg font-bold text-white line-clamp-2 leading-tight hover:text-blue-300 transition-colors cursor-pointer">
+                {game.name || 'Untitled Game'}
+              </h3>
+            </Link>
+            
+            {/* Price Display */}
+            <div className="flex-shrink-0 text-right">
+              <div className="text-lg font-bold text-green-400">
+                ${game.price ? game.price.toFixed(2) : '19.99'}
+              </div>
+              {game.originalPrice && game.originalPrice > game.price && (
+                <div className="text-sm text-gray-400 line-through">
+                  ${game.originalPrice.toFixed(2)}
+                </div>
+              )}
+            </div>
+          </div>
+          
           {/* Target Icon */}
           <div className="flex items-center gap-1 mt-1">
             <span className="text-red-500 text-sm">🎯</span>

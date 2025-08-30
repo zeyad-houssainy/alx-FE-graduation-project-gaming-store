@@ -71,7 +71,7 @@ export default function SlidingCartSummary() {
           {/* Cart Panel */}
           <div 
             ref={cartPanelRef}
-            className={`fixed top-0 right-0 max-h-screen w-full sm:w-96 lg:w-[420px] bg-white dark:bg-slate-900 shadow-2xl z-50 transform transition-all duration-300 ease-out ${
+            className={`fixed top-0 right-0 h-screen w-full sm:w-96 lg:w-[420px] bg-white dark:bg-slate-900 shadow-2xl z-50 transform transition-all duration-300 ease-out ${
               isOpen ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
@@ -103,9 +103,9 @@ export default function SlidingCartSummary() {
             </div>
 
             {/* Cart Content */}
-            <div className="flex flex-col">
+            <div className="flex flex-col h-full">
               {/* Items List */}
-              <div className="overflow-y-auto p-6 space-y-4 max-h-[60vh]">
+              <div className="overflow-y-auto p-6 space-y-4 flex-1">
                 {items.length === 0 ? (
                   <div className="text-center py-16">
                     <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -134,11 +134,11 @@ export default function SlidingCartSummary() {
               </div>
               
               {/* Spacer for empty cart */}
-              {items.length === 0 && <div className="flex-1" />}
+              {items.length === 0 && <div className="flex-1 min-h-[40vh]" />}
 
               {/* Modern Cart Footer */}
               {items.length > 0 && (
-                <div className="border-t border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800 mt-auto">
+                <div className="border-t border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800 mt-auto sticky bottom-0">
                   {/* Total Section */}
                   <div className="flex items-center justify-between mb-6 p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center gap-3">

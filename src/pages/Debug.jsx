@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
+import { useAuthStore } from '../stores';
+import { useNavigate } from 'react-router-dom';
 import { FaBug, FaCode, FaDatabase, FaGlobe, FaServer, FaExclamationTriangle, FaCheckCircle, FaStore, FaGamepad, FaSearch, FaFilter, FaSort } from 'react-icons/fa';
 
 const Debug = () => {
+  const navigate = useNavigate();
+  const { resetAllData } = useAuthStore();
+  
   const [systemInfo, setSystemInfo] = useState({});
   const [apiStatus, setApiStatus] = useState({});
   const [loading, setLoading] = useState(true);
@@ -13,6 +18,14 @@ const Debug = () => {
   const [rawgTestResult, setRawgTestResult] = useState(null);
   const [isTestingCheapShark, setIsTestingCheapShark] = useState(false);
   const [isTestingRAWG, setIsTestingRAWG] = useState(false);
+
+  // Development helper: Reset all data
+  const handleResetAllData = () => {
+    if (window.confirm('⚠️ DEVELOPMENT ONLY: This will reset ALL data including cart, orders, and login state. Are you sure?')) {
+      resetAllData();
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     // Collect system information
@@ -387,6 +400,24 @@ const Debug = () => {
                       View Storage
                     </button>
                   </div>
+                </div>
+
+                {/* Development Tools */}
+                <div className="mt-8 p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <FaExclamationTriangle className="text-2xl text-red-600 dark:text-red-400" />
+                    <h3 className="text-xl font-semibold text-red-800 dark:text-red-200">Development Tools</h3>
+                  </div>
+                  <p className="text-red-700 dark:text-red-300 mb-4">
+                    ⚠️ These tools are for development purposes only and will permanently delete data.
+                  </p>
+                  <button
+                    onClick={handleResetAllData}
+                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors shadow-lg"
+                    title="Development only - Reset all data"
+                  >
+                    🔄 Reset All Data (Dev)
+                  </button>
                 </div>
               </div>
 
