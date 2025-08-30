@@ -296,10 +296,7 @@ const transformRAWGGame = (rawgGame) => {
     user_game: rawgGame.user_game || null,
     reviews_count: rawgGame.reviews_count || 0,
     saturated_color: rawgGame.saturated_color,
-    dominant_color: rawgGame.dominant_color,
     screenshots_count: rawgGame.screenshots_count || 0,
-    movies_count: rawgGame.movies_count || 0,
-    creators_count: rawgGame.creators_count || 0,
     tags_count: rawgGame.tags_count || 0,
     esrb_rating_id: rawgGame.esrb_rating?.id || null,
     esrb_rating_slug: rawgGame.esrb_rating?.slug || null,
@@ -376,16 +373,22 @@ export const fetchGames = async (options = {}) => {
     // Add optional parameters only if they have values
     if (search.trim()) params.search = search.trim();
     if (platforms.length > 0) {
-      // Filter out mobile and web platforms and add to exclusions
-      const excludedPlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile, Web
-      const filteredPlatforms = platforms.filter(p => !excludedPlatforms.includes(p.toString()));
+      // Filter to only include desired platforms: PC, PlayStation, Xbox, Nintendo
+      const desiredPlatformIds = ['1', '2', '3', '7']; // PC, PlayStation, Xbox, Nintendo
+      const filteredPlatforms = platforms.filter(p => desiredPlatformIds.includes(p.toString()));
       if (filteredPlatforms.length > 0) {
         params.platforms = filteredPlatforms.join(',');
       }
     } else {
-      // Default to exclude mobile and web platforms if no specific platforms provided
-      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile, Web
+      // Default to only include desired platforms: PC, PlayStation, Xbox, Nintendo
+      // PC: 1, PlayStation: 2, Xbox: 3, Nintendo: 7
+      // We want: PC (1), PlayStation (2), Xbox (3), Nintendo (7)
+      params.platforms = '1,2,3,7'; // PC, PlayStation, Xbox, Nintendo
     }
+    
+    // Always exclude unwanted platforms to ensure they don't appear in results
+    // Web: 34, 37, Android: 4, iOS: 8, Linux: 6, Gameboy: 5, Mobile: 21
+    params.exclude_platforms = '4,5,6,8,21,34,37';
     
     if (genres.length > 0) params.genres = genres.join(',');
     if (tags.length > 0) params.tags = tags.join(',');
@@ -432,7 +435,8 @@ export const fetchGames = async (options = {}) => {
         timestamp: new Date().toISOString(),
         totalResults: response.data.count,
         filters: {
-          excludedPlatforms: 'Mobile (Android, iOS), Web, Mobile',
+          includedPlatforms: 'PC, PlayStation, Xbox, Nintendo',
+          excludedPlatforms: 'Web (34,37), Android (4), iOS (8), Linux (6), Gameboy (5), Mobile (21)',
           minMetacritic: metacritic,
           minRating: rating.split(',')[0],
           dateRange: dates
@@ -490,10 +494,10 @@ export const fetchPlatforms = async () => {
       }
     });
     
-    // Filter out mobile and web platforms
-    const excludedPlatformIds = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile, Web
+    // Filter to only include desired platforms: PC, PlayStation, Xbox, Nintendo
+    const desiredPlatformIds = ['1', '2', '3', '7']; // PC, PlayStation, Xbox, Nintendo
     const filteredPlatforms = response.data.results.filter(platform => 
-      !excludedPlatformIds.includes(platform.id.toString())
+      desiredPlatformIds.includes(platform.id.toString())
     );
     
     const platforms = filteredPlatforms.map(platform => ({
@@ -513,7 +517,7 @@ export const fetchPlatforms = async () => {
       requirements: platform.requirements || {},
     }));
     
-    console.log(`✅ Fetched ${platforms.length} platforms from RAWG (mobile platforms excluded)`);
+    console.log(`✅ Fetched ${platforms.length} platforms from RAWG (only PC, PlayStation, Xbox, Nintendo)`);
     return platforms;
   } catch (error) {
     const enhancedError = handleRAWGError(error, 'Fetch platforms');
@@ -699,12 +703,13 @@ export const searchGames = async (searchTerm, options = {}) => {
   try {
     console.log(`🔍 Searching for games: "${searchTerm}"`);
     
-    // Build search parameters with mobile platform exclusion
+    // Build search parameters with platform filtering
     const params = {
       search: searchTerm,
       page_size: options.pageSize || 60,
       ordering: options.ordering || '-rating',
-      exclude_platforms: '4,8,21,34,37', // Exclude Android, iOS, Mobile, Web
+      platforms: '1,2,3,7', // Only PC, PlayStation, Xbox, Nintendo
+      exclude_platforms: '4,5,6,8,21,34,37', // Exclude Web, Android, iOS, Linux, Gameboy, Mobile
       ...options
     };
     
@@ -712,7 +717,7 @@ export const searchGames = async (searchTerm, options = {}) => {
 
     const transformedGames = response.data.results.map(transformRAWGGame);
     
-    console.log(`✅ Search completed: ${transformedGames.length} results for "${searchTerm}" (mobile platforms excluded)`);
+    console.log(`✅ Search completed: ${transformedGames.length} results for "${searchTerm}" (only PC, PlayStation, Xbox, Nintendo)`);
     return transformedGames;
   } catch (error) {
     const enhancedError = handleRAWGError(error, `Search games: "${searchTerm}"`);
@@ -791,16 +796,21 @@ export const fetchGamesWithFilters = async (options = {}) => {
     
     if (search) params.search = search;
     if (platformIds.length > 0) {
-      // Filter out mobile and web platforms
-      const excludedPlatforms = ['4', '8', '21', '34', '37']; // Android, iOS, Mobile, Web
-      const filteredPlatformIds = platformIds.filter(id => !excludedPlatforms.includes(id.toString()));
+      // Filter to only include desired platforms
+      const desiredPlatformIds = ['1', '2', '3', '7']; // PC, PlayStation, Xbox, Nintendo
+      const filteredPlatformIds = platformIds.filter(id => desiredPlatformIds.includes(id.toString()));
       if (filteredPlatformIds.length > 0) {
         params.platforms = filteredPlatformIds.join(',');
       }
     } else {
-      // Default to exclude mobile and web platforms if no specific platforms provided
-      params.exclude_platforms = '4,8,21,34,37'; // Exclude Android, iOS, Mobile, Web
+      // Default to only include desired platforms: PC, PlayStation, Xbox, Nintendo
+      params.platforms = '1,2,3,7'; // PC, PlayStation, Xbox, Nintendo
     }
+    
+    // Always exclude unwanted platforms to ensure they don't appear in results
+    // Web: 34, 37, Android: 4, iOS: 8, Linux: 6, Gameboy: 5, Mobile: 21
+    params.exclude_platforms = '4,5,6,8,21,34,37';
+    
     if (genreIds.length > 0) params.genres = genreIds.join(',');
 
     console.log('🔍 RAWG API params:', params);

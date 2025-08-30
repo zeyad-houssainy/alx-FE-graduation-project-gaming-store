@@ -418,9 +418,11 @@ const Deals = () => {
             
             {/* All Deals Section */}
             <div className="mt-16">
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">All Deals</h3>
-                <p className="text-gray-600 dark:text-gray-400">Browse through all available deals</p>
+              <div className="mb-8 text-center">
+                <h3 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 bg-gradient-to-r from-purple-600 via-pink-500 via-cyan-500 via-yellow-400 to-orange-500 bg-clip-text text-transparent animate-pulse">
+                  All Deals
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-lg">Browse through all available deals</p>
               </div>
               <div className="flex flex-wrap gap-6 justify-center max-w-[1800px] mx-auto">
                 {filteredDeals.slice(0, 20).map((deal) => (
